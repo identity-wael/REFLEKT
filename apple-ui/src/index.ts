@@ -81,6 +81,65 @@ export type {
   VisionDepth,
 } from './components/VisionCard'
 
+// MenuBar (macOS/visionOS-inspired)
+export {
+  MenuBar,
+  MenuBarContent,
+  MenuBarBrand,
+  MenuBarSection,
+  MenuItem,
+  MenuBarDivider,
+} from './components/MenuBar'
+export type {
+  MenuBarProps,
+  MenuBarContentProps,
+  MenuBarBrandProps,
+  MenuBarSectionProps,
+  MenuItemProps,
+  MenuBarDividerProps,
+  MenuBarMaterial,
+  MenuBarPosition,
+} from './components/MenuBar'
+
+// Widget (Dashboard widgets)
+export {
+  Widget,
+  WidgetHeader,
+  WidgetContent,
+  WidgetValue,
+  WidgetTrend,
+  WidgetDivider,
+  WidgetFooter,
+} from './components/Widget'
+export type {
+  WidgetProps,
+  WidgetHeaderProps,
+  WidgetContentProps,
+  WidgetValueProps,
+  WidgetTrendProps,
+  WidgetDividerProps,
+  WidgetFooterProps,
+  WidgetMaterial,
+  WidgetSize,
+  WidgetAccent,
+} from './components/Widget'
+
+// GlassCanvas (visionOS/tvOS-inspired)
+export { GlassCanvas } from './components/GlassCanvas'
+export type {
+  GlassCanvasProps,
+  GlassCanvasVariant,
+  CanvasDepth,
+} from './components/GlassCanvas'
+
+// FloatingZone (visionOS/tvOS-inspired)
+export { FloatingZone } from './components/FloatingZone'
+export type {
+  FloatingZoneProps,
+  ZoneDepth,
+  ZoneAnimation,
+} from './components/FloatingZone'
+
 // === DESIGN TOKENS ===
 
 export {

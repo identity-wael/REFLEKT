@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **IconGrid** - Grid layout for icons with automatic staggered animations
 - **VisionCard** (visionOS-inspired) - Glass card component with 4 material variants (glass, frosted, crystal, dark-glass), 3D tilt on hover, glow effects, and floating animations
 - **VisionCardGrid** - Grid layout for VisionCards with responsive columns
+- **MenuBar** (macOS Sonoma/visionOS-inspired) - Advanced menu bar with 4 glass materials (glass, frosted-heavy, translucent, vibrant), dynamic blur on scroll, and menu items with indicators
+- **MenuItem, MenuBarDivider** - Menu bar sub-components for building navigation
+- **Widget** - Modular dashboard widget system with 4 materials, 4 sizes, 7 accent colors, and support for dynamic data display
+- **WidgetHeader, WidgetContent, WidgetValue, WidgetTrend, WidgetFooter** - Widget sub-components for structured content
+- **GlassCanvas** (visionOS/tvOS-inspired) - Two-way mirror/screen surface for floating interfaces with 4 variants, background video/image support, parallax on mouse movement, and ambient lighting effects
+- **FloatingZone** (visionOS/tvOS-inspired) - Positioning zones for floating content on GlassCanvas with 4 depth layers, 5 entry animations, 3D transforms, and 9 anchor points
 
 #### Design Tokens
 - **Colors** - Complete Apple color system including primary, grays, system colors, backgrounds, labels, and fills
@@ -40,6 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Smooth spring-based animations** - Natural motion with cubic-bezier easing
 - **Multiple entry animations** - Float, bounce, scale, rotate, slide, and fade
 - **Rich hover interactions** - Lift, tilt, glow, pulse, and float effects
+- **Two-way mirror/screen interfaces** - visionOS/tvOS-style floating content with GlassCanvas
+- **Advanced glass materials** - Heavy frosted (macOS Sonoma), ultra-translucent (visionOS), vibrant
+- **Parallax effects** - Mouse-tracking parallax on GlassCanvas backgrounds
+- **Dashboard widgets** - Modular system for stocks, health vitals, weather, and custom data
+- **Dynamic blur** - Blur intensity increases on scroll for menu bars
 - Zero dependencies (except clsx utility)
 - Tree-shakeable exports
 - CSS Modules for scoped styling
@@ -49,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive README with component examples
 - EXAMPLES.md with real-world usage patterns
 - **VISIONOS_EXAMPLES.md** - Dedicated visionOS component examples and patterns
+- **WIDGETS_AND_INTERFACES.md** - Complete guide for widgets, MenuBar, GlassCanvas, and FloatingZone
 - TypeScript documentation with JSDoc comments
 - Design principles and best practices
 
