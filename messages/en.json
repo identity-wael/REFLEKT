@@ -1,0 +1,229 @@
+{
+  "navigation": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "stories": "Stories",
+    "contact": "Contact"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "learnMore": "Learn More",
+    "getStarted": "Get Started",
+    "viewAll": "View All",
+    "readMore": "Read More"
+  },
+  "home": {
+    "hero": {
+      "title": "Your mindful partner REFLEKT",
+      "subtitle": "The smart mirror that reflects not just how you look, but how you feel. Transform your morning routine with mindful technology that centers, prepares, and inspires.",
+      "badge": "Smart Mirror • Wellness Technology",
+      "cta": "Join the Waitlist",
+      "demo": "See Mirror Demo",
+      "calmMode": "Calm Mode",
+      "calmDescription": "Guided breathing and mindfulness to center your morning",
+      "moodSensing": "Mood Sensing",
+      "moodDescription": "AI-powered emotional awareness with personalized responses",
+      "activeMode": "Active Mode",
+      "activeDescription": "Smart briefings, style tips, and daily preparation",
+      "interfaceTitle": "Experience REFLEKT's Dual Modes",
+      "calmModeTitle": "Calm Mode",
+      "calmModeDescription": "Begin each day with guided breathing exercises and mindfulness moments that center your mind and reduce anxiety.",
+      "activeModeTitle": "Active Mode",
+      "activeModeDescription": "Your personalized morning dashboard with smart scheduling, daily briefings, and curated content tailored to your day."
+    },
+    "features": {
+      "title": "Smart Mirror. Mindful Mornings.",
+      "subtitle": "REFLEKT transforms your daily routine into a wellness ritual with AI-powered interfaces that adapt to your mood and needs.",
+      "deepDiveTitle": "Interface Deep Dive",
+      "deepDiveSubtitle": "Explore the three core experiences that make REFLEKT your perfect morning companion.",
+      "arTitle": "AR Style Guidance",
+      "arDescription": "Virtual try-on experiences and personalized style recommendations powered by advanced computer vision technology."
+    },
+    "ecosystem": {
+      "title": "Three Ways to Experience REFLEKT",
+      "subtitle": "From personal wellness mirrors to enterprise installations, discover how REFLEKT adapts to every lifestyle and environment.",
+      "badge": "Complete Ecosystem",
+      "ctaTitle": "Ready to Transform Your Daily Routine?",
+      "ctaSubtitle": "Join thousands of early adopters who are already experiencing the future of mindful technology.",
+      "ctaButton": "Start Your Journey",
+      "appPreview": "Download App Preview"
+    },
+    "stats": {
+      "projects": "Beta Testers",
+      "satisfaction": "Stress Reduction",
+      "clients": "Daily Users",
+      "experience": "Mindful Minutes"
+    },
+    "testimonials": {
+      "title": "What Early Users Say",
+      "subtitle": "Real experiences from beta testers who've integrated REFLEKT into their morning routines."
+    },
+    "cta": {
+      "title": "Ready to Transform Your Mornings?",
+      "subtitle": "Join the beta program and experience the future of mindful technology. Be among the first to own your REFLEKT mirror.",
+      "button": "Join Beta Program"
+    }
+  },
+  "about": {
+    "title": "About REFLEKT",
+    "subtitle": "We're reimagining the intersection of technology and wellness, creating smart mirrors that enhance daily routines with mindful, AI-powered experiences.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To make mindfulness accessible through innovative technology, helping people start each day centered, confident, and prepared for whatever lies ahead."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "description": "A world where technology serves human well-being, where smart mirrors become trusted companions in our journey toward better mental health and self-awareness."
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "The principles that guide our approach to wellness technology and shape how we create meaningful experiences."
+    },
+    "team": {
+      "title": "Meet Our Team",
+      "subtitle": "Experts in AI, wellness, design, and technology working together to create the future of mindful living."
+    },
+    "journey": {
+      "title": "Our Journey",
+      "subtitle": "From concept to beta program - key milestones in developing the world's first mindful smart mirror."
+    }
+  },
+  "services": {
+    "title": "REFLEKT Solutions",
+    "subtitle": "Comprehensive wellness technology solutions for homes, businesses, and wellness centers seeking to integrate mindful technology.",
+    "process": {
+      "title": "Implementation Process",
+      "subtitle": "A seamless journey from consultation to installation, ensuring REFLEKT integrates perfectly into your space."
+    },
+    "benefits": {
+      "title": "Why Choose REFLEKT?",
+      "subtitle": "We deliver transformative wellness experiences through cutting-edge AI and thoughtful design."
+    }
+  },
+  "stories": {
+    "title": "Wellness & Tech Insights",
+    "subtitle": "Exploring the intersection of mindfulness, artificial intelligence, and daily wellness routines.",
+    "newsletter": {
+      "title": "Stay Mindful",
+      "subtitle": "Subscribe to receive wellness tips, mindfulness insights, and updates on REFLEKT's development.",
+      "placeholder": "Enter your email",
+      "button": "Subscribe",
+      "disclaimer": "Mindful content only. Unsubscribe anytime."
+    }
+  },
+  "contact": {
+    "title": "Join the REFLEKT Community",
+    "subtitle": "Ready to transform your daily routine? Whether you're interested in our beta program, business partnerships, or wellness center installations, we'd love to connect.",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "company": "Company",
+      "phone": "Phone",
+      "subject": "Subject",
+      "waitlist": "Join Beta Waitlist",
+      "betaProgram": "Beta Testing Program",
+      "businessPartnership": "Business Partnership",
+      "wellnessCenter": "Wellness Center Installation",
+      "mediaInquiry": "Media & Press Inquiry",
+      "other": "Other",
+      "interestType": "Interest Type",
+      "personalUse": "Personal Home Use",
+      "smallBusiness": "Small Wellness Business",
+      "enterprise": "Enterprise/Corporate",
+      "hospitality": "Hotel/Spa/Resort",
+      "notSure": "Not Sure",
+      "timeline": "Timeline",
+      "immediate": "Immediate Interest",
+      "threeMonths": "Next 3 months",
+      "sixMonths": "Next 6 months",
+      "twelveMonths": "Next 12 months",
+      "flexible": "Flexible / Future Planning",
+      "message": "Message",
+      "messagePlaceholder": "Tell us about your interest in REFLEKT. Are you looking to enhance your morning routine, explore wellness technology, or considering installation for your business? Share your vision and any specific questions...",
+      "messageDescription": "Help us understand how REFLEKT can fit into your wellness journey or business goals.",
+      "newsletter": "Join the REFLEKT wellness community",
+      "newsletterDescription": "Get early access updates, mindfulness tips, and smart mirror technology insights.",
+      "submit": "Send Message",
+      "sending": "Sending...",
+      "success": "Message Sent Successfully!",
+      "successMessage": "Thank you for contacting us. We'll get back to you within 24 hours.",
+      "tryAgain": "Send Another Message",
+      "error": "Something Went Wrong",
+      "errorMessage": "We're sorry, but there was an error sending your message. Please try again or contact us directly.",
+      "retry": "Try Again",
+      "privacy": "privacy policy",
+      "terms": "terms of service",
+      "disclaimer": "By submitting this form, you agree to our"
+    },
+    "info": {
+      "email": "hello@reflekt.com",
+      "phone": "+1 (555) 123-4567",
+      "address": "San Francisco, CA",
+      "hours": "Mon-Fri from 8am to 6pm"
+    },
+    "support": {
+      "title": "How Can We Help?",
+      "subtitle": "Choose the option that best describes your inquiry for personalized assistance."
+    },
+    "hours": {
+      "title": "Response Times",
+      "subtitle": "We're committed to responding quickly. Here are our typical response times for different inquiries."
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Common questions about REFLEKT mirrors, beta program, and installation process."
+    }
+  },
+  "products": {
+    "mirror": {
+      "name": "REFLEKT Mirror",
+      "category": "Flagship Product",
+      "description": "The premium smart mirror for your home - your mindful morning companion that transforms daily routines into wellness rituals.",
+      "availability": "Beta Program",
+      "cta": "Join Waitlist",
+      "features": {
+        "aiMood": "AI-powered mood sensing",
+        "dualModes": "Calm & Active modes",
+        "arBeauty": "AR beauty & style guidance",
+        "voiceTouch": "Voice & touch interaction",
+        "smartHome": "Smart home integration"
+      }
+    },
+    "app": {
+      "name": "REFLEKT App",
+      "category": "Companion Experience",
+      "description": "Your portable wellness companion - bring mindful moments, mood tracking, and personalized guidance wherever you go.",
+      "availability": "Coming Soon",
+      "cta": "Early Access",
+      "features": {
+        "moodCheckins": "Daily mood check-ins",
+        "meditations": "Guided meditations",
+        "briefings": "Wellness briefings",
+        "sync": "Mirror synchronization",
+        "tracking": "Progress tracking"
+      }
+    },
+    "space": {
+      "name": "REFLEKT Space",
+      "category": "Ambient Installation",
+      "description": "Transform any environment into a multi-sensory wellness zone with immersive spatial technology for businesses and premium spaces.",
+      "availability": "Enterprise",
+      "cta": "Partner With Us",
+      "features": {
+        "multiSensory": "Multi-sensory environment",
+        "ambientLighting": "Ambient lighting & scents",
+        "contactless": "Contactless interaction",
+        "corporateWellness": "Corporate wellness pods",
+        "customInstall": "Custom installations"
+      }
+    }
+  }
+}
