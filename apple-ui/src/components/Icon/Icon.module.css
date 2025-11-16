@@ -1,0 +1,394 @@
+/**
+ * Icon Component Styles
+ * visionOS-inspired animations and effects
+ */
+
+.icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20%;
+  transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  animation-duration: 800ms;
+  animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation-fill-mode: both;
+}
+
+.iconContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: inherit;
+  line-height: 1;
+}
+
+/* Interactive cursor */
+.interactive {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* === SIZES === */
+
+.size-xs {
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.size-sm {
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+
+.size-md {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+}
+
+.size-lg {
+  width: 64px;
+  height: 64px;
+  font-size: 32px;
+}
+
+.size-xl {
+  width: 80px;
+  height: 80px;
+  font-size: 40px;
+}
+
+.size-2xl {
+  width: 96px;
+  height: 96px;
+  font-size: 48px;
+}
+
+.size-3xl {
+  width: 128px;
+  height: 128px;
+  font-size: 64px;
+}
+
+/* === BACKGROUNDS === */
+
+.background-none {
+  background: transparent;
+}
+
+.background-filled {
+  background: #f2f2f7;
+}
+
+@media (prefers-color-scheme: dark) {
+  .background-filled {
+    background: #2c2c2e;
+  }
+}
+
+.background-glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .background-glass {
+    background: rgba(28, 28, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.background-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+/* === ENTRY ANIMATIONS === */
+
+.animation-none {
+  animation: none;
+}
+
+/* Float animation */
+@keyframes float-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animation-float {
+  animation-name: float-in;
+}
+
+/* Bounce animation */
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-30px);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animation-bounce {
+  animation-name: bounce-in;
+}
+
+/* Scale animation */
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animation-scale {
+  animation-name: scale-in;
+}
+
+/* Rotate animation */
+@keyframes rotate-in {
+  0% {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+
+.animation-rotate {
+  animation-name: rotate-in;
+}
+
+/* Slide up animation */
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animation-slide-up {
+  animation-name: slide-up;
+}
+
+/* Slide down animation */
+@keyframes slide-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animation-slide-down {
+  animation-name: slide-down;
+}
+
+/* Fade animation */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animation-fade {
+  animation-name: fade-in;
+}
+
+/* === HOVER EFFECTS (visionOS-style) === */
+
+/* Lift effect */
+.hover-lift:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hover-lift:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* 3D Tilt effect */
+.hover-tilt {
+  transition: all 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-tilt:hover {
+  transform: perspective(1000px) rotateX(10deg) rotateY(10deg) scale(1.05);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hover-tilt:hover {
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* Rotate effect */
+.hover-rotate:hover {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Scale effect */
+.hover-scale:hover {
+  transform: scale(1.15);
+}
+
+/* Glow effect */
+.hover-glow {
+  transition: all 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-glow:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(0, 122, 255, 0.5), 0 0 60px rgba(0, 122, 255, 0.3);
+  filter: brightness(1.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .hover-glow:hover {
+    box-shadow: 0 0 30px rgba(10, 132, 255, 0.6), 0 0 60px rgba(10, 132, 255, 0.4);
+  }
+}
+
+/* Float effect */
+.hover-float {
+  animation: gentle-float 3s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hover-float:hover {
+  animation-play-state: paused;
+  transform: translateY(-15px) scale(1.05);
+}
+
+/* Pulse effect */
+.hover-pulse {
+  animation: gentle-pulse 2s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.hover-pulse:hover {
+  animation-play-state: paused;
+  transform: scale(1.15);
+}
+
+/* None */
+.hover-none:hover {
+  transform: none;
+}
+
+/* === ICON GRID === */
+
+.iconGrid {
+  display: grid;
+  width: 100%;
+}
+
+.gap-sm {
+  gap: 12px;
+}
+
+.gap-md {
+  gap: 24px;
+}
+
+.gap-lg {
+  gap: 40px;
+}
+
+/* Focus state for accessibility */
+.interactive:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .interactive:focus-visible {
+    outline-color: #0a84ff;
+  }
+}
+
+/* Active state */
+.interactive:active {
+  transform: scale(0.95);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .icon {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hover-float,
+  .hover-pulse {
+    animation: none !important;
+  }
+
+  .icon:hover {
+    transform: none !important;
+  }
+}

@@ -7,10 +7,13 @@ A modern, accessible, and beautifully designed component library that brings App
 ## Features
 
 - **Apple Design Language** - Faithful implementation of Apple's Human Interface Guidelines
+- **visionOS-Inspired** - Beautiful 3D effects, glassmorphism, and smooth animations
 - **TypeScript First** - Full TypeScript support with comprehensive type definitions
 - **Dark Mode** - Automatic dark mode support using CSS media queries
 - **Accessible** - WCAG 2.1 AA compliant with semantic HTML and ARIA attributes
 - **Glassmorphism** - Beautiful blur effects and translucent surfaces
+- **3D Depth Effects** - Realistic tilt, hover, and perspective transforms
+- **Smooth Animations** - Spring-based animations for natural motion
 - **Responsive** - Mobile-first design that works on all screen sizes
 - **Zero Dependencies** - Only requires React (except for `clsx` utility)
 - **Tree-shakeable** - Import only what you need
@@ -278,6 +281,113 @@ import {
 - `variant`: Visual style (`default` | `glass` | `transparent`)
 - `position`: Positioning (`static` | `fixed` | `sticky`)
 - `blurOnScroll`: Enable blur effect on scroll
+
+### Icon (visionOS-inspired)
+
+Beautiful animated icons with smooth hover effects and depth.
+
+```tsx
+import { Icon, IconGrid } from '@reflekt/apple-ui'
+
+// Basic icon with lift effect
+<Icon hoverEffect="lift" size="lg">
+  🚀
+</Icon>
+
+// Icon with glass background and tilt
+<Icon
+  background="glass"
+  hoverEffect="tilt"
+  animation="bounce"
+  size="xl"
+>
+  🎨
+</Icon>
+
+// Entry animations
+<Icon animation="float">🌟</Icon>
+<Icon animation="bounce">⚡</Icon>
+<Icon animation="scale">💎</Icon>
+<Icon animation="rotate">🔮</Icon>
+
+// Hover effects
+<Icon hoverEffect="lift">📱</Icon>   {/* Lift with shadow */}
+<Icon hoverEffect="tilt">🎯</Icon>   {/* 3D tilt */}
+<Icon hoverEffect="glow">✨</Icon>   {/* Glowing effect */}
+<Icon hoverEffect="float">☁️</Icon>  {/* Continuous float */}
+<Icon hoverEffect="pulse">❤️</Icon>  {/* Pulsing scale */}
+
+// Icon grid with staggered animations
+<IconGrid columns={3} gap="lg" staggerDelay={100}>
+  <Icon animation="bounce" hoverEffect="tilt">🚀</Icon>
+  <Icon animation="bounce" hoverEffect="tilt">⚡</Icon>
+  <Icon animation="bounce" hoverEffect="tilt">🎨</Icon>
+</IconGrid>
+```
+
+**Props:**
+- `size`: Icon size (`xs` | `sm` | `md` | `lg` | `xl` | `2xl` | `3xl`)
+- `animation`: Entry animation (`none` | `float` | `bounce` | `scale` | `rotate` | `slide-up` | `slide-down` | `fade`)
+- `animationDelay`: Animation delay in milliseconds
+- `hoverEffect`: Hover effect (`none` | `lift` | `tilt` | `rotate` | `scale` | `glow` | `float` | `pulse`)
+- `background`: Background variant (`none` | `filled` | `glass` | `gradient`)
+- `color`: Custom background color
+- `interactive`: Enable interactive state
+- `disableHover`: Disable hover effects
+
+### VisionCard (visionOS-inspired)
+
+Glass cards with depth, 3D tilt effects, and smooth animations.
+
+```tsx
+import { VisionCard, VisionCardGrid } from '@reflekt/apple-ui'
+
+// Basic glass card
+<VisionCard material="glass" depth="medium">
+  <h3>Beautiful Glass Effect</h3>
+  <p>With backdrop blur and depth</p>
+</VisionCard>
+
+// Interactive card with tilt and glow
+<VisionCard
+  material="frosted"
+  depth="deep"
+  tiltOnHover
+  glowOnHover
+  radius="xl"
+  padding="lg"
+>
+  <Icon size="xl">🚀</Icon>
+  <Typography variant="title2">Amazing Card</Typography>
+</VisionCard>
+
+// Floating card
+<VisionCard
+  material="crystal"
+  floating
+  depth="medium"
+>
+  <p>Gently floating in space</p>
+</VisionCard>
+
+// Card grid
+<VisionCardGrid columns={3} gap="lg">
+  <VisionCard material="glass">Card 1</VisionCard>
+  <VisionCard material="frosted">Card 2</VisionCard>
+  <VisionCard material="crystal">Card 3</VisionCard>
+</VisionCardGrid>
+```
+
+**Props:**
+- `material`: Glass material (`glass` | `frosted` | `crystal` | `dark-glass`)
+- `depth`: Depth level (`flat` | `shallow` | `medium` | `deep`)
+- `tiltOnHover`: Enable 3D tilt effect on hover
+- `glowOnHover`: Enable glow effect on hover
+- `floating`: Enable floating animation
+- `radius`: Border radius (`sm` | `md` | `lg` | `xl` | `2xl`)
+- `padding`: Internal padding (`none` | `sm` | `md` | `lg` | `xl`)
+
+**See [VISIONOS_EXAMPLES.md](./VISIONOS_EXAMPLES.md) for detailed visionOS component examples.**
 
 ## Design Tokens
 

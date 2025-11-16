@@ -62,6 +62,25 @@ export type {
   NavVariant,
 } from './components/Navigation'
 
+// Icon (visionOS-inspired)
+export { Icon, IconGrid } from './components/Icon'
+export type {
+  IconProps,
+  IconGridProps,
+  IconAnimation,
+  IconSize,
+  IconHoverEffect,
+} from './components/Icon'
+
+// VisionCard (visionOS-inspired)
+export { VisionCard, VisionCardGrid } from './components/VisionCard'
+export type {
+  VisionCardProps,
+  VisionCardGridProps,
+  VisionMaterial,
+  VisionDepth,
+} from './components/VisionCard'
+
 // === DESIGN TOKENS ===
 
 export {
