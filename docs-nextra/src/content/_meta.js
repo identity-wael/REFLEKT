@@ -8,15 +8,7 @@ const meta = {
   },
   console: {
     type: "page",
-    title: "Console",
-  },
-  "platform-services": {
-    type: "page",
-    title: "Platform Services",
-  },
-  "credit-engine": {
-    type: "page",
-    title: "Credit Engine",
+    title: "Smart Mirror",
   },
   infrastructure: {
     type: "page",
@@ -24,11 +16,7 @@ const meta = {
   },
   security: {
     type: "page",
-    title: "Security",
-  },
-  compliance: {
-    type: "page",
-    title: "Compliance",
+    title: "Security & Privacy",
   },
 }
 

@@ -3,13 +3,12 @@ const meta = {
   prerequisites: "Prerequisites",
   "get-started": "Setup Guide",
   "quick-reference": "Quick Reference",
-  "plaid-integration": "Plaid Integration",
-  security: "Security & Encryption",
-  "core-features": "Core Features",
+  security: "Security & Privacy",
+  "core-features": "Product Features",
   "architecture-docs": "Architecture",
-  "system-modeling": "System Modeling",
+  "system-modeling": "System Design",
   development: "Development",
-  operations: "Operations",
+  operations: "Deployment & Operations",
   reference: "Reference",
 }
 

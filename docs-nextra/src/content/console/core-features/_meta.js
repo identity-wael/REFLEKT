@@ -1,8 +1,10 @@
 const meta = {
-  "ai-integration": "AI Integration",
-  "interactive-avatars": "Interactive Avatars",
-  "voice-audio": "Voice & Audio",
-  supabase: "Supabase Backend"
+  "calm-mode": "Calm Mode",
+  "active-mode": "Active Mode",
+  "mood-sensing": "Mood Sensing",
+  "ar-style": "AR Style Guidance",
+  "voice-assistant": "Voice Assistant",
+  "dementia-support": "Dementia Support"
 };
 
 export default meta;

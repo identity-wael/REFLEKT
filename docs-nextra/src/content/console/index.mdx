@@ -2,307 +2,309 @@ import { Tabs } from 'nextra/components'
 
 # REFLEKT Documentation
 
-**REFLEKT** is an advanced multi-model AI chat platform powered by GPT-4o as the primary model, with support for Claude, Gemini and other leading AI providers. Built with Next.js 15.4 (canary), Supabase backend, and featuring real-time messaging, file attachments, and flexible user authentication including anonymous access.
+**REFLEKT** is an AI-powered smart mirror that transforms your daily routine into a mindful wellness ritual. Built with cutting-edge technology, REFLEKT features dual-mode interfaces, mood sensing, and AR style guidance to help you start each day centered, confident, and prepared.
 
-## Platform Overview
+## Product Overview
 
 ### What is REFLEKT?
 
-REFLEKT is a sophisticated conversational AI platform that combines:
-- **GPT-4o Primary Model**: OpenAI's GPT-4o and GPT-4o-mini as default models
-- **Multi-Model Support**: Switch between Claude 3 Opus, Gemini Pro, and other providers
-- **Supabase Backend**: PostgreSQL database with Row Level Security (RLS)
-- **Real-time Features**: Live message streaming and updates via Supabase Realtime
-- **Flexible Authentication**: Support for registered and anonymous users
-- **Daily Usage Limits**: Free tier (10 messages/day) and Pro tier (100 messages/day)
+REFLEKT is an intelligent wellness technology that combines:
+- **Dual-Mode Interface**: Calm Mode for mindfulness and Active Mode for daily preparation
+- **AI-Powered Mood Sensing**: Emotional awareness with personalized responses
+- **AR Style Guidance**: Virtual try-on experiences and style recommendations
+- **Smart Briefings**: Context-aware daily information and scheduling
+- **Dementia Support**: Specialized features for cognitive assistance and memory support
+- **Morning Wellness**: Guided breathing, anxiety reduction, and mindful moments
 
 ### Core Capabilities
 
-- **GPT-4o Powered**: Primary model with GPT-4o and GPT-4o-mini
-- **Multi-Model Support**: Switch between Claude 3 Opus, Gemini Pro, and more
-- **Supabase Storage**: File attachments with secure storage buckets
-- **Flexible Auth**: Anonymous access or registered accounts via Supabase Auth
-- **Row Level Security**: Database-level security with RLS policies
-- **Real-time Updates**: Live message streaming and presence tracking
-- **Usage Tracking**: Daily message limits with automatic reset
-- **Project Management**: Organize chats into projects for multi-model comparisons
+- **Calm Mode**: Guided breathing exercises and mindfulness moments to center your morning
+- **Active Mode**: Personalized dashboard with smart scheduling, daily briefings, and curated content
+- **Mood Sensing**: AI-powered emotional awareness that adapts to how you feel
+- **AR Style**: Virtual try-on experiences with computer vision technology
+- **Smart Assistant**: Daily briefings, weather, calendar, and personalized recommendations
+- **Dementia Care**: Memory prompts, routine assistance, and cognitive support features
+- **Wellness Tracking**: Monitor stress reduction and mindful minutes
+- **Multi-Platform**: Physical mirror, mobile app, and cloud sync
 
 ## Architecture Overview
 
 ```mermaid
 flowchart TB
-    subgraph "Frontend Applications"
-        A1[Next.js 15.4 App]
-        A2[Chat Interface]
-        A3[Console App]
-        A4[Docs Nextra]
+    subgraph "User Interfaces"
+        A1[Smart Mirror Display]
+        A2[Mobile App]
+        A3[Web Dashboard]
     end
 
-    subgraph "AI Models"
-        B1[GPT-4o Primary]
-        B2[Claude 3 Opus]
-        B3[Gemini Pro]
-        B4[Model Router]
+    subgraph "Core Modes"
+        B1[Calm Mode]
+        B2[Active Mode]
+        B3[AR Style Mode]
+        B4[Mode Controller]
+    end
+
+    subgraph "AI Services"
+        C1[Mood Sensing AI]
+        C2[Voice Recognition]
+        C3[Computer Vision]
+        C4[NLP Engine]
     end
 
     subgraph "Backend Services"
-        C1[API Routes]
-        C2[Edge Functions]
-        C3[Auth Middleware]
-        C4[Rate Limiter]
+        D1[Smart Briefing API]
+        D2[Weather & Calendar]
+        D3[Style Recommendations]
+        D4[Dementia Support]
+        D5[User Preferences]
     end
 
-    subgraph "Supabase Platform"
-        D1[Supabase Auth]
-        D2[PostgreSQL 15]
-        D3[RLS Policies]
-        D4[Storage Buckets]
-        D5[Realtime]
-        D6[Edge Functions]
-    end
-
-    A1 --> C1
+    A1 --> B4
     A2 --> B4
-    A3 --> C1
+    A3 --> B4
 
     B4 --> B1
     B4 --> B2
     B4 --> B3
 
-    C1 --> C3
-    C3 --> C4
-    C4 --> D1
+    B1 --> C1
+    B2 --> D1
+    B3 --> C3
 
-    C1 --> D2
-    D2 --> D3
-    C1 --> D4
-    D2 --> D5
+    C1 --> C4
+    D1 --> D2
+    D1 --> D5
+    C3 --> D3
 
     style A1 fill:#3B82F6,color:#ffffff
-    style B1 fill:#8B5CF6,color:#ffffff
-    style B4 fill:#10B981,color:#ffffff
+    style B4 fill:#8B5CF6,color:#ffffff
+    style C1 fill:#10B981,color:#ffffff
     style D1 fill:#3ECF8E,color:#ffffff
 ```
 
 ## Technology Stack
 
-### AI Models
-- **Primary Model**: OpenAI GPT-4o and GPT-4o-mini
-- **Alternative Models**:
-  - Anthropic Claude 3 Opus
-  - Google Gemini Pro
-  - Additional providers via API integration
-- **Model Router**: Dynamic model selection per chat
-- **Streaming**: Real-time token streaming for all models
+### Hardware
+- **Display**: Smart mirror with touch interface
+- **Sensors**: Camera, microphone, ambient light sensor
+- **Connectivity**: Wi-Fi, Bluetooth 5.0
+- **Processing**: Edge computing for real-time AI
+- **Audio**: High-quality speakers for voice feedback
 
-### Supabase Backend
-- **Database**: PostgreSQL 15 with extensions
-- **Authentication**: Supabase Auth with anonymous support
-- **Row Level Security**: Database-level access control
-- **Storage**: File attachments via Storage Buckets
-- **Realtime**: WebSocket-based live updates
-- **Edge Functions**: Serverless functions for processing
+### Software Platform
+- **Framework**: Next.js 15.5.3 with App Router
+- **Language**: TypeScript 5.9.3
+- **UI Library**: React 19.2.0 with Server Components
+- **Styling**: Tailwind CSS v4 + Framer Motion
+- **State Management**: React hooks + Context API
+- **i18n**: next-intl (English & Japanese)
 
-### Frontend
-- **Framework**: Next.js 15.4.0-canary.47 with App Router
-- **Language**: TypeScript 5.0+
-- **UI Components**: shadcn/ui + Radix UI primitives
-- **Styling**: Tailwind CSS v4 + CSS variables
-- **State Management**: Zustand + React Query
-- **Motion**: Motion primitives for animations
+### AI & ML
+- **Mood Detection**: Computer vision and facial analysis
+- **Voice Processing**: Speech recognition and synthesis
+- **NLP**: Natural language understanding for commands
+- **AR Technology**: Real-time style overlay and virtual try-on
+- **Personalization**: Machine learning for user preferences
 
-### Backend Infrastructure
-- **Runtime**: Next.js API Routes + Edge Functions
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth with RLS
-- **File Storage**: Supabase Storage buckets
-- **Session Management**: Server-side with cookies
+### Backend Services
+- **API**: RESTful endpoints for data sync
+- **Cloud Storage**: User preferences and history
+- **Analytics**: Wellness tracking and usage metrics
+- **Third-party Integrations**: Weather, calendar, news APIs
 
 ## Key Features
 
-### Multi-Model Chat Interface
+### Dual-Mode Interface
 
 | Feature | Description | Status |
 |---------|-------------|--------|
-| Model Switching | Hot-swap between AI models mid-conversation | Live |
-| Streaming Responses | Real-time token streaming with markdown | Live |
-| File Uploads | Image and document analysis | Live |
-| Multi-Chat | Compare responses from multiple models | Live |
-| Chat History | Persistent conversations with search | Live |
+| Calm Mode | Guided breathing exercises and mindfulness moments | Beta |
+| Active Mode | Smart briefings, scheduling, and daily preparation | Beta |
+| Mode Switching | Seamless transition between modes based on user preference | Beta |
+| Personalization | Learns from usage patterns to optimize experience | In Development |
+| Voice Control | Hands-free mode switching and interaction | Beta |
 
-### Interactive Avatar Features
-- **Real-time Rendering**: Smooth avatar animations synced with speech
-- **Voice Synthesis**: Natural voice generation for avatar responses
-- **Session Control**: Start, pause, resume avatar interactions
-- **Custom Avatars**: Selection from multiple avatar options
-- **WebRTC Streaming**: Low-latency video delivery
+### AI-Powered Wellness
+- **Mood Sensing**: Facial analysis to detect emotional state
+- **Adaptive Responses**: Interface adapts to your mood and needs
+- **Breathing Guidance**: Real-time coaching for anxiety reduction
+- **Stress Tracking**: Monitor wellness metrics over time
+- **Personalized Tips**: AI-generated wellness recommendations
 
-### Voice Mode Capabilities
-- **Real-time Conversation**: Natural back-and-forth dialogue
-- **Voice Selection**: Multiple voice options and personalities
-- **Audio Controls**: Volume, speed, and pitch adjustments
-- **Transcription**: Real-time speech-to-text
-- **Interruption Handling**: Natural conversation flow
+### Smart Daily Assistant
+- **Morning Briefings**: Weather, calendar, news, and reminders
+- **Smart Scheduling**: Optimize your day based on priorities
+- **Style Recommendations**: Outfit suggestions based on weather and calendar
+- **AR Try-On**: Virtual preview of clothing and accessories
+- **Voice Assistant**: Natural language commands and queries
 
 ## Quick Start
 
 ### Prerequisites
 
 ```bash
-Node.js >= 22.0.0
-pnpm >= 9.14.4
-Supabase CLI (optional)
+Node.js >= 18.17
+npm >= 9 or pnpm >= 8
+Smart Mirror hardware (for physical deployment)
 ```
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/identity-wael/reflekt-ai.git
-cd reflekt-ai
+git clone https://github.com/identity-wael/REFLEKT.git
+cd REFLEKT
 
-# Install all dependencies (monorepo)
-pnpm install
+# Install dependencies
+npm install
 
-# Set up environment variables
-cd console
-cp .env.example .env.local
+# Set up environment variables (if needed)
+cp .env.local.example .env.local
 
-# Run database migrations
-pnpm db:migrate
+# Start development server
+npm run dev
 
-# Start development server (from root)
-cd ..
-pnpm turbo dev --filter=console
-
-# Or from console directory
-# cd console && pnpm dev
+# Open http://localhost:3000 to view
 ```
 
 ### Environment Configuration
 
 ```env
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_key
+# API Keys (if using external services)
+NEXT_PUBLIC_WEATHER_API_KEY=your_weather_key
+NEXT_PUBLIC_CALENDAR_API_KEY=your_calendar_key
 
-# AI Providers
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-GOOGLE_AI_API_KEY=your_google_key
-MISTRAL_API_KEY=your_mistral_key
-XAI_API_KEY=your_xai_key
-PERPLEXITY_API_KEY=your_perplexity_key
+# AI Services (for mood sensing and NLP)
+AI_MOOD_DETECTION_KEY=your_ai_key
+AI_VOICE_RECOGNITION_KEY=your_voice_key
 
-# HeyGen Avatar
-NEXT_PUBLIC_HEYGEN_API_KEY=your_heygen_key
-HEYGEN_SECRET_KEY=your_heygen_secret
-
-# Optional Services
-OPENROUTER_API_KEY=your_openrouter_key
-DEEPSEEK_API_KEY=your_deepseek_key
+# Optional Analytics
+NEXT_PUBLIC_ANALYTICS_ID=your_analytics_id
 ```
 
 ## Development Workflow
 
-<Tabs items={['Local Setup', 'Docker', 'Cloud Deploy']} defaultIndex={0}>
+<Tabs items={['Local Setup', 'Hardware Setup', 'Production Deploy']} defaultIndex={0}>
   <Tabs.Tab>
     **Local Development**
 
     ```bash
     # Install dependencies
-    pnpm install
+    npm install
 
-    # Set up Supabase locally
-    supabase start
+    # Start dev server with Turbopack
+    npm run dev
 
-    # Run migrations
-    pnpm db:migrate
+    # Run tests
+    npm run test
 
-    # Start dev server
-    pnpm turbo dev --filter=console
+    # Type checking
+    npm run type-check
     ```
 
     Access at http://localhost:3000
   </Tabs.Tab>
 
   <Tabs.Tab>
-    **Docker Setup**
+    **Smart Mirror Hardware**
 
     ```bash
-    # Build and run with Docker Compose
-    docker-compose up -d
+    # Deploy to smart mirror device
+    npm run build
+    npm run start
 
-    # With Ollama support
-    docker-compose -f docker-compose.ollama.yml up -d
+    # Configure display settings
+    # Set up camera and sensors
+    # Connect to Wi-Fi network
+    # Enable touch interface
     ```
 
-    Includes Supabase, PostgreSQL, and app containers
+    See Hardware Setup Guide for detailed instructions
   </Tabs.Tab>
 
   <Tabs.Tab>
     **Production Deploy**
 
     ```bash
-    # Deploy to Vercel
+    # Build for production
+    npm run build
+
+    # Deploy to Vercel (for web dashboard)
     vercel --prod
 
-    # Set environment variables
-    vercel env add OPENAI_API_KEY
-    vercel env add SUPABASE_URL
-    # ... add all required keys
+    # Or deploy to smart mirror hardware
+    # See deployment documentation
     ```
 
-    Automatic deployments on push to main
+    Optimized for Vercel Edge Network
   </Tabs.Tab>
 </Tabs>
 
 ## Documentation Sections
 
-### Core Concepts
-- [Getting Started](/docs/get-started) - Quick setup and first chat
-- [Architecture](/docs/architecture) - System design and components
-- [AI Integration](/docs/ai-integration) - Vercel AI SDK v5 implementation
+### Getting Started
+- [Quick Start Guide](/console/get-started) - Initial setup and configuration
+- [Prerequisites](/console/prerequisites) - Required hardware and software
+- [Architecture Overview](/console/architecture-docs/architecture) - System design
 
-### Interactive Features
-- [Interactive Avatars](/docs/interactive-avatars) - HeyGen integration guide
-- [Voice Mode](/docs/voice-audio) - Real-time voice conversations
-- [WebRTC Streaming](/docs/webrtc) - Low-latency media delivery
+### Product Features
+- [Calm Mode](/console/core-features/calm-mode) - Mindfulness and breathing exercises
+- [Active Mode](/console/core-features/active-mode) - Daily briefings and smart scheduling
+- [Mood Sensing](/console/core-features/mood-sensing) - AI-powered emotional awareness
+- [AR Style Guide](/console/core-features/ar-style) - Virtual try-on and style recommendations
 
 ### Development
-- [API Reference](/docs/api) - REST and WebSocket endpoints
-- [Component Library](/docs/components) - UI component documentation
-- [Configuration](/docs/configuration) - Environment and settings
+- [Developer Guide](/console/development/developer-guide) - Development workflow
+- [Component Library](/console/development/components) - UI component documentation
+- [API Reference](/console/development/api) - API endpoints and integrations
+- [Configuration](/console/development/configuration) - Environment setup
 
-### Backend Services
-- [Supabase Integration](/docs/supabase) - Auth, database, and storage
-- [Security](/docs/security) - Authentication and RLS policies
-- [Deployment](/docs/deployment) - Production deployment guide
+### Deployment
+- [Hardware Setup](/console/operations/hardware-setup) - Physical mirror installation
+- [Software Deployment](/console/operations/deployment) - Production deployment
+- [Troubleshooting](/console/operations/troubleshooting) - Common issues and solutions
 
 ## Performance Metrics
 
 | Metric | Target | Current |
 |--------|--------|----------|
-| First Token (Chat) | &lt;500ms | ~400ms |
-| Avatar Load Time | &lt;3s | ~2.5s |
-| Voice Latency | &lt;200ms | ~150ms |
-| WebRTC Connection | &lt;1s | ~800ms |
-| Concurrent Users | 1000+ | Scalable |
+| Mirror Boot Time | &lt;5s | ~4s |
+| Mood Detection | &lt;200ms | ~180ms |
+| Voice Response | &lt;300ms | ~250ms |
+| AR Overlay Rendering | 60fps | 60fps |
+| Daily Active Users | 10,000+ | Beta Testing |
+
+## Target Customers
+
+### Individual Consumers
+- **Busy Professionals**: Morning optimization and stress management
+- **Wellness Enthusiasts**: Mindfulness practice and habit tracking
+- **Fashion-Forward Users**: Style guidance and virtual try-on
+
+### Healthcare
+- **Dementia Care Facilities**: Memory support and routine assistance
+- **Mental Health Clinics**: Anxiety reduction and mood tracking
+- **Rehabilitation Centers**: Daily structure and cognitive support
+
+### Commercial Spaces
+- **Luxury Hotels**: Premium guest experience enhancement
+- **Fitness Centers**: Wellness integration and member engagement
+- **Corporate Offices**: Employee wellness programs
 
 ## Community & Support
 
-- **GitHub**: [github.com/identity-wael/reflekt-ai](https://github.com/identity-wael/reflekt-ai)
-- **Discord**: Join our developer community
-- **Issues**: Report bugs and request features
-- **Contributing**: See [CONTRIBUTING.md](https://github.com/identity-wael/reflekt-ai/blob/main/CONTRIBUTING.md)
+- **Website**: [reflekt.app](https://reflekt.app)
+- **GitHub**: [github.com/identity-wael/REFLEKT](https://github.com/identity-wael/REFLEKT)
+- **Documentation**: [docs.reflekt.app](https://docs.reflekt.app)
+- **Issues**: Report bugs and request features on GitHub
+- **Beta Program**: Join the waitlist for early access
 
 ## License
 
-REFLEKT Console is based on the open-source Zola project and enhanced with proprietary features. See [LICENSE](https://github.com/identity-wael/reflekt-ai/blob/main/LICENSE) for details.
+REFLEKT Smart Mirror - Proprietary wellness technology. All rights reserved.
 
 ---
 
-**Built with cutting-edge AI technologies for the next generation of conversational interfaces**
+**Transform your daily routine with mindful technology**
 
-_Last updated: December 19, 2024_
+_Last updated: November 16, 2025_

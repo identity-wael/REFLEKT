@@ -1,6 +1,6 @@
 # REFLEKT Documentation
 
-Official documentation site for the REFLEKT platform, built with Nextra.
+Official documentation site for the REFLEKT Smart Mirror, built with Nextra.
 
 ## Live Deployment
 
@@ -8,15 +8,16 @@ Official documentation site for the REFLEKT platform, built with Nextra.
 
 ## Overview
 
-Comprehensive documentation for the REFLEKT platform including:
+Comprehensive documentation for the REFLEKT Smart Mirror including:
 
 - Getting started guides
-- API references
-- Architecture documentation
-- Credit intelligence features
-- Interactive avatar integration
-- Voice mode implementation
-- Infrastructure and deployment
+- Product features and capabilities
+- Dual-mode interface (Calm & Active Modes)
+- AI-powered mood sensing
+- AR style guidance technology
+- Dementia support features
+- Hardware and software architecture
+- Development and deployment guides
 
 ## Tech Stack
 
@@ -92,35 +93,37 @@ docs-nextra/
 
 ## Documentation Structure
 
-### Console Documentation
+### Smart Mirror Documentation
 
 - Getting started guide
 - Prerequisites and setup
-- Core features (AI models, chat, voice)
+- Core features (Calm Mode, Active Mode, Mood Sensing)
+- AR Style Guidance
+- Dementia support capabilities
+- Hardware specifications
+
+### Product Features
+
+- Dual-mode interface overview
+- AI-powered mood sensing
+- Morning wellness routines
+- Daily briefings and smart scheduling
+- Style recommendations and virtual try-on
+
+### Development
+
+- Architecture overview
+- Technology stack
+- Component library
 - API reference
 - Development guides
 
-### Credit Engine
+### Deployment
 
-- Architecture overview
-- API endpoints
-- AI credit coaching
-- Integration guides
-
-### Infrastructure
-
-- Turborepo & pnpm migration
-- Monorepo best practices
-- Environment variables
-- Vercel deployment
-- Port configuration
-
-### Operations
-
+- Hardware setup
+- Software installation
+- Environment configuration
 - Troubleshooting guides
-- Migration documentation
-- Deployment procedures
-- Monitoring and maintenance
 
 ## Key Features
 
