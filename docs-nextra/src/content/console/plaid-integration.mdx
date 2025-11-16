@@ -352,7 +352,7 @@ export async function POST(request: Request) {
       user: {
         client_user_id: session.user.id
       },
-      client_name: 'Earna AI',
+      client_name: 'REFLEKT',
       products: (process.env.PLAID_PRODUCTS?.split(',') || ['accounts', 'transactions']) as any,
       country_codes: (process.env.PLAID_COUNTRY_CODES?.split(',') || ['US', 'CA']) as any,
       language: 'en',

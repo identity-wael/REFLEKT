@@ -8,22 +8,22 @@ import "nextra-theme-docs/style.css"
 import "./globals.css"
 
 export const metadata = {
-  metadataBase: new URL("https://docs.earna.ai"),
+  metadataBase: new URL("https://docs.reflekt.app"),
   title: {
-    template: "%s - Earna AI Documentation",
+    template: "%s - REFLEKT Documentation",
   },
-  description: "Earna AI: AI-Powered Canadian Credit Score Advisor",
-  applicationName: "Earna AI",
+  description: "REFLEKT: Modern multilingual website platform built with Next.js and React",
+  applicationName: "REFLEKT",
   generator: "Next.js",
   appleWebApp: {
-    title: "Earna AI Docs",
+    title: "REFLEKT Docs",
   },
   other: {
-    "msapplication-TileImage": "/earna-logo.png",
+    "msapplication-TileImage": "/reflekt-logo.png",
     "msapplication-TileColor": "#fff",
   },
   twitter: {
-    site: "https://earna.ai",
+    site: "https://reflekt.app",
   },
 }
 
@@ -41,8 +41,7 @@ export default async function RootLayout({ children }) {
                 "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
             }}
           >
-            <span style={{ color: "var(--earna-color, #ffffff)" }}>EARNA</span>
-            <span style={{ color: "#4185f4" }}> AI</span>
+            <span style={{ color: "var(--reflekt-color, #ffffff)" }}>REFLEKT</span>
           </span>
           <div
             style={{
@@ -53,8 +52,8 @@ export default async function RootLayout({ children }) {
           />
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <Image
-              src="/brain-finance-logo.svg"
-              alt="Brain Finance"
+              src="/reflekt-logo.svg"
+              alt="REFLEKT"
               width={48}
               height={48}
               style={{
@@ -64,8 +63,8 @@ export default async function RootLayout({ children }) {
               }}
             />
             <Image
-              src="/brain-finance-logo-dark.svg"
-              alt="Brain Finance"
+              src="/reflekt-logo-dark.svg"
+              alt="REFLEKT"
               width={48}
               height={48}
               style={{
@@ -77,23 +76,23 @@ export default async function RootLayout({ children }) {
           </div>
         </div>
       }
-      logoLink="https://earna.sh"
-      projectLink="https://github.com/identity-wael/earna-ai"
+      logoLink="https://reflekt.app"
+      projectLink="https://github.com/identity-wael/REFLEKT"
     />
   )
   const pageMap = await getPageMap()
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <Head>
-        <link rel="icon" href="/earna-logo.png" type="image/png" />
+        <link rel="icon" href="/reflekt-logo.png" type="image/png" />
         <style>{`
           :root {
-            --earna-color: #000000;
+            --reflekt-color: #000000;
             --light-logo-display: block;
             --dark-logo-display: none;
           }
           [data-theme='dark'], .dark {
-            --earna-color: #ffffff;
+            --reflekt-color: #ffffff;
             --light-logo-display: none;
             --dark-logo-display: block;
           }
@@ -123,11 +122,11 @@ export default async function RootLayout({ children }) {
           navbar={navbar}
           footer={
             <Footer>
-              {new Date().getFullYear()} © Earna AI. All rights reserved.
+              {new Date().getFullYear()} © REFLEKT. All rights reserved.
             </Footer>
           }
           editLink="Edit this page on GitHub"
-          docsRepositoryBase="https://github.com/identity-wael/earna-ai/blob/main/docs-nextra"
+          docsRepositoryBase="https://github.com/identity-wael/REFLEKT/blob/main/docs-nextra"
           sidebar={{ defaultMenuCollapseLevel: 1 }}
           pageMap={pageMap}
         >

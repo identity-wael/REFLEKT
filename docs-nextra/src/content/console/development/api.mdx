@@ -1,13 +1,13 @@
 ---
 title: API Reference
-description: Complete API documentation for Earna AI Console
+description: Complete API documentation for REFLEKT Console
 ---
 
 import { Tabs, Callout } from 'nextra/components'
 
 # API Reference
 
-Complete REST API reference for Earna AI Console. The API provides endpoints for chat interactions, model management, avatar sessions, voice conversations, and file handling powered by GPT-4o and multiple AI providers.
+Complete REST API reference for REFLEKT Console. The API provides endpoints for chat interactions, model management, avatar sessions, voice conversations, and file handling powered by GPT-4o and multiple AI providers.
 
 ## Base URL
 
@@ -62,7 +62,7 @@ Send a message to GPT-4o or alternative models:
   <Tabs.Tab>
     ```json
     {
-      "response": "Earna AI Console is a multi-model chat platform powered by GPT-4o...",
+      "response": "REFLEKT Console is a multi-model chat platform powered by GPT-4o...",
       "model": "gpt-4o",
       "usage": {
         "promptTokens": 42,
@@ -402,7 +402,7 @@ Authorization: Bearer your_jwt_token
 ```json
 {
   "fileId": "file_xyz123",
-  "url": "https://storage.earna.sh/files/file_xyz123",
+  "url": "https://storage.reflekt.sh/files/file_xyz123",
   "name": "document.pdf",
   "size": 1024000,
   "mimeType": "application/pdf"
@@ -418,7 +418,7 @@ POST /api/vision/analyze
 Content-Type: application/json
 
 {
-  "imageUrl": "https://storage.earna.sh/files/image.jpg",
+  "imageUrl": "https://storage.reflekt.sh/files/image.jpg",
   "prompt": "What's in this image?"
 }
 ```
@@ -825,7 +825,7 @@ Authorization: Bearer your_jwt_token
 Connect to WebSocket for live updates:
 
 ```javascript
-const ws = new WebSocket('wss://api.earna.sh/realtime');
+const ws = new WebSocket('wss://api.reflekt.sh/realtime');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
@@ -899,11 +899,11 @@ X-RateLimit-Reset: 1705315200
 ### Node.js/TypeScript
 
 ```typescript
-import { createClient } from '@earna/sdk';
+import { createClient } from '@reflekt/sdk';
 
 const client = createClient({
   apiKey: process.env.EARNA_API_KEY,
-  baseUrl: 'https://api.earna.sh/v1'
+  baseUrl: 'https://api.reflekt.sh/v1'
 });
 
 // Send a message
@@ -922,11 +922,11 @@ for await (const chunk of response) {
 ### Python
 
 ```python
-import earna
+import reflekt
 
-client = earna.Client(
+client = reflekt.Client(
     api_key=os.environ["EARNA_API_KEY"],
-    base_url="https://api.earna.sh/v1"
+    base_url="https://api.reflekt.sh/v1"
 )
 
 # Send a message
@@ -945,7 +945,7 @@ for chunk in response:
 
 ```bash
 # Send a chat message
-curl -X POST https://api.earna.sh/v1/api/chat \
+curl -X POST https://api.reflekt.sh/v1/api/chat \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -954,7 +954,7 @@ curl -X POST https://api.earna.sh/v1/api/chat \
   }'
 
 # Get chat history
-curl -X GET "https://api.earna.sh/v1/api/chat/history?chatId=chat_abc123" \
+curl -X GET "https://api.reflekt.sh/v1/api/chat/history?chatId=chat_abc123" \
   -H "Authorization: Bearer $API_KEY"
 ```
 
@@ -962,13 +962,13 @@ curl -X GET "https://api.earna.sh/v1/api/chat/history?chatId=chat_abc123" \
 
 Official SDKs available:
 
-- **JavaScript/TypeScript**: `pnpm add @earna/sdk`
-- **Python**: `pip install earna`
-- **Go**: `go get github.com/earna/go-sdk`
-- **Ruby**: `gem install earna`
+- **JavaScript/TypeScript**: `pnpm add @reflekt/sdk`
+- **Python**: `pip install reflekt`
+- **Go**: `go get github.com/reflekt/go-sdk`
+- **Ruby**: `gem install reflekt`
 
 <Callout type="info">
-For detailed SDK documentation, visit [sdk.earna.sh](https://sdk.earna.sh)
+For detailed SDK documentation, visit [sdk.reflekt.sh](https://sdk.reflekt.sh)
 </Callout>
 
 ## Webhooks
@@ -1035,6 +1035,6 @@ X-API-Version: 2025-01
 ## Support
 
 For API support:
-- Documentation: [docs.earna.sh](https://docs.earna.sh)
-- Status: [status.earna.sh](https://status.earna.sh)
-- Support: support@earna.sh
+- Documentation: [docs.reflekt.sh](https://docs.reflekt.sh)
+- Status: [status.reflekt.sh](https://status.reflekt.sh)
+- Support: support@reflekt.sh

@@ -46,7 +46,7 @@ Deploys the console application to Vercel with proper environment configuration.
 set -euo pipefail
 
 # Configuration
-PROJECT_NAME="earna-console"
+PROJECT_NAME="reflekt-console"
 ENVIRONMENT="${1:-production}"
 
 # Color codes for output
@@ -120,7 +120,7 @@ set -euo pipefail
 
 CLUSTER_NAME="platform-production"
 REGION="us-west1"
-PROJECT_ID="earna-production"
+PROJECT_ID="reflekt-production"
 
 echo "🚀 Deploying Platform Services"
 
@@ -209,8 +209,8 @@ Initializes Terraform backend in GCS.
 # init-backend.sh - Initialize Terraform backend
 set -euo pipefail
 
-PROJECT_ID="earna-production"
-BUCKET_NAME="earna-terraform-state"
+PROJECT_ID="reflekt-production"
+BUCKET_NAME="reflekt-terraform-state"
 LOCATION="us-west1"
 
 echo "🔧 Initializing Terraform Backend"
@@ -307,7 +307,7 @@ Configures monitoring dashboards in Google Cloud.
 # setup-dashboards.sh - Setup monitoring dashboards
 set -euo pipefail
 
-PROJECT_ID="earna-production"
+PROJECT_ID="reflekt-production"
 
 echo "📊 Setting up monitoring dashboards"
 
@@ -465,7 +465,7 @@ Audits IAM permissions and access controls.
 # audit-permissions.sh - Audit IAM permissions
 set -euo pipefail
 
-PROJECT_ID="earna-production"
+PROJECT_ID="reflekt-production"
 OUTPUT_FILE="audit-report-$(date +%Y%m%d).json"
 
 echo "🔍 Auditing IAM permissions"
@@ -561,7 +561,7 @@ pnpm husky install
 
 # Configure gcloud
 echo "Configuring gcloud..."
-gcloud config set project earna-production
+gcloud config set project reflekt-production
 
 # Setup kubectl context
 gcloud container clusters get-credentials \
@@ -602,11 +602,11 @@ echo "🏥 Running health checks for $SERVICE in $ENVIRONMENT"
 
 # Define endpoints
 declare -A ENDPOINTS=(
-    ["console"]="https://console.earna.ai/api/health"
-    ["api"]="https://api.earna.ai/health"
-    ["plaid"]="https://console.earna.ai/api/plaid/health"
-    ["temporal"]="http://temporal.earna.ai:7233/health"
-    ["tigerbeetle"]="http://tigerbeetle.earna.ai:3000/health"
+    ["console"]="https://console.reflekt.ai/api/health"
+    ["api"]="https://api.reflekt.ai/health"
+    ["plaid"]="https://console.reflekt.ai/api/plaid/health"
+    ["temporal"]="http://temporal.reflekt.ai:7233/health"
+    ["tigerbeetle"]="http://tigerbeetle.reflekt.ai:3000/health"
 )
 
 failed=0
@@ -643,7 +643,7 @@ echo "🧹 Cleaning up $TYPE resources"
 case $TYPE in
     temp)
         # Clean temporary files
-        find /tmp -name "earna-*" -mtime +1 -delete
+        find /tmp -name "reflekt-*" -mtime +1 -delete
         rm -rf node_modules/.cache
         rm -rf .next/cache
         ;;
@@ -770,7 +770,7 @@ else
 fi
 
 # Use environment variables with defaults
-DATABASE_URL="${DATABASE_URL:-postgresql://localhost/earna}"
+DATABASE_URL="${DATABASE_URL:-postgresql://localhost/reflekt}"
 REDIS_URL="${REDIS_URL:-redis://localhost:6379}"
 ```
 

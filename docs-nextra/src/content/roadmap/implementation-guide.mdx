@@ -1,13 +1,13 @@
 ---
 title: Implementation Guide
-description: Day-by-day execution plan for building the Earna AI financial platform backend infrastructure
+description: Day-by-day execution plan for building the REFLEKT financial platform backend infrastructure
 ---
 
 import { Tabs, Steps, Callout, FileTree } from 'nextra/components'
 
 # Implementation Guide
 
-This guide provides a detailed, day-by-day implementation plan for building Earna AI's backend infrastructure without disrupting the existing console application. The strategy focuses on building isolated services that can be gradually integrated.
+This guide provides a detailed, day-by-day implementation plan for building REFLEKT's backend infrastructure without disrupting the existing console application. The strategy focuses on building isolated services that can be gradually integrated.
 
 ## Core Implementation Principle
 
@@ -381,7 +381,7 @@ const plaidClient = new PlaidApi(
 app.post('/api/plaid/link/token', async (req, res) => {
   const response = await plaidClient.linkTokenCreate({
     user: { client_user_id: req.body.userId },
-    client_name: 'Earna AI',
+    client_name: 'REFLEKT',
     products: ['transactions', 'accounts', 'investments'],
     country_codes: ['US'],
     language: 'en'
@@ -1183,7 +1183,7 @@ class SubscriptionManager {
 ### API Client Library
 ```typescript
 // console/lib/api-client.ts
-class EarnaAPIClient {
+class REFLEKTAPIClient {
   private baseURL: string
   private token: string
 

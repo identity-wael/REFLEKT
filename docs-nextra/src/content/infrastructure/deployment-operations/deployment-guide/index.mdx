@@ -1,10 +1,10 @@
 # Deployment Guide
 
-Step-by-step guide for deploying Earna AI projects from development to production.
+Step-by-step guide for deploying REFLEKT projects from development to production.
 
 ## Deployment Overview
 
-The Earna AI platform uses a multi-stage deployment pipeline with automatic deployments via Vercel's GitHub integration.
+The REFLEKT platform uses a multi-stage deployment pipeline with automatic deployments via Vercel's GitHub integration.
 
 ```mermaid
 graph TB
@@ -96,7 +96,7 @@ gh pr create --title "feat: Add dashboard widget" \
 Vercel automatically creates a preview deployment:
 
 ```
-https://console-[hash]-earna-ai.vercel.app
+https://console-[hash]-reflekt-ai.vercel.app
 ```
 
 Test the preview URL thoroughly before merging.
@@ -132,7 +132,7 @@ vercel ls --prod
 vercel logs --prod
 
 # Check production site
-curl -I https://console.earna.sh
+curl -I https://console.reflekt.sh
 ```
 
 ## Project-Specific Deployments
@@ -259,13 +259,13 @@ git push --force origin main  # Use with caution!
 
 ```bash
 # Console health check
-curl https://console.earna.sh/api/health
+curl https://console.reflekt.sh/api/health
 
 # Apps health check
-curl https://earna.sh/api/health
+curl https://reflekt.sh/api/health
 
 # Credit Engine health check
-curl https://credit.earna.sh/api/health
+curl https://credit.reflekt.sh/api/health
 ```
 
 ### Monitoring Checklist
@@ -283,11 +283,11 @@ curl https://credit.earna.sh/api/health
 ```bash
 # Lighthouse CI
 pnpm add -D @lhci/cli
-lhci autorun --collect.url=https://console.earna.sh
+lhci autorun --collect.url=https://console.reflekt.sh
 
 # Load testing
 pnpm add -D autocannon
-autocannon -c 10 -d 30 https://console.earna.sh/api/health
+autocannon -c 10 -d 30 https://console.reflekt.sh/api/health
 ```
 
 ## Deployment Environments
@@ -316,10 +316,10 @@ pnpm turbo dev
 # Automatic on main branch push
 # Environment: Production env vars in Vercel
 # URLs:
-# - https://earna.sh
-# - https://console.earna.sh
-# - https://docs.earna.sh
-# - https://credit.earna.sh
+# - https://reflekt.sh
+# - https://console.reflekt.sh
+# - https://docs.reflekt.sh
+# - https://credit.reflekt.sh
 ```
 
 ## Secrets Management

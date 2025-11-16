@@ -60,7 +60,7 @@ Configures VPC and network security:
 ```hcl
 terraform {
   backend "gcs" {
-    bucket = "earna-terraform-state"
+    bucket = "reflekt-terraform-state"
     prefix = "production"
   }
 }
@@ -163,7 +163,7 @@ variable "cluster_name" {
 ### Environment-Specific Values
 ```hcl
 # terraform.tfvars
-project_id = "production-earna-ai"
+project_id = "production-reflekt-ai"
 region     = "us-central1"
 
 tigerbeetle_replicas = 3
@@ -241,7 +241,7 @@ resource "google_compute_instance" "example" {
 ### Recovery Procedures
 ```bash
 # Restore from state backup
-gsutil cp gs://earna-terraform-state-backup/latest.tfstate .
+gsutil cp gs://reflekt-terraform-state-backup/latest.tfstate .
 terraform init -reconfigure
 terraform refresh
 terraform plan
@@ -307,7 +307,7 @@ terraform force-unlock <lock-id>
 ### Import Existing Resources
 ```bash
 # Import GKE cluster
-terraform import google_container_cluster.primary projects/production-earna-ai/locations/us-central1/clusters/platform-production
+terraform import google_container_cluster.primary projects/production-reflekt-ai/locations/us-central1/clusters/platform-production
 ```
 
 ### Debugging

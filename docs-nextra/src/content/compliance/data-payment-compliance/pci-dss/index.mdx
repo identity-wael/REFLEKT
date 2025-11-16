@@ -2,13 +2,13 @@
 
 ## Overview
 
-The Payment Card Industry Data Security Standard (PCI DSS) is a security standard for organizations that handle credit card information. While Earna AI primarily focuses on data aggregation rather than payment processing, we must ensure PCI DSS compliance when handling any payment card data.
+The Payment Card Industry Data Security Standard (PCI DSS) is a security standard for organizations that handle credit card information. While REFLEKT primarily focuses on data aggregation rather than payment processing, we must ensure PCI DSS compliance when handling any payment card data.
 
 ## Applicability Assessment
 
 ```mermaid
 flowchart TD
-    A[Earna Services] --> B{Handle Card Data?}
+    A[REFLEKT Services] --> B{Handle Card Data?}
     B -->|Yes| C[PCI DSS Applies]
     B -->|No| D[Not Applicable]
 
@@ -18,7 +18,7 @@ flowchart TD
     E -->|20K-1M/year| H[Level 3 Merchant]
     E -->|<20K/year| I[Level 4 Merchant]
 
-    subgraph "Earna Context"
+    subgraph "REFLEKT Context"
         J[Plaid Integration]
         K[Bank Data Access]
         L[Transaction Analysis]
@@ -810,6 +810,6 @@ interface ScopeReduction {
 - **Payment Card Industry Forensic Investigators (PFI)**: For incident response
 
 ### Contact Information
-- **PCI DSS Questions**: compliance@earna.ai
-- **Security Team**: security@earna.ai
-- **Emergency**: security-incident@earna.ai
+- **PCI DSS Questions**: compliance@reflekt.ai
+- **Security Team**: security@reflekt.ai
+- **Emergency**: security-incident@reflekt.ai

@@ -1,5 +1,6 @@
 {
   "name": "docs-nextra",
+  "description": "REFLEKT Documentation - Official documentation site built with Nextra",
   "license": "MIT",
   "private": true,
   "scripts": {

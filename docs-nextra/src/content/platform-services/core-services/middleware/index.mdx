@@ -2,7 +2,7 @@
 
 ## Overview
 
-Earna AI's middleware layer provides the critical integration backbone between external services, internal APIs, and our financial platform. Our middleware architecture ensures reliable data processing, workflow orchestration, and seamless service communication across the entire platform.
+REFLEKT's middleware layer provides the critical integration backbone between external services, internal APIs, and our financial platform. Our middleware architecture ensures reliable data processing, workflow orchestration, and seamless service communication across the entire platform.
 
 ## Architecture
 
@@ -404,7 +404,7 @@ class PlaidTransactionTransformer implements DataTransformer<PlaidTransaction, S
 version: '3.8'
 services:
   plaid-sync-worker:
-    image: earna/middleware-worker:latest
+    image: reflekt/middleware-worker:latest
     environment:
       - WORKER_TYPE=plaid-sync
       - CONCURRENCY=5
@@ -421,7 +421,7 @@ services:
       - postgres
 
   credit-analysis-worker:
-    image: earna/middleware-worker:latest
+    image: reflekt/middleware-worker:latest
     environment:
       - WORKER_TYPE=credit-analysis
       - CONCURRENCY=2
@@ -439,7 +439,7 @@ services:
       - tigerbeetle
 
   notification-worker:
-    image: earna/middleware-worker:latest
+    image: reflekt/middleware-worker:latest
     environment:
       - WORKER_TYPE=notification
       - CONCURRENCY=10
@@ -476,7 +476,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: earna/middleware-worker:latest
+        image: reflekt/middleware-worker:latest
         env:
         - name: WORKER_TYPE
           value: "plaid-sync"
@@ -857,9 +857,9 @@ class MiddlewareCacheManager {
 ## Contact Information
 
 For middleware services inquiries:
-- **Email**: middleware@earna.ai
+- **Email**: middleware@reflekt.ai
 - **Slack**: #platform-middleware
-- **Emergency**: platform-emergency@earna.ai
+- **Emergency**: platform-emergency@reflekt.ai
 
 ## Next Steps
 

@@ -31,7 +31,7 @@ export function CustomNavbar() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
           <a
-            href="https://earna.sh"
+            href="https://reflekt.app"
             style={{
               display: "flex",
               alignItems: "center",
@@ -48,10 +48,9 @@ export function CustomNavbar() {
                   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
               }}
             >
-              <span style={{ color: "var(--earna-color, #000000)" }}>
-                EARNA
+              <span style={{ color: "var(--reflekt-color, #000000)" }}>
+                REFLEKT
               </span>
-              <span style={{ color: "#4185f4" }}> AI</span>
             </span>
             <div
               style={{
@@ -62,8 +61,8 @@ export function CustomNavbar() {
             />
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <Image
-                src="/brain-finance-logo.svg"
-                alt="Brain Finance"
+                src="/reflekt-logo.svg"
+                alt="REFLEKT"
                 width={48}
                 height={48}
                 style={{
@@ -73,8 +72,8 @@ export function CustomNavbar() {
                 }}
               />
               <Image
-                src="/brain-finance-logo-dark.svg"
-                alt="Brain Finance"
+                src="/reflekt-logo-dark.svg"
+                alt="REFLEKT"
                 width={48}
                 height={48}
                 style={{
@@ -101,7 +100,7 @@ export function CustomNavbar() {
             }}
           />
           <a
-            href="https://github.com/identity-wael/earna-ai"
+            href="https://github.com/identity-wael/REFLEKT"
             target="_blank"
             rel="noopener noreferrer"
           >

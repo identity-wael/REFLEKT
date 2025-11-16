@@ -2,12 +2,12 @@
 
 ## Overview
 
-The Earna AI platform uses a monorepo structure to manage multiple related applications and services. This guide outlines best practices for working within our monorepo.
+The REFLEKT platform uses a monorepo structure to manage multiple related applications and services. This guide outlines best practices for working within our monorepo.
 
 ## Repository Structure
 
 ```
-earna-ai/
+reflekt-ai/
 ├── apps/                 # Main customer-facing application
 │   ├── package.json     # App-specific dependencies
 │   ├── vercel.json      # Deployment configuration
@@ -56,8 +56,8 @@ pnpm add -r lodash
 ```json
 {
   "dependencies": {
-    "@earna/shared": "workspace:*",
-    "@earna/ui": "workspace:^"
+    "@reflekt/shared": "workspace:*",
+    "@reflekt/ui": "workspace:^"
   }
 }
 ```
@@ -68,7 +68,7 @@ pnpm add -r lodash
 import { Button } from '@/components/ui/button'
 
 // Good: Cross-workspace imports
-import { utils } from '@earna/shared'
+import { utils } from '@reflekt/shared'
 
 // Bad: Relative imports across workspaces
 import { Button } from '../../../console/components/button'
@@ -159,7 +159,7 @@ pnpm init
 
 # Configure package.json
 {
-  "name": "@earna/shared",
+  "name": "@reflekt/shared",
   "version": "1.0.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts"
@@ -180,7 +180,7 @@ packages/
 ```json
 // apps/tsconfig.json
 {
-  "extends": "@earna/tsconfig/nextjs.json",
+  "extends": "@reflekt/tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": "."
   }
@@ -243,9 +243,9 @@ pnpm turbo build --filter=...[origin/main]
 
 #### Independent Deployments
 Each workspace deploys independently:
-- Apps → app.earna.ai
-- Console → console.earna.ai
-- Docs → docs.earna.ai
+- Apps → app.reflekt.ai
+- Console → console.reflekt.ai
+- Docs → docs.reflekt.ai
 
 #### Vercel Configuration
 ```json

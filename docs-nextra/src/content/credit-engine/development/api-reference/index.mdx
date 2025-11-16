@@ -1,12 +1,12 @@
 # API Reference
 
-Complete API documentation for the Earna AI Credit Engine, including all endpoints, request/response formats, and authentication requirements.
+Complete API documentation for the REFLEKT Credit Engine, including all endpoints, request/response formats, and authentication requirements.
 
 ## Base URL
 
 ```
 Development: http://localhost:3004
-Production: https://credit-api.earna.sh (planned)
+Production: https://credit-api.reflekt.sh (planned)
 ```
 
 ## Authentication
@@ -528,11 +528,11 @@ X-RateLimit-Reset: 1642255200
 ### JavaScript/TypeScript
 
 ```typescript
-import { CreditEngineClient } from '@earna/credit-engine-sdk';
+import { CreditEngineClient } from '@reflekt/credit-engine-sdk';
 
 const client = new CreditEngineClient({
   apiKey: process.env.CREDIT_ENGINE_API_KEY,
-  baseUrl: 'https://credit-api.earna.sh'
+  baseUrl: 'https://credit-api.reflekt.sh'
 });
 
 // Chat with AI coach
@@ -559,11 +559,11 @@ const impact = await client.analyzeImpact({
 ### Python
 
 ```python
-from earna_credit import CreditEngineClient
+from reflekt_credit import CreditEngineClient
 
 client = CreditEngineClient(
     api_key="your_api_key",
-    base_url="https://credit-api.earna.sh"
+    base_url="https://credit-api.reflekt.sh"
 )
 
 # Chat with AI coach

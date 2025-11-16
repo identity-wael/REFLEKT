@@ -1,17 +1,17 @@
 ---
 title: Configuration
-description: Configure Earna AI Console with GPT-4o, alternative AI models, Supabase, and real-time features
+description: Configure REFLEKT Console with GPT-4o, alternative AI models, Supabase, and real-time features
 ---
 
 import { Steps, Tabs, Callout } from 'nextra/components'
 
 # Configuration
 
-Complete configuration guide for Earna AI Console. This covers GPT-4o integration, alternative AI models via Vercel AI SDK v5, Supabase backend, HeyGen avatars, real-time voice features, and TypeScript strict mode.
+Complete configuration guide for REFLEKT Console. This covers GPT-4o integration, alternative AI models via Vercel AI SDK v5, Supabase backend, HeyGen avatars, real-time voice features, and TypeScript strict mode.
 
 ## Environment Variables
 
-Earna AI Console requires several environment variables for proper operation. Create a `.env.local` file in your project root:
+REFLEKT Console requires several environment variables for proper operation. Create a `.env.local` file in your project root:
 
 ```env
 # Primary AI Model - OpenAI GPT-4o
@@ -478,7 +478,7 @@ Configure Supabase for backend services:
           },
           global: {
             headers: {
-              'x-application-name': 'earna-ai-console'
+              'x-application-name': 'reflekt-ai-console'
             }
           }
         }
@@ -1087,7 +1087,7 @@ export const securityConfig = {
   // CORS settings
   cors: {
     origin: process.env.NODE_ENV === 'production'
-      ? ['https://earna.sh', 'https://app.earna.sh']
+      ? ['https://reflekt.sh', 'https://app.reflekt.sh']
       : ['http://localhost:3000', 'http://localhost:3001'],
     credentials: true
   },
@@ -1226,4 +1226,4 @@ For production deployment, ensure all API keys are properly secured and never ex
    - Ensure proper CORS configuration
    - Test file type validation
 
-For more help, see our [Troubleshooting Guide](/troubleshooting) or visit [GitHub Issues](https://github.com/earna-ai/console/issues).
+For more help, see our [Troubleshooting Guide](/troubleshooting) or visit [GitHub Issues](https://github.com/reflekt-ai/console/issues).

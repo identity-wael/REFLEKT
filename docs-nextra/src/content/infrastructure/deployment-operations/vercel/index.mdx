@@ -1,19 +1,19 @@
 # Vercel Deployment & Configuration
 
-Complete guide to deploying the Earna AI monorepo projects on Vercel with GitHub integration.
+Complete guide to deploying the REFLEKT monorepo projects on Vercel with GitHub integration.
 
 ## Overview
 
-All Earna AI projects are deployed on Vercel with automatic deployments triggered by GitHub commits. Each project in the monorepo has its own Vercel project with specific configurations.
+All REFLEKT projects are deployed on Vercel with automatic deployments triggered by GitHub commits. Each project in the monorepo has its own Vercel project with specific configurations.
 
 ## Projects Structure
 
 | Project | URL | Vercel Project | Root Directory |
 |---------|-----|---------------|----------------|
-| Apps (Main) | [earna.sh](https://earna.sh) | `earna-ai` | `/` |
-| Console | [console.earna.sh](https://console.earna.sh) | `console` | `/` |
-| Docs | [docs.earna.sh](https://docs.earna.sh) | `docs-nextra` | `/` |
-| Credit Engine | [credit.earna.sh](https://credit.earna.sh) | `credit-engine` | `/` |
+| Apps (Main) | [reflekt.sh](https://reflekt.sh) | `reflekt-ai` | `/` |
+| Console | [console.reflekt.sh](https://console.reflekt.sh) | `console` | `/` |
+| Docs | [docs.reflekt.sh](https://docs.reflekt.sh) | `docs-nextra` | `/` |
+| Credit Engine | [credit.reflekt.sh](https://credit.reflekt.sh) | `credit-engine` | `/` |
 
 ## GitHub Integration
 
@@ -140,7 +140,7 @@ DIRECT_URL=postgresql://...  # For migrations
 ANTHROPIC_API_KEY=sk-ant-...
 
 # Authentication
-NEXTAUTH_URL=https://credit.earna.sh
+NEXTAUTH_URL=https://credit.reflekt.sh
 NEXTAUTH_SECRET=[generated-secret]
 
 # Monitoring
@@ -259,16 +259,16 @@ graph LR
 
 ```bash
 # Apps
-earna.sh → earna-ai.vercel.app
+reflekt.sh → reflekt-ai.vercel.app
 
 # Console
-console.earna.sh → console.vercel.app
+console.reflekt.sh → console.vercel.app
 
 # Docs
-docs.earna.sh → docs-nextra.vercel.app
+docs.reflekt.sh → docs-nextra.vercel.app
 
 # Credit Engine
-credit.earna.sh → credit-engine.vercel.app
+credit.reflekt.sh → credit-engine.vercel.app
 ```
 
 ### DNS Settings
@@ -297,7 +297,7 @@ module.exports = {
 
   // Image optimization
   images: {
-    domains: ['earna.sh'],
+    domains: ['reflekt.sh'],
     formats: ['image/avif', 'image/webp']
   }
 }
@@ -378,7 +378,7 @@ vercel env add PNPM_VERSION 9.14.4
 
 ```bash
 # For client-side variables, use NEXT_PUBLIC_ prefix
-NEXT_PUBLIC_API_URL=https://api.earna.sh
+NEXT_PUBLIC_API_URL=https://api.reflekt.sh
 
 # Verify variables
 vercel env ls

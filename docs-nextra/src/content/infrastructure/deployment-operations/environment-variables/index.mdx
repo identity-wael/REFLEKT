@@ -1,6 +1,6 @@
 # Environment Variables Reference
 
-Complete reference for all environment variables required across the Earna AI monorepo projects.
+Complete reference for all environment variables required across the REFLEKT monorepo projects.
 
 ## Environment Scopes
 
@@ -65,7 +65,7 @@ GITHUB_TOKEN=ghp_[...]  # GitHub integration
 
 ```bash
 # Vercel
-NEXT_PUBLIC_VERCEL_URL=https://console.earna.sh
+NEXT_PUBLIC_VERCEL_URL=https://console.reflekt.sh
 
 # Analytics (Optional)
 NEXT_PUBLIC_POSTHOG_KEY=[...]
@@ -115,10 +115,10 @@ ANTHROPIC_API_KEY=sk-ant-[...]
 
 ```bash
 # Domain
-NEXT_PUBLIC_APP_URL=https://earna.sh
+NEXT_PUBLIC_APP_URL=https://reflekt.sh
 
 # SEO
-NEXT_PUBLIC_SITE_NAME="Earna AI"
+NEXT_PUBLIC_SITE_NAME="REFLEKT"
 ```
 
 ## Credit Engine Variables
@@ -136,7 +136,7 @@ ANTHROPIC_API_KEY=sk-ant-[...]  # Required for Claude
 # Authentication
 NEXTAUTH_SECRET=[32-char-secret]  # Generate: openssl rand -base64 32
 NEXTAUTH_URL=http://localhost:3004  # Dev
-# NEXTAUTH_URL=https://credit.earna.sh  # Production
+# NEXTAUTH_URL=https://credit.reflekt.sh  # Production
 ```
 
 ### Optional Variables
@@ -206,7 +206,7 @@ STATSD_EXPORTER_SERVICE=statsd-exporter.observability:8125
 
 ```bash
 # Project Configuration
-GCP_PROJECT_ID=production-earna-ai
+GCP_PROJECT_ID=production-reflekt-ai
 GCP_REGION=us-central1
 
 # GKE Cluster
@@ -214,13 +214,13 @@ GKE_CLUSTER_NAME=platform-production
 GKE_CLUSTER_LOCATION=us-central1
 
 # CloudSQL (Temporal)
-CLOUDSQL_CONNECTION_NAME=production-earna-ai:us-central1:temporal-production
+CLOUDSQL_CONNECTION_NAME=production-reflekt-ai:us-central1:temporal-production
 CLOUDSQL_DATABASE=temporal
 CLOUDSQL_DATABASE_VISIBILITY=temporal_visibility
 CLOUDSQL_PRIVATE_IP=10.147.0.2
 
 # Workload Identity
-WIF_SERVICE_ACCOUNT=[service-account]@production-earna-ai.iam.gserviceaccount.com
+WIF_SERVICE_ACCOUNT=[service-account]@production-reflekt-ai.iam.gserviceaccount.com
 WIF_PROVIDER=projects/[number]/locations/global/workloadIdentityPools/[pool]/providers/[provider]
 
 # Service Mesh
@@ -234,7 +234,7 @@ ISTIO_NAMESPACE=istio-system
 # Required for infrastructure deployment
 WIF_PROVIDER=[Workload Identity Provider]
 WIF_SERVICE_ACCOUNT=[Service Account Email]
-GCP_PROJECT_ID=production-earna-ai
+GCP_PROJECT_ID=production-reflekt-ai
 
 # Monitoring access
 GRAFANA_API_KEY=[For dashboard automation]
@@ -390,7 +390,7 @@ console.log('✅ All required environment variables are set')
 ## Environment Files Structure
 
 ```bash
-earna-ai/
+reflekt-ai/
 ├── .env.example          # Root example (common vars)
 ├── .env.local           # Root local (gitignored)
 ├── apps/
