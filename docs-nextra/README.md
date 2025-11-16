@@ -1,14 +1,14 @@
-# Earna AI Documentation
+# REFLEKT Documentation
 
-Official documentation site for the Earna AI platform, built with Nextra.
+Official documentation site for the REFLEKT platform, built with Nextra.
 
 ## Live Deployment
 
-**Production**: [https://docs.earna.sh](https://docs.earna.sh)
+**Production**: [https://docs.reflekt.app](https://docs.reflekt.app)
 
 ## Overview
 
-Comprehensive documentation for the Earna AI platform including:
+Comprehensive documentation for the REFLEKT platform including:
 
 - Getting started guides
 - API references
@@ -185,11 +185,11 @@ See [Contributing Guidelines](../project-planning/contributing.md) for details.
 
 ## Related Links
 
-- **Main Console**: [https://console.earna.sh](https://console.earna.sh)
-- **Landing Page**: [https://earna.sh](https://earna.sh)
+- **Main Console**: [https://console.reflekt.app](https://console.reflekt.app)
+- **Landing Page**: [https://reflekt.app](https://reflekt.app)
 - **Credit Engine API**: Port 3004 (development)
-- **GitHub**: [https://github.com/identity-wael/earna-ai](https://github.com/identity-wael/earna-ai)
+- **GitHub**: [https://github.com/identity-wael/REFLEKT](https://github.com/identity-wael/REFLEKT)
 
 ## License
 
-Copyright © 2025 Earna AI. All rights reserved.
+Copyright © 2025 REFLEKT. All rights reserved.

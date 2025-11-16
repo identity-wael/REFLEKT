@@ -2,7 +2,7 @@
 
 ## Overview
 
-Temporal provides durable workflow execution for the Earna AI platform, ensuring reliable processing of financial operations, data synchronization, and complex business logic. Our Temporal deployment handles mission-critical workflows with guaranteed completion and full observability.
+Temporal provides durable workflow execution for the REFLEKT platform, ensuring reliable processing of financial operations, data synchronization, and complex business logic. Our Temporal deployment handles mission-critical workflows with guaranteed completion and full observability.
 
 ## Architecture
 
@@ -317,7 +317,7 @@ spec:
     spec:
       containers:
       - name: worker
-        image: gcr.io/production-earna-ai/temporal-worker:latest
+        image: gcr.io/production-reflekt-ai/temporal-worker:latest
         env:
         - name: TEMPORAL_HOST
           value: temporal-frontend.temporal.svc.cluster.local:7233

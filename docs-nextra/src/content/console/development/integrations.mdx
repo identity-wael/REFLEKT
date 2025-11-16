@@ -1,11 +1,11 @@
 ---
 title: Third-Party Integrations
-description: Comprehensive guide to integrating Earna AI Console with external services
+description: Comprehensive guide to integrating REFLEKT Console with external services
 ---
 
 # Third-Party Integrations
 
-The Earna AI Console provides seamless integration with various external services including AI models, real-time features, and backend services.
+The REFLEKT Console provides seamless integration with various external services including AI models, real-time features, and backend services.
 
 ## Overview
 
@@ -532,8 +532,8 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 export async function sendWelcomeEmail(to: string, name: string) {
   const msg = {
     to,
-    from: 'noreply@earna.ai',
-    subject: 'Welcome to Earna AI Console',
+    from: 'noreply@reflekt.ai',
+    subject: 'Welcome to REFLEKT Console',
     html: `
       <h1>Welcome ${name}!</h1>
       <p>Your AI-powered console is ready.</p>
@@ -558,7 +558,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function sendEmail(to: string, subject: string, react: React.ReactElement) {
   const { data, error } = await resend.emails.send({
-    from: 'Earna AI <onboarding@earna.ai>',
+    from: 'REFLEKT <onboarding@reflekt.ai>',
     to,
     subject,
     react
@@ -916,7 +916,7 @@ const { user, session } = await supabase.auth.signInWithPassword({
 ## Support
 
 For integration support:
-- Documentation: https://docs.earna.ai
-- GitHub: https://github.com/earna-ai/console
-- Discord: https://discord.gg/earna-ai
-- Email: support@earna.ai
+- Documentation: https://docs.reflekt.ai
+- GitHub: https://github.com/reflekt-ai/console
+- Discord: https://discord.gg/reflekt-ai
+- Email: support@reflekt.ai

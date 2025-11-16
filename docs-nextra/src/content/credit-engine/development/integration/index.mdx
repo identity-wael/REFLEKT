@@ -2,9 +2,9 @@
 
 Complete guide for integrating the Credit Engine with your applications and services.
 
-## Integration with Earna Console
+## Integration with REFLEKT Console
 
-The Credit Engine is designed to work seamlessly with the main Earna Console application.
+The Credit Engine is designed to work seamlessly with the main REFLEKT Console application.
 
 ### Console Integration Setup
 
@@ -87,7 +87,7 @@ const axios = require('axios');
 class CreditEngineAPI {
   constructor(apiKey) {
     this.apiKey = apiKey;
-    this.baseUrl = 'https://credit-api.earna.sh';
+    this.baseUrl = 'https://credit-api.reflekt.sh';
   }
 
   async makeRequest(endpoint, method = 'GET', data = null) {
@@ -133,7 +133,7 @@ import json
 from typing import Dict, List, Optional
 
 class CreditEngineClient:
-    def __init__(self, api_key: str, base_url: str = "https://credit-api.earna.sh"):
+    def __init__(self, api_key: str, base_url: str = "https://credit-api.reflekt.sh"):
         self.api_key = api_key
         self.base_url = base_url
         self.session = requests.Session()
@@ -255,7 +255,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class CreditEngineService {
   private apiKey: string;
-  private baseUrl = 'https://credit-api.earna.sh';
+  private baseUrl = 'https://credit-api.reflekt.sh';
 
   async initialize() {
     this.apiKey = await AsyncStorage.getItem('credit_engine_api_key');
@@ -315,7 +315,7 @@ import 'dart:convert';
 
 class CreditEngineClient {
   final String apiKey;
-  final String baseUrl = 'https://credit-api.earna.sh';
+  final String baseUrl = 'https://credit-api.reflekt.sh';
 
   CreditEngineClient({required this.apiKey});
 
@@ -488,7 +488,7 @@ input MessageInput {
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
 
 const client = new ApolloClient({
-  uri: 'https://credit-api.earna.sh/graphql',
+  uri: 'https://credit-api.reflekt.sh/graphql',
   cache: new InMemoryCache(),
   headers: {
     authorization: `Bearer ${apiKey}`
@@ -526,7 +526,7 @@ const result = await client.mutate({
 ### TypeScript SDK Structure
 
 ```typescript
-// @earna/credit-engine-sdk
+// @reflekt/credit-engine-sdk
 export class CreditEngineSDK {
   private client: HttpClient;
 
@@ -548,7 +548,7 @@ export class CreditEngineSDK {
 }
 
 // Usage
-import { CreditEngineSDK } from '@earna/credit-engine-sdk';
+import { CreditEngineSDK } from '@reflekt/credit-engine-sdk';
 
 const sdk = new CreditEngineSDK({
   apiKey: 'your_api_key',

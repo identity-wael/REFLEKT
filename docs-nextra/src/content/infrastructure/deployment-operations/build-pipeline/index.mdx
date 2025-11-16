@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Earna AI build pipeline leverages Turborepo for orchestration and PNPM for dependency management, providing fast, reliable builds across all workspaces.
+The REFLEKT build pipeline leverages Turborepo for orchestration and PNPM for dependency management, providing fast, reliable builds across all workspaces.
 
 ## Pipeline Architecture
 
@@ -208,7 +208,7 @@ pnpm turbo build --filter=console --force
 {
   "remoteCache": {
     "enabled": true,
-    "url": "https://cache.earna.ai",
+    "url": "https://cache.reflekt.ai",
     "token": "$TURBO_TOKEN"
   }
 }
@@ -231,7 +231,7 @@ VERCEL_DEEP_CLONE=true
 VERCEL_URL=$VERCEL_URL
 
 # Application Variables
-NEXT_PUBLIC_API_URL=https://api.earna.ai
+NEXT_PUBLIC_API_URL=https://api.reflekt.ai
 DATABASE_URL=postgresql://...
 ```
 

@@ -4,7 +4,7 @@ import { Tabs } from 'nextra/components'
 
 ## Actual Supabase Database Schema
 
-This ER diagram shows the ACTUAL tables and relationships currently implemented in the Earna AI Supabase database with Row Level Security (RLS).
+This ER diagram shows the ACTUAL tables and relationships currently implemented in the REFLEKT Supabase database with Row Level Security (RLS).
 
 ```mermaid
 erDiagram
@@ -255,7 +255,7 @@ erDiagram
 
 ## Supabase Database Architecture
 
-This section details the Supabase-specific implementation and features used in the Earna AI platform.
+This section details the Supabase-specific implementation and features used in the REFLEKT platform.
 
 <Tabs items={['Supabase Features', 'Real-time Subscriptions', 'Edge Functions']}>
   <Tabs.Tab>
@@ -871,7 +871,7 @@ erDiagram
         'identity'
       ],
       countryCodes: ['CA'],
-      webhook: 'https://api.earna.ai/webhooks/plaid'
+      webhook: 'https://api.reflekt.ai/webhooks/plaid'
     };
 
     // Webhook Event Handlers
