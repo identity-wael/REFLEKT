@@ -1,0 +1,219 @@
+# Port & Configuration Reference
+
+Quick reference for all ports, URLs, and configurations in the Earna AI monorepo.
+
+## Development Ports
+
+| Project | Port | URL | Command |
+|---------|------|-----|---------|
+| **Console** | 3000 | http://localhost:3000 | `pnpm --filter console dev` |
+| **Docs** | 3002 | http://localhost:3002 | `pnpm --filter docs-nextra dev` |
+| **TigerBeetle** | 3003 | tb://0@localhost:3003 | `docker compose up -d` |
+| **Credit Engine** | 3004 | http://localhost:3004 | `pnpm --filter credit-engine dev` |
+| **Apps** | 3005 | http://localhost:3005 | `pnpm --filter apps dev` |
+| **Grafana (Local)** | 3006 | http://localhost:3006 | `docker compose up -d` |
+| **StatsD** | 8125 | UDP localhost:8125 | Auto-started with monitoring |
+| **Prometheus** | 9090 | http://localhost:9090 | `docker compose up -d` |
+
+## Production URLs
+
+| Project | Production URL | Platform |
+|---------|---------------|----------|
+| **Apps** | https://earna.sh | Vercel |
+| **Console** | https://console.earna.sh | Vercel |
+| **Docs** | https://docs.earna.sh | Vercel |
+| **Credit Engine** | https://credit.earna.sh | Vercel |
+| **TigerBeetle** | tb://0@104.154.31.249:3003 | GKE |
+| **Grafana** | http://34.172.102.114 | GKE |
+
+## Infrastructure Services (GKE)
+
+| Service | Internal Address | External Address | Namespace |
+|---------|-----------------|------------------|-----------|
+| **TigerBeetle** | tigerbeetle.tigerbeetle:3003 | 104.154.31.249:3003 | tigerbeetle |
+| **Prometheus** | prometheus-server.monitoring:80 | Internal only | monitoring |
+| **Grafana** | grafana.monitoring:80 | 34.172.102.114:80 | monitoring |
+| **StatsD Exporter** | statsd-exporter.observability:8125 | Internal only | observability |
+| **CloudSQL (Temporal)** | 10.147.0.2:5432 | Private IP only | N/A |
+
+## Package Names (for --filter)
+
+| Directory | Package Name | Filter Command |
+|-----------|-------------|----------------|
+| apps/ | earna-ai | `--filter=earna-ai` |
+| console/ | console | `--filter=console` |
+| docs-nextra/ | docs-nextra | `--filter=docs-nextra` |
+| credit-engine/ | credit-engine | `--filter=credit-engine` |
+
+## Vercel Build Commands
+
+| Project | Build Command | Install Command |
+|---------|--------------|-----------------|
+| **Apps** | `pnpm turbo build --filter=earna-ai` | `pnpm install` |
+| **Console** | `pnpm turbo build --filter=console` | `pnpm install` |
+| **Docs** | `pnpm turbo build --filter=docs-nextra` | `pnpm install` |
+| **Credit Engine** | `cd .. && pnpm turbo build --filter=credit-engine` | `pnpm install` |
+
+> **Note**: Credit Engine has `cd ..` because its vercel.json might be configured with a different root directory setting.
+
+## Common Commands
+
+### Run All Projects
+```bash
+# Start all dev servers (each on its own port)
+pnpm turbo dev
+
+# Build all projects
+pnpm turbo build
+
+# Type check all projects
+pnpm turbo typecheck
+```
+
+### Run Specific Project
+```bash
+# From monorepo root
+pnpm turbo dev --filter=console
+pnpm turbo build --filter=apps
+pnpm turbo typecheck --filter=credit-engine
+
+# Or using pnpm directly
+pnpm --filter console dev
+pnpm --filter apps build
+pnpm --filter credit-engine typecheck
+```
+
+### Run Multiple Projects
+```bash
+# Run console and apps together
+pnpm turbo dev --filter=console --filter=apps
+
+# Build docs and credit-engine
+pnpm turbo build --filter=docs-nextra --filter=credit-engine
+```
+
+## Project Scripts
+
+### Console (port 3000)
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "type-check": "tsc --noEmit",
+  "lint": "next lint"
+}
+```
+
+### Apps (port 3005)
+```json
+{
+  "dev": "next dev -p 3005",
+  "build": "next build",
+  "start": "next start -p 3005",
+  "typecheck": "tsc --noEmit",
+  "lint": "next lint"
+}
+```
+
+### Docs-Nextra (port 3002)
+```json
+{
+  "dev": "next dev -p 3002",
+  "build": "next build",
+  "start": "next start",
+  "typecheck": "tsc --noEmit"
+}
+```
+
+### Credit Engine (port 3004)
+```json
+{
+  "dev": "next dev --port 3004",
+  "build": "next build",
+  "start": "next start --port 3004",
+  "type-check": "tsc --noEmit",
+  "lint": "next lint"
+}
+```
+
+## Database Commands
+
+### Console
+```bash
+# No database - uses Supabase
+```
+
+### Apps
+```bash
+pnpm --filter apps db:generate  # Generate Prisma client
+pnpm --filter apps db:push      # Push schema to database
+pnpm --filter apps db:migrate   # Run migrations
+pnpm --filter apps db:studio    # Open Prisma Studio
+```
+
+### Credit Engine
+```bash
+pnpm --filter credit-engine db:generate  # Generate Prisma client
+pnpm --filter credit-engine db:push      # Push schema to database
+pnpm --filter credit-engine db:migrate   # Run migrations
+pnpm --filter credit-engine db:studio    # Open Prisma Studio
+```
+
+## Environment Files
+
+```
+earna-ai/
+├── .env.example          # Root example
+├── .env.local           # Root local (gitignored)
+├── apps/
+│   ├── .env.example
+│   └── .env.local
+├── console/
+│   ├── .env.example
+│   └── .env.local
+├── credit-engine/
+│   ├── .env.example
+│   └── .env.local
+└── docs-nextra/
+    └── .env.local       # No .env.example (no secrets needed)
+```
+
+## Quick Troubleshooting
+
+### Port Already in Use
+```bash
+# Find process using port
+lsof -i :3000
+
+# Kill process
+kill -9 [PID]
+
+# Or run on different port
+PORT=3001 pnpm dev
+```
+
+### Clear All Caches
+```bash
+# Clear Turborepo cache
+rm -rf .turbo
+
+# Clear Next.js caches
+rm -rf apps/.next console/.next docs-nextra/.next credit-engine/.next
+
+# Clear node_modules and reinstall
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+### Verify Setup
+```bash
+# Check all projects build
+pnpm turbo build
+
+# Run type checking
+pnpm turbo typecheck
+
+# Check which ports are in use
+lsof -i :3000,3002,3004,3005
+```

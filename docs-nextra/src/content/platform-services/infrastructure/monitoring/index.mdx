@@ -1,0 +1,180 @@
+# Monitoring & Observability
+
+The Earna AI platform uses a comprehensive monitoring stack deployed in the `observability` namespace, providing real-time insights into system performance, service health, and business metrics.
+
+## Architecture Overview
+
+Our monitoring infrastructure consists of:
+
+- **Prometheus**: Time-series metrics collection and alerting
+- **Grafana**: Visualization dashboards and analytics
+- **Istio Service Mesh**: Distributed tracing and traffic monitoring
+- **Google Cloud Monitoring**: Cloud infrastructure metrics integration
+
+## Prometheus Configuration
+
+### Metrics Collection
+
+Prometheus is configured to scrape metrics from multiple sources:
+
+```yaml
+# Scraping configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'platform-production'
+    environment: 'production'
+```
+
+### Monitored Services
+
+1. **Istio Service Mesh**
+   - Telemetry data from all mesh services
+   - Request latency, throughput, and error rates
+   - Circuit breaker status and health checks
+
+2. **Application Pods**
+   - Custom application metrics via `/metrics` endpoint
+   - Kubernetes pod annotations for service discovery
+   - Health check and readiness probe metrics
+
+3. **Envoy Proxy Statistics**
+   - Connection pool metrics
+   - Load balancing statistics
+   - HTTP/gRPC request metrics
+
+## Alerting Rules
+
+### Latency Monitoring
+
+- **HighLatency**: 99th percentile > 500ms (Warning)
+- **VeryHighLatency**: 99th percentile > 1000ms (Critical)
+
+### Traffic Analysis
+
+- **HighErrorRate**: 5xx errors > 1% for 5 minutes
+- **TrafficSpike**: 2x traffic increase compared to previous hour
+
+### Service Health
+
+- **CircuitBreakerOpen**: Circuit breaker activation detection
+- Service availability and dependency health checks
+
+## Grafana Dashboards
+
+### Data Sources
+
+- **Primary**: Prometheus server at `prometheus-server.monitoring.svc.cluster.local`
+- **Secondary**: Google Cloud Monitoring for infrastructure metrics
+
+### Dashboard Configuration
+
+```yaml
+# Pre-configured dashboards
+dashboards:
+  default:
+    tigerbeetle-dashboard:
+      gnetId: 1860
+      datasource: Prometheus
+```
+
+### Key Metrics Visualized
+
+- **TigerBeetle Financial Ledger**
+  - Transaction throughput and latency
+  - Account balance accuracy verification
+  - Database performance metrics
+
+- **Service Mesh Traffic**
+  - Request success rates across services
+  - Inter-service communication patterns
+  - Load distribution visualization
+
+- **Infrastructure Health**
+  - Node resource utilization
+  - Pod memory and CPU consumption
+  - Storage I/O performance
+
+## Access & Authentication
+
+### Grafana Access
+
+- **Service Type**: LoadBalancer with external IP
+- **Authentication**: Admin password stored in Kubernetes secrets
+- **Persistence**: 10GB premium SSD storage for dashboard retention
+
+### Security Configuration
+
+```yaml
+# Persistent storage for Grafana
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClassName: premium-rwo
+```
+
+## Deployment Architecture
+
+### Namespace Organization
+
+- **observability**: Monitoring infrastructure
+- **istio-system**: Service mesh components
+- **tigerbeetle**: Financial ledger monitoring
+- **temporal**: Workflow engine metrics
+
+### High Availability
+
+- Prometheus server with persistent storage
+- Grafana with LoadBalancer service
+- Alert manager for notification routing
+- Service mesh redundancy across nodes
+
+## Integration Points
+
+### TigerBeetle Monitoring
+
+- Custom metrics for transaction validation
+- Account balance integrity checks
+- Performance monitoring for high-frequency trading
+
+### Temporal Workflows
+
+- Workflow execution success rates
+- Task queue depth and processing times
+- Activity retry and failure tracking
+
+### API Gateway Metrics
+
+- Request routing and load balancing
+- Authentication success rates
+- Rate limiting enforcement
+
+## Best Practices
+
+### Metric Collection
+
+1. **Annotation-based Discovery**
+   ```yaml
+   annotations:
+     prometheus.io/scrape: "true"
+     prometheus.io/port: "8080"
+     prometheus.io/path: "/metrics"
+   ```
+
+2. **Service Level Objectives**
+   - Define SLIs (Service Level Indicators)
+   - Monitor SLO compliance
+   - Alert on SLA threshold breaches
+
+### Dashboard Design
+
+- Focus on business metrics over technical metrics
+- Use consistent color schemes and naming
+- Implement drill-down capabilities for troubleshooting
+
+### Alert Management
+
+- Prioritize alerts by business impact
+- Implement alert fatigue prevention
+- Use runbook links for incident response

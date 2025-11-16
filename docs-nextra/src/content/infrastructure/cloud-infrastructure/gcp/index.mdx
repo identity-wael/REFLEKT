@@ -1,0 +1,116 @@
+# Google Cloud Platform Infrastructure
+
+## Overview
+
+Our production infrastructure runs on Google Cloud Platform, leveraging GKE Standard for container orchestration and various GCP services for a complete platform.
+
+## Key Components
+
+### [TigerBeetle Financial Ledger](./tigerbeetle-gke)
+Our core financial ledger system running on a 3-node cluster with local SSD optimization for high-throughput transaction processing.
+
+### CloudSQL for PostgreSQL
+Managed PostgreSQL instance for Temporal workflow engine:
+- **Instance**: temporal-production
+- **Tier**: db-g1-small
+- **Databases**: temporal, temporal_visibility
+- **Private IP**: 10.147.0.2
+
+### GKE Standard Cluster
+- **Name**: platform-production
+- **Location**: us-central1 (Regional)
+- **Node Pools**:
+  - TigerBeetle pool: c3-standard-4-lssd nodes
+  - Default pool: e2-standard-4 nodes
+
+### Networking
+- **VPC**: Custom network with private nodes
+- **Cloud NAT**: For outbound connectivity
+- **LoadBalancers**: External access for services
+
+## Quick Access
+
+| Service | External Access | Purpose |
+|---------|----------------|---------|
+| TigerBeetle | 104.154.31.249:3003 | Financial ledger |
+| Grafana | http://34.172.102.114 | Monitoring dashboards |
+| CloudSQL | Private IP only | Temporal database |
+
+## Enabled APIs
+
+```bash
+# Core Services
+compute.googleapis.com
+container.googleapis.com
+iam.googleapis.com
+
+# Networking
+servicenetworking.googleapis.com
+networkmanagement.googleapis.com
+
+# Storage & Data
+storage.googleapis.com
+sqladmin.googleapis.com
+
+# Monitoring
+monitoring.googleapis.com
+logging.googleapis.com
+cloudtrace.googleapis.com
+
+# Security
+secretmanager.googleapis.com
+cloudkms.googleapis.com
+binaryauthorization.googleapis.com
+
+# Service Mesh
+mesh.googleapis.com
+meshconfig.googleapis.com
+meshtelemetry.googleapis.com
+```
+
+## Cost Overview
+
+| Component | Monthly Cost |
+|-----------|-------------|
+| GKE Cluster | $73 |
+| TigerBeetle Nodes | ~$450 |
+| Default Nodes | ~$120 |
+| Storage | ~$20 |
+| Networking | ~$65 |
+| CloudSQL | ~$25 |
+| **Total** | **~$753/month** |
+
+## Management
+
+### Access Cluster
+```bash
+gcloud container clusters get-credentials platform-production \
+  --region us-central1 \
+  --project production-earna-ai
+```
+
+### View Resources
+```bash
+# Pods
+kubectl get pods -A
+
+# Services
+kubectl get svc -A
+
+# Nodes
+kubectl get nodes
+```
+
+## Security
+
+- Private cluster with no public node IPs
+- Workload Identity Federation for service authentication
+- Cloud IAM for access control
+- Secret Manager for sensitive data
+- Network policies for pod isolation
+
+## Next Steps
+
+- [Deploy Temporal workflow engine](../deployment/temporal)
+- [Set up CI/CD pipelines](../deployment/github-actions)
+- [Configure monitoring alerts](../monitoring/alerting)

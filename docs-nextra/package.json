@@ -1,0 +1,38 @@
+{
+  "name": "docs-nextra",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
+    "dev": "next dev -p 3002",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "start": "next start -p 3002",
+    "lint": "eslint . --fix",
+    "type-check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests configured for docs package\""
+  },
+  "dependencies": {
+    "@scalar/api-reference": "^1.34.6",
+    "@scalar/api-reference-react": "^0.7.42",
+    "@types/three": "^0.180.0",
+    "katex": "^0.16.22",
+    "next": "15.5.2",
+    "nextra": "^4.3.0",
+    "nextra-theme-docs": "^4.3.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.1.10",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "eslint": "9",
+    "eslint-config-next": "^15.5.2",
+    "pagefind": "^1.4.0",
+    "typescript": "^5.9.2"
+  }
+}

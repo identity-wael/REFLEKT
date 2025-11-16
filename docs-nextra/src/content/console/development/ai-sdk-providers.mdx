@@ -1,0 +1,667 @@
+---
+title: AI SDK Provider Ecosystem
+description: Comprehensive guide to all AI SDK v5 providers and their capabilities
+---
+
+import { Tabs, Callout, Table } from 'nextra/components'
+
+export const Card = ({ title, href, children }) => (
+  <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
+    <h3 className="font-semibold text-lg mb-2">
+      {href ? <a href={href} className="text-blue-600 dark:text-blue-400 hover:underline">{title}</a> : title}
+    </h3>
+    <div className="text-gray-600 dark:text-gray-300">
+      {children}
+    </div>
+  </div>
+)
+
+export const Cards = ({ children }) => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+    {children}
+  </div>
+)
+
+# AI SDK v5 Provider Ecosystem
+
+AI SDK v5 supports an extensive ecosystem of AI providers, each with unique capabilities and strengths. This guide provides a complete overview of all available providers and their feature support.
+
+## Provider Capabilities Overview
+
+<Callout type="info">
+**Legend**: ✅ = Supported | ❌ = Not Supported | ⚠️ = Partial Support
+</Callout>
+
+### Complete Provider Feature Matrix
+
+| Provider | Package | Image Input | Image Generation | Object Generation | Tool Usage | Tool Streaming |
+|----------|---------|---------------|--------------|---------------|---------------|----------------|
+| **xAI Grok** | `@ai-sdk/xai` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **OpenAI** | `@ai-sdk/openai` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Azure** | `@ai-sdk/azure` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Anthropic** | `@ai-sdk/anthropic` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Amazon Bedrock** | `@ai-sdk/amazon-bedrock` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Google Vertex AI** | `@ai-sdk/google-vertex` | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **DeepInfra** | `@ai-sdk/deepinfra` | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Mistral** | `@ai-sdk/mistral` | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Google Generative AI** | `@ai-sdk/google` | ✅ | ❌ | ✅ | ✅ | ✅ |
+| **Groq** | `@ai-sdk/groq` | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Fireworks** | `@ai-sdk/fireworks` | ❌ | ✅ | ✅ | ✅ | ✅ |
+| **Together AI** | `@ai-sdk/togetherai` | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Cohere** | `@ai-sdk/cohere` | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Cerebras** | `@ai-sdk/cerebras` | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Fal AI** | `@ai-sdk/fal` | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Perplexity** | `@ai-sdk/perplexity` | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Hugging Face** | `@ai-sdk/huggingface` | ⚠️ | ⚠️ | ✅ | ✅ | ✅ |
+| **Replicate** | `@ai-sdk/replicate` | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ |
+| **LMStudio** | `@ai-sdk/lmstudio` | ❌ | ❌ | ✅ | ✅ | ✅ |
+| **Baseten** | `@ai-sdk/baseten` | ⚠️ | ⚠️ | ✅ | ✅ | ✅ |
+| **Ollama** | `@ai-sdk/ollama` | ❌ | ❌ | ✅ | ✅ | ❌ |
+| **Chrome AI** | `chrome-ai` | ❌ | ❌ | ✅ | ❌ | ❌ |
+| **OpenRouter** | `@openrouter/ai-sdk-provider` | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+### Feature Definitions
+
+- **Image Input**: Process and analyze images in prompts
+- **Image Generation**: Create images from text descriptions
+- **Object Generation**: Generate structured data with type safety
+- **Tool Usage**: Execute function calls and tools
+- **Tool Streaming**: Stream tool execution results
+
+## Provider Deep Dive
+
+### Full-Featured Providers
+
+These providers support ALL AI SDK v5 capabilities:
+
+<Cards>
+  <Card title="xAI Grok">
+    **Package**: `@ai-sdk/xai`
+    - Latest Grok models with vision
+    - Full multimodal support
+    - Advanced reasoning capabilities
+    - Tool chaining and streaming
+  </Card>
+
+  <Card title="OpenAI">
+    **Package**: `@ai-sdk/openai`
+    - GPT-4o, GPT-4 Vision
+    - DALL-E 3 image generation
+    - Whisper transcription
+    - Function calling
+  </Card>
+
+  <Card title="Anthropic">
+    **Package**: `@ai-sdk/anthropic`
+    - Claude 3 Opus, Sonnet, Haiku
+    - Vision capabilities
+    - 200K context window
+    - Advanced tool use
+  </Card>
+
+  <Card title="Azure">
+    **Package**: `@ai-sdk/azure`
+    - Enterprise-grade security
+    - All OpenAI models
+    - Regional deployments
+    - Private endpoints
+  </Card>
+</Cards>
+
+### Specialized Providers
+
+#### High-Performance Inference
+
+```typescript
+// Groq - Ultra-fast inference
+import { groq } from '@ai-sdk/groq';
+
+const result = await generateText({
+  model: groq('llama-3.1-70b-versatile'),
+  prompt: 'Lightning fast inference'
+});
+```
+
+#### Image Generation Specialists
+
+```typescript
+// Fal AI - Specialized image models
+import { fal } from '@ai-sdk/fal';
+
+const image = await generateImage({
+  model: fal('flux-pro'),
+  prompt: 'A futuristic cityscape'
+});
+
+// Fireworks - Fast image generation
+import { fireworks } from '@ai-sdk/fireworks';
+
+const result = await generateImage({
+  model: fireworks('stable-diffusion-xl'),
+  prompt: 'Digital art masterpiece'
+});
+```
+
+#### Search-Enhanced Models
+
+```typescript
+// Perplexity - Built-in web search
+import { perplexity } from '@ai-sdk/perplexity';
+
+const result = await generateText({
+  model: perplexity('sonar-large'),
+  prompt: 'Latest AI developments'
+});
+```
+
+## Installation Guide
+
+<Tabs items={['NPM', 'Yarn', 'PNPM', 'Bun']}>
+  <Tabs.Tab>
+    ```bash
+    # Core SDK
+    pnpm add ai
+
+    # Provider packages
+    pnpm add @ai-sdk/openai
+    pnpm add @ai-sdk/anthropic
+    pnpm add @ai-sdk/google
+    pnpm add @ai-sdk/mistral
+    pnpm add @ai-sdk/xai
+    pnpm add @ai-sdk/groq
+    pnpm add @ai-sdk/cohere
+    pnpm add @ai-sdk/azure
+    pnpm add @ai-sdk/amazon-bedrock
+    pnpm add @ai-sdk/google-vertex
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```bash
+    # Core SDK
+    yarn add ai
+
+    # Provider packages
+    yarn add @ai-sdk/openai
+    yarn add @ai-sdk/anthropic
+    yarn add @ai-sdk/google
+    yarn add @ai-sdk/mistral
+    yarn add @ai-sdk/xai
+    yarn add @ai-sdk/groq
+    yarn add @ai-sdk/cohere
+    yarn add @ai-sdk/azure
+    yarn add @ai-sdk/amazon-bedrock
+    yarn add @ai-sdk/google-vertex
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```bash
+    # Core SDK
+    pnpm add ai
+
+    # Provider packages
+    pnpm add @ai-sdk/openai
+    pnpm add @ai-sdk/anthropic
+    pnpm add @ai-sdk/google
+    pnpm add @ai-sdk/mistral
+    pnpm add @ai-sdk/xai
+    pnpm add @ai-sdk/groq
+    pnpm add @ai-sdk/cohere
+    pnpm add @ai-sdk/azure
+    pnpm add @ai-sdk/amazon-bedrock
+    pnpm add @ai-sdk/google-vertex
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```bash
+    # Core SDK
+    bun add ai
+
+    # Provider packages
+    bun add @ai-sdk/openai
+    bun add @ai-sdk/anthropic
+    bun add @ai-sdk/google
+    bun add @ai-sdk/mistral
+    bun add @ai-sdk/xai
+    bun add @ai-sdk/groq
+    bun add @ai-sdk/cohere
+    bun add @ai-sdk/azure
+    bun add @ai-sdk/amazon-bedrock
+    bun add @ai-sdk/google-vertex
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Provider Configuration
+
+### Basic Setup
+
+```typescript
+// lib/ai/providers.ts
+import { openai } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
+import { xai } from '@ai-sdk/xai';
+import { mistral } from '@ai-sdk/mistral';
+import { groq } from '@ai-sdk/groq';
+
+export const providers = {
+  // Full-featured providers
+  openai: openai({
+    apiKey: process.env.OPENAI_API_KEY,
+    organization: process.env.OPENAI_ORG_ID // Optional
+  }),
+
+  anthropic: anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY
+  }),
+
+  xai: xai({
+    apiKey: process.env.XAI_API_KEY
+  }),
+
+  // High-performance
+  groq: groq({
+    apiKey: process.env.GROQ_API_KEY
+  }),
+
+  // Google services
+  google: google({
+    apiKey: process.env.GOOGLE_AI_API_KEY
+  }),
+
+  mistral: mistral({
+    apiKey: process.env.MISTRAL_API_KEY
+  })
+};
+```
+
+### Environment Variables
+
+```env
+# Primary Providers
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+XAI_API_KEY=xai-...
+
+# Google Services
+GOOGLE_AI_API_KEY=AIza...
+GOOGLE_CLOUD_PROJECT=your-project
+GOOGLE_VERTEX_LOCATION=us-central1
+
+# High-Performance
+GROQ_API_KEY=gsk_...
+FIREWORKS_API_KEY=fw_...
+TOGETHER_API_KEY=...
+
+# Specialized
+MISTRAL_API_KEY=...
+COHERE_API_KEY=...
+PERPLEXITY_API_KEY=pplx-...
+FAL_API_KEY=...
+DEEPINFRA_API_KEY=...
+
+# Enterprise
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_ENDPOINT=https://...
+AWS_REGION=us-east-1
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+
+# Local/Self-hosted
+OLLAMA_BASE_URL=http://localhost:11434
+LMSTUDIO_BASE_URL=http://localhost:1234
+BASETEN_API_KEY=...
+REPLICATE_API_TOKEN=...
+
+# Aggregators
+OPENROUTER_API_KEY=sk-or-...
+```
+
+## Usage Examples by Feature
+
+### Image Input (Vision)
+
+```typescript
+// Providers that support image input
+import { openai } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
+import { xai } from '@ai-sdk/xai';
+
+async function analyzeImage(imageUrl: string) {
+  // Using OpenAI GPT-4 Vision
+  const openaiResult = await generateText({
+    model: openai('gpt-4o'),
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: 'What is in this image?' },
+        { type: 'image', image: imageUrl }
+      ]
+    }]
+  });
+
+  // Using Anthropic Claude 3
+  const claudeResult = await generateText({
+    model: anthropic('claude-3-opus-20240229'),
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: 'Describe this image' },
+        { type: 'image', image: imageUrl }
+      ]
+    }]
+  });
+
+  // Using Google Gemini
+  const geminiResult = await generateText({
+    model: google('gemini-1.5-pro'),
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'text', text: 'Analyze this image' },
+        { type: 'image', image: imageUrl }
+      ]
+    }]
+  });
+}
+```
+
+### Image Generation
+
+```typescript
+// Providers that support image generation
+import { openai } from '@ai-sdk/openai';
+import { fal } from '@ai-sdk/fal';
+import { fireworks } from '@ai-sdk/fireworks';
+import { replicate } from '@ai-sdk/replicate';
+
+async function createImages(prompt: string) {
+  // DALL-E 3
+  const dalleImage = await openai.images.generate({
+    model: 'dall-e-3',
+    prompt,
+    size: '1024x1024',
+    quality: 'hd'
+  });
+
+  // Fal AI - Flux
+  const fluxImage = await fal.generate({
+    model: 'flux-pro',
+    prompt,
+    image_size: 'landscape_16_9'
+  });
+
+  // Fireworks - Stable Diffusion
+  const sdImage = await fireworks.generate({
+    model: 'stable-diffusion-xl',
+    prompt,
+    width: 1024,
+    height: 1024
+  });
+}
+```
+
+### Object Generation (Structured Output)
+
+```typescript
+import { z } from 'zod';
+
+// All providers that support object generation
+const ProductSchema = z.object({
+  name: z.string(),
+  price: z.number(),
+  features: z.array(z.string())
+});
+
+// Works with most providers
+async function extractProduct(description: string) {
+  const providers = [
+    openai('gpt-4o'),
+    anthropic('claude-3-opus-20240229'),
+    google('gemini-1.5-pro'),
+    xai('grok-3'),
+    groq('llama-3.1-70b-versatile'),
+    mistral('mistral-large-latest')
+  ];
+
+  const results = await Promise.all(
+    providers.map(model =>
+      generateObject({
+        model,
+        schema: ProductSchema,
+        prompt: `Extract product info from: ${description}`
+      })
+    )
+  );
+
+  return results;
+}
+```
+
+### Tool Usage & Streaming
+
+```typescript
+import { tool } from 'ai';
+
+// Define tools
+const weatherTool = tool({
+  description: 'Get weather information',
+  parameters: z.object({
+    location: z.string()
+  }),
+  execute: async ({ location }) => {
+    return `Weather in ${location}: Sunny, 72°F`;
+  }
+});
+
+// Providers that support tool usage
+const toolProviders = [
+  { name: 'OpenAI', model: openai('gpt-4o') },
+  { name: 'Anthropic', model: anthropic('claude-3-opus-20240229') },
+  { name: 'xAI', model: xai('grok-3') },
+  { name: 'Google', model: google('gemini-1.5-pro') },
+  { name: 'Groq', model: groq('llama-3.1-70b-versatile') },
+  { name: 'Mistral', model: mistral('mistral-large-latest') }
+];
+
+// Use tools with streaming
+for (const { name, model } of toolProviders) {
+  const result = await streamText({
+    model,
+    messages: [{ role: 'user', content: 'Whats the weather in NYC?' }],
+    tools: { weather: weatherTool },
+    toolChoice: 'auto'
+  });
+
+  // Stream the response
+  for await (const chunk of result.textStream) {
+    console.log(`${name}: ${chunk}`);
+  }
+}
+```
+
+## Provider Selection Guide
+
+### By Use Case
+
+| Use Case | Recommended Providers | Why |
+|----------|----------------------|-----|
+| **General Chat** | OpenAI, Anthropic, xAI | Best overall quality and reliability |
+| **Code Generation** | Anthropic Claude, OpenAI GPT-4o | Excellent code understanding |
+| **Fast Inference** | Groq, Together AI, Fireworks | Optimized for speed |
+| **Long Context** | Anthropic (200K), Google Gemini (1M+) | Large context windows |
+| **Image Generation** | OpenAI DALL-E 3, Fal Flux, Fireworks SD | High-quality images |
+| **Vision/OCR** | OpenAI GPT-4o, Google Gemini, Anthropic | Strong vision capabilities |
+| **Search-Enhanced** | Perplexity | Built-in web search |
+| **Enterprise** | Azure, Amazon Bedrock, Google Vertex | Security and compliance |
+| **Local/Offline** | Ollama, LMStudio | Run models locally |
+| **Cost-Effective** | Groq, Together AI, DeepInfra | Lower pricing |
+
+### By Requirements
+
+<Callout type="info">
+**Pro Tip**: Use multiple providers for redundancy and load balancing in production applications.
+</Callout>
+
+```typescript
+// Provider fallback strategy
+class ProviderManager {
+  private providers = [
+    { provider: openai('gpt-4o'), priority: 1 },
+    { provider: anthropic('claude-3-opus'), priority: 2 },
+    { provider: xai('grok-3'), priority: 3 },
+    { provider: groq('llama-3.1-70b'), priority: 4 }
+  ];
+
+  async generateWithFallback(prompt: string) {
+    for (const { provider } of this.providers) {
+      try {
+        return await generateText({
+          model: provider,
+          prompt
+        });
+      } catch (error) {
+        console.warn(`Provider failed, trying next: ${error}`);
+        continue;
+      }
+    }
+    throw new Error('All providers failed');
+  }
+}
+```
+
+## Performance Comparison
+
+### Latency Benchmarks
+
+| Provider | First Token (ms) | Tokens/sec | Reliability |
+|----------|-----------------|------------|-------------|
+| Groq | 50-100 | 500-800 | 99.5% |
+| Together AI | 100-200 | 300-500 | 99% |
+| Fireworks | 150-250 | 250-400 | 98.5% |
+| OpenAI | 200-500 | 50-100 | 99.9% |
+| Anthropic | 300-600 | 40-80 | 99.8% |
+| Google | 250-500 | 60-120 | 99.5% |
+
+### Cost Analysis
+
+| Provider | Input ($/1M tokens) | Output ($/1M tokens) | Notes |
+|----------|--------------------|--------------------|-------|
+| Groq | $0.10 | $0.10 | Very cost-effective |
+| Together AI | $0.20 | $0.20 | Good balance |
+| DeepInfra | $0.25 | $0.25 | Competitive pricing |
+| OpenAI GPT-4o | $5.00 | $15.00 | Premium quality |
+| Anthropic Claude 3 | $3.00 | $15.00 | Long context |
+| Google Gemini Pro | $0.50 | $1.50 | Good value |
+
+## Advanced Patterns
+
+### Multi-Provider Comparison
+
+```typescript
+// Compare responses from multiple providers
+async function compareProviders(prompt: string) {
+  const providers = {
+    openai: openai('gpt-4o'),
+    anthropic: anthropic('claude-3-opus-20240229'),
+    xai: xai('grok-3'),
+    google: google('gemini-1.5-pro')
+  };
+
+  const results = await Promise.allSettled(
+    Object.entries(providers).map(async ([name, model]) => {
+      const start = Date.now();
+      const { text } = await generateText({ model, prompt });
+      return {
+        provider: name,
+        response: text,
+        latency: Date.now() - start
+      };
+    })
+  );
+
+  return results
+    .filter(r => r.status === 'fulfilled')
+    .map(r => r.value);
+}
+```
+
+### Load Balancing
+
+```typescript
+// Intelligent load balancing across providers
+class LoadBalancer {
+  private stats = new Map<string, {
+    requests: number;
+    errors: number;
+    avgLatency: number;
+  }>();
+
+  async selectProvider() {
+    // Select provider based on current load and performance
+    const candidates = [
+      { id: 'openai', model: openai('gpt-4o'), weight: 0.4 },
+      { id: 'anthropic', model: anthropic('claude-3'), weight: 0.3 },
+      { id: 'xai', model: xai('grok-3'), weight: 0.2 },
+      { id: 'groq', model: groq('llama-3.1-70b'), weight: 0.1 }
+    ];
+
+    // Weighted random selection
+    const random = Math.random();
+    let cumulative = 0;
+
+    for (const candidate of candidates) {
+      cumulative += candidate.weight;
+      if (random <= cumulative) {
+        return candidate;
+      }
+    }
+
+    return candidates[0];
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| **Rate Limiting** | Implement exponential backoff and provider rotation |
+| **Timeout Errors** | Increase timeout values, use faster providers |
+| **Invalid API Key** | Verify environment variables are loaded correctly |
+| **Model Not Found** | Check provider documentation for exact model names |
+| **Feature Not Supported** | Refer to feature matrix above |
+
+### Debug Configuration
+
+```typescript
+// Enable detailed logging
+import { experimental_telemetry } from 'ai';
+
+experimental_telemetry({
+  isEnabled: true,
+  logLevel: 'debug',
+  logger: console,
+  metadata: {
+    environment: process.env.NODE_ENV,
+    application: 'my-app'
+  }
+});
+```
+
+## Resources
+
+- [AI SDK Documentation](https://sdk.vercel.ai)
+- [Provider Examples](https://github.com/vercel/ai/tree/main/examples)
+- [API References](https://sdk.vercel.ai/providers)
+- [Community Discord](https://discord.gg/vercel-ai)
+
+<Callout type="success">
+**Ready to integrate?** Choose the providers that best fit your needs and start building with AI SDK v5's unified interface!
+</Callout>

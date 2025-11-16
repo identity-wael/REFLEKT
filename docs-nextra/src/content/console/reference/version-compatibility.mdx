@@ -1,0 +1,175 @@
+---
+title: Version Compatibility
+description: Compatibility matrix for dependencies and platform versions
+---
+
+import { Callout } from 'nextra/components'
+
+# Version Compatibility
+
+Compatibility matrix for all dependencies, platforms, and services used by Earna AI Console.
+
+## Core Dependencies
+
+### Framework Versions
+
+| Component | Current | Minimum | Notes |
+|-----------|---------|---------|-------|
+| Next.js | 15.5.0 | 15.0.0 | App Router required |
+| React | 19.0.0 | 18.2.0 | Server Components support |
+| TypeScript | 5.3.0 | 5.0.0 | Enhanced type checking |
+| Tailwind CSS | 3.4.0 | 3.3.0 | Modern features required |
+
+### AI SDK Versions
+
+| Package | Current | Minimum | Notes |
+|---------|---------|---------|-------|
+| ai | 5.0.0+ | 5.0.0 | Core Vercel AI SDK v5 |
+| @ai-sdk/openai | 1.0.0+ | 1.0.0 | OpenAI provider v1 |
+| @ai-sdk/anthropic | 1.0.0+ | 1.0.0 | Anthropic provider v1 |
+| @ai-sdk/google | 1.0.0+ | 1.0.0 | Google AI provider v1 |
+
+## Runtime Requirements
+
+### Node.js Compatibility
+
+| Node.js Version | Status | Notes |
+|-----------------|--------|-------|
+| 22.17.0+ | ✅ Recommended | Best performance, all features |
+| 22.0.0 - 22.16.x | ✅ Supported | Fully compatible |
+| 20.x | ⚠️ Limited | Some Next.js 15 features unavailable |
+| 18.x | ❌ Unsupported | Missing required features |
+
+### Package Manager Versions
+
+| Package Manager | Minimum Version | Recommended |
+|-----------------|-----------------|-------------|
+| npm | 10.0.0 | 10.8.0+ |
+| yarn | 4.0.0 | 4.1.0+ |
+| pnpm | 8.15.0 | 9.0.0+ |
+
+## Platform Compatibility
+
+### Deployment Platforms
+
+| Platform | Status | Node.js Version | Notes |
+|----------|--------|-----------------|-------|
+| Vercel | ✅ Fully Supported | 22.x | Recommended platform |
+| Netlify | ✅ Supported | 22.x | Edge functions available |
+| Railway | ✅ Supported | 22.x | Full stack platform |
+| AWS Amplify | ⚠️ Limited | 20.x | Next.js 15 support pending |
+| Google Cloud Run | ✅ Supported | 22.x | Container deployment |
+| Azure Static Web Apps | ⚠️ Limited | 20.x | API routes have limitations |
+
+### Database Compatibility
+
+| Database | Version | Status | Notes |
+|----------|---------|--------|-------|
+| Supabase (PostgreSQL) | 15.x | ✅ Recommended | Fully integrated |
+| PostgreSQL | 15.x | ✅ Supported | Direct connection |
+| PostgreSQL | 14.x | ❌ Unsupported | Below minimum requirement |
+| PostgreSQL | 13.x | ❌ Unsupported | Below minimum requirement |
+| PlanetScale (MySQL) | 8.0 | ❌ Unsupported | Architecture incompatible |
+
+## Browser Compatibility
+
+### Desktop Browsers
+
+| Browser | Minimum Version | Support Status |
+|---------|-----------------|----------------|
+| Chrome | 90+ | ✅ Tested & Supported |
+| Safari | 14+ | ✅ Tested & Supported |
+| Firefox | 88+ | ⚠️ Untested |
+| Edge | 90+ | ⚠️ Untested |
+| Opera | 76+ | ⚠️ Untested |
+
+### Mobile Browsers
+
+<Callout type="info">
+**Mobile support is coming soon**. The application is currently optimized for desktop browsers only.
+</Callout>
+
+## AI Provider API Versions
+
+### OpenAI API
+
+| API Version | Status | Models Supported |
+|-------------|--------|------------------|
+| 2024-12-17 | ✅ Current | GPT-4o, GPT-4o-mini, Realtime |
+| 2024-08-01 | ✅ Supported | GPT-4o, GPT-4o-mini |
+| 2023-12-01 | ⚠️ Legacy | GPT-4, GPT-3.5-turbo |
+
+### Anthropic API
+
+| API Version | Status | Models Supported |
+|-------------|--------|------------------|
+| 2023-06-01 | ✅ Current | Claude 3 Opus, Sonnet, Haiku |
+| 2023-01-01 | ⚠️ Legacy | Claude 2.1, Claude Instant |
+
+## Development Tool Versions
+
+### IDE Support
+
+| IDE/Editor | Minimum Version | Recommended Extensions |
+|------------|-----------------|------------------------|
+| VS Code | 1.85.0 | ESLint, Prettier, TypeScript |
+| WebStorm | 2023.3 | Built-in Next.js support |
+| Cursor | 0.40.0 | AI-powered features |
+
+### Testing Framework Versions
+
+| Framework | Version | Status |
+|-----------|---------|--------|
+| Jest | 29.x | ✅ Supported |
+| Vitest | 2.x | ✅ Recommended |
+| Playwright | 1.40.x | ✅ Supported |
+| Cypress | 13.x | ✅ Supported |
+
+## Upgrade Recommendations
+
+### Critical Updates
+
+<Callout type="warning">
+**Security Updates Required**:
+- Node.js 22.17.0+ (security patches)
+- Next.js 15.5.0+ (security improvements)
+- React 19.0.0+ (performance and security)
+</Callout>
+
+### Performance Updates
+
+<Callout type="info">
+**Performance Recommendations**:
+- Upgrade to Node.js 22.17.0+ for 15% better performance
+- Use pnpm 9.0.0+ for faster installs
+- Update Vercel AI SDK to 4.x for streaming improvements
+</Callout>
+
+## Version Update Schedule
+
+### Next.js Updates
+- **Major versions**: Every 6 months
+- **Minor versions**: Monthly
+- **Patch versions**: As needed
+
+### AI SDK Updates
+- **Major versions**: Quarterly
+- **Minor versions**: Bi-weekly
+- **Patch versions**: Weekly
+
+### Database Updates
+- **Supabase**: Weekly updates
+- **PostgreSQL**: Minor updates quarterly
+
+## Compatibility Testing
+
+We test compatibility against:
+- Google Chrome (latest stable)
+- Safari (latest stable)
+- Latest stable version of Node.js 22.x
+- Latest stable versions of all AI providers
+- Vercel deployment platform
+
+<Callout type="info">
+**Stay Updated**: Subscribe to our [release notes](/operations/migration-guides) for the latest compatibility information and upgrade guides.
+</Callout>

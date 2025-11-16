@@ -1,0 +1,178 @@
+# Monitoring & Observability
+
+## Overview
+
+Comprehensive monitoring stack deployed on GKE for platform observability, featuring Prometheus for metrics collection and Grafana for visualization. Primary focus is monitoring our TigerBeetle financial ledger performance and health.
+
+## Architecture
+
+```
+TigerBeetle → StatsD (8125) → StatsD Exporter → Prometheus → Grafana
+     ↓                                              ↓           ↓
+Application Metrics                          Time Series    Dashboard
+```
+
+## Components
+
+### Grafana
+- **URL**: http://34.172.102.114
+- **Version**: 7.0.8
+- **Access**: LoadBalancer service
+- **Credentials**: admin / [Check Secret Manager]
+
+### Prometheus
+- **Version**: 25.8.0
+- **Storage**: 50GB with 15-day retention
+- **Access**: Internal only (prometheus-server.monitoring:80)
+- **Scrape Interval**: 15s
+
+### StatsD Exporter
+- **Port**: 8125 (UDP/TCP)
+- **Namespace**: observability
+- **Purpose**: Converts StatsD metrics to Prometheus format
+
+## Dashboards
+
+### TigerBeetle Financial Ledger Dashboard
+Real-time monitoring of our financial ledger:
+- Transaction Per Second (TPS)
+- Request rates and latencies
+- Storage I/O operations (IOPS)
+- Database operations
+- Active replicas status
+
+## Available Metrics
+
+### Application Metrics (tb_*)
+```yaml
+# Transaction metrics
+tb_replica_commit_us_*
+tb_replica_request_us_*
+
+# Storage metrics
+tb_storage_read_us_*
+tb_storage_write_us_*
+
+# Database operations
+tb_lookup_us_*
+tb_scan_tree_us_*
+tb_compact_mutable_suffix_us_*
+```
+
+### Infrastructure Metrics
+```yaml
+# Kubernetes metrics
+container_cpu_usage_seconds_total
+container_memory_usage_bytes
+kube_pod_status_phase
+kube_node_status_condition
+
+# GCP metrics (via Cloud Monitoring)
+kubernetes.io/container/cpu/core_usage_time
+kubernetes.io/container/memory/used_bytes
+```
+
+## Accessing Metrics
+
+### Grafana Web UI
+```bash
+# Direct access
+http://34.172.102.114
+
+# Dashboard: TigerBeetle Performance Dashboard
+```
+
+### Prometheus Queries
+```bash
+# Port-forward for local access
+kubectl port-forward -n monitoring svc/prometheus-server 9090:80
+
+# Example queries
+sum(rate(tb_replica_commit_us_count[1m]))  # TPS
+count(count by (replica) (tb_replica_commit_us_count))  # Active replicas
+```
+
+### kubectl Metrics
+```bash
+# Pod metrics
+kubectl top pods -n tigerbeetle
+
+# Node metrics
+kubectl top nodes
+```
+
+## Deployment
+
+### Deploy Monitoring Stack
+```bash
+# Run deployment script
+./infrastructure/scripts/deploy-monitoring.sh
+
+# This will:
+# 1. Install Prometheus via Helm
+# 2. Install Grafana via Helm
+# 3. Configure datasources
+# 4. Import dashboards
+```
+
+### Update Dashboard
+```bash
+# Edit dashboard
+vim infrastructure/kubernetes/monitoring/tigerbeetle-dashboard.json
+
+# Update ConfigMap
+kubectl delete configmap grafana-dashboard-tigerbeetle -n monitoring
+kubectl create configmap grafana-dashboard-tigerbeetle \
+  --from-file=tigerbeetle-dashboard.json \
+  --namespace monitoring
+
+# Label for auto-discovery
+kubectl label configmap grafana-dashboard-tigerbeetle \
+  grafana_dashboard=1 -n monitoring
+
+# Restart Grafana
+kubectl rollout restart deployment/grafana -n monitoring
+```
+
+## Alerting (Planned)
+
+### Alert Rules
+- TigerBeetle replica down
+- High transaction latency (> 100ms)
+- Storage usage > 80%
+- Pod restart rate > 5/hour
+
+### Notification Channels
+- Slack integration
+- PagerDuty for critical alerts
+- Email notifications
+
+## Troubleshooting
+
+### No Data in Dashboard
+1. Check TigerBeetle is sending metrics
+2. Verify StatsD Exporter is receiving
+3. Confirm Prometheus is scraping
+4. Check dashboard time range
+
+### High Memory Usage
+1. Review retention settings
+2. Check cardinality of metrics
+3. Consider downsampling
+
+## Cost
+
+| Component | Resource | Monthly Cost |
+|-----------|----------|--------------|
+| Prometheus Storage | 50GB | ~$8 |
+| Grafana Storage | 10GB | ~$2 |
+| LoadBalancer | 1 × TCP | ~$20 |
+| **Total** | | **~$30/month** |
+
+## Future Enhancements
+
+- Long-term storage in Cloud Storage
+- Custom alerts for business metrics
+- Integration with Cloud Monitoring
+- Distributed tracing with Jaeger
+- Log aggregation with Loki

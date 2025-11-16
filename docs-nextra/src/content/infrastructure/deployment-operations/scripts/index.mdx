@@ -1,0 +1,857 @@
+# Infrastructure Scripts
+
+## Overview
+
+This document catalogs the automation scripts used for infrastructure management, deployment, and operations. These scripts streamline repetitive tasks, ensure consistency, and reduce human error in our infrastructure operations.
+
+## Script Organization
+
+```
+infrastructure/
+├── scripts/
+│   ├── deployment/
+│   │   ├── deploy-console.sh
+│   │   ├── deploy-platform.sh
+│   │   ├── rollback.sh
+│   │   └── verify-deployment.sh
+│   ├── terraform/
+│   │   ├── init-backend.sh
+│   │   ├── plan-apply.sh
+│   │   ├── destroy-env.sh
+│   │   └── state-management.sh
+│   ├── monitoring/
+│   │   ├── setup-dashboards.sh
+│   │   ├── alert-config.sh
+│   │   └── log-aggregation.sh
+│   ├── security/
+│   │   ├── rotate-secrets.sh
+│   │   ├── audit-permissions.sh
+│   │   └── backup-keys.sh
+│   └── utilities/
+│       ├── env-setup.sh
+│       ├── health-check.sh
+│       ├── cleanup.sh
+│       └── debug-helper.sh
+```
+
+## Deployment Scripts
+
+### deploy-console.sh
+
+Deploys the console application to Vercel with proper environment configuration.
+
+```bash
+#!/bin/bash
+# deploy-console.sh - Deploy console to Vercel
+set -euo pipefail
+
+# Configuration
+PROJECT_NAME="earna-console"
+ENVIRONMENT="${1:-production}"
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${GREEN}🚀 Deploying Console to ${ENVIRONMENT}${NC}"
+
+# Validate environment
+if [[ ! "$ENVIRONMENT" =~ ^(production|staging|preview)$ ]]; then
+    echo -e "${RED}❌ Invalid environment: $ENVIRONMENT${NC}"
+    exit 1
+fi
+
+# Check prerequisites
+command -v vercel >/dev/null 2>&1 || {
+    echo -e "${RED}❌ Vercel CLI not installed${NC}"
+    exit 1
+}
+
+# Set environment variables (critical for Plaid)
+echo -e "${YELLOW}📝 Setting environment variables...${NC}"
+
+# Use printf to avoid newline issues in Vercel
+vercel env pull .env.local --environment=$ENVIRONMENT
+
+# Validate critical variables
+required_vars=(
+    "NEXT_PUBLIC_SUPABASE_URL"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    "SUPABASE_SERVICE_ROLE_KEY"
+    "PLAID_CLIENT_ID"
+    "PLAID_SECRET"
+    "ENCRYPTION_KEY"
+)
+
+for var in "${required_vars[@]}"; do
+    if ! grep -q "^$var=" .env.local; then
+        echo -e "${RED}❌ Missing required variable: $var${NC}"
+        exit 1
+    fi
+done
+
+# Build and deploy
+echo -e "${YELLOW}🔨 Building application...${NC}"
+pnpm build
+
+echo -e "${YELLOW}🚢 Deploying to Vercel...${NC}"
+if [ "$ENVIRONMENT" = "production" ]; then
+    vercel --prod --yes
+else
+    vercel --yes
+fi
+
+echo -e "${GREEN}✅ Deployment complete!${NC}"
+
+# Run health checks
+./scripts/utilities/health-check.sh console $ENVIRONMENT
+```
+
+### deploy-platform.sh
+
+Deploys platform services to GKE cluster.
+
+```bash
+#!/bin/bash
+# deploy-platform.sh - Deploy platform services to GKE
+set -euo pipefail
+
+CLUSTER_NAME="platform-production"
+REGION="us-west1"
+PROJECT_ID="earna-production"
+
+echo "🚀 Deploying Platform Services"
+
+# Authenticate with GCP
+gcloud auth activate-service-account \
+    --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+
+# Get cluster credentials
+gcloud container clusters get-credentials \
+    $CLUSTER_NAME \
+    --region=$REGION \
+    --project=$PROJECT_ID
+
+# Deploy services in order
+services=(
+    "tigerbeetle"
+    "temporal"
+    "temporal-worker"
+    "api-gateway"
+)
+
+for service in "${services[@]}"; do
+    echo "📦 Deploying $service..."
+    kubectl apply -f k8s/$service/
+
+    # Wait for rollout
+    kubectl rollout status deployment/$service \
+        --timeout=300s || true
+done
+
+# Verify deployments
+kubectl get pods --all-namespaces
+kubectl get services --all-namespaces
+
+echo "✅ Platform deployment complete"
+```
+
+### rollback.sh
+
+Emergency rollback script for quick recovery.
+
+```bash
+#!/bin/bash
+# rollback.sh - Emergency rollback script
+set -euo pipefail
+
+SERVICE="${1:-}"
+VERSION="${2:-}"
+
+if [ -z "$SERVICE" ] || [ -z "$VERSION" ]; then
+    echo "Usage: ./rollback.sh <service> <version>"
+    echo "Example: ./rollback.sh console v1.2.3"
+    exit 1
+fi
+
+echo "⚠️  Rolling back $SERVICE to $VERSION"
+
+case $SERVICE in
+    console)
+        vercel rollback --yes --to=$VERSION
+        ;;
+    platform)
+        kubectl rollout undo deployment/$SERVICE \
+            --to-revision=$VERSION
+        ;;
+    *)
+        echo "Unknown service: $SERVICE"
+        exit 1
+        ;;
+esac
+
+echo "✅ Rollback complete"
+
+# Verify health
+./scripts/utilities/health-check.sh $SERVICE production
+```
+
+## Terraform Scripts
+
+### init-backend.sh
+
+Initializes Terraform backend in GCS.
+
+```bash
+#!/bin/bash
+# init-backend.sh - Initialize Terraform backend
+set -euo pipefail
+
+PROJECT_ID="earna-production"
+BUCKET_NAME="earna-terraform-state"
+LOCATION="us-west1"
+
+echo "🔧 Initializing Terraform Backend"
+
+# Create GCS bucket for state
+gsutil mb -p $PROJECT_ID -l $LOCATION gs://$BUCKET_NAME/ || true
+
+# Enable versioning
+gsutil versioning set on gs://$BUCKET_NAME/
+
+# Set lifecycle policy
+cat > lifecycle.json <<EOF
+{
+  "lifecycle": {
+    "rule": [
+      {
+        "action": {"type": "Delete"},
+        "condition": {
+          "numNewerVersions": 10,
+          "isLive": false
+        }
+      }
+    ]
+  }
+}
+EOF
+
+gsutil lifecycle set lifecycle.json gs://$BUCKET_NAME/
+rm lifecycle.json
+
+# Initialize Terraform
+cd terraform/environments/production
+terraform init \
+    -backend-config="bucket=$BUCKET_NAME" \
+    -backend-config="prefix=terraform/state"
+
+echo "✅ Backend initialized"
+```
+
+### plan-apply.sh
+
+Safely plans and applies Terraform changes.
+
+```bash
+#!/bin/bash
+# plan-apply.sh - Plan and apply Terraform changes
+set -euo pipefail
+
+ENVIRONMENT="${1:-production}"
+AUTO_APPROVE="${2:-false}"
+
+cd terraform/environments/$ENVIRONMENT
+
+echo "📋 Planning Terraform changes for $ENVIRONMENT"
+
+# Format code
+terraform fmt -recursive
+
+# Validate configuration
+terraform validate
+
+# Generate plan
+terraform plan -out=tfplan
+
+# Show plan summary
+terraform show -no-color tfplan | grep -E "^[[:space:]]*[+-~]" || true
+
+if [ "$AUTO_APPROVE" = "true" ]; then
+    terraform apply tfplan
+else
+    read -p "Apply changes? (yes/no): " confirm
+    if [ "$confirm" = "yes" ]; then
+        terraform apply tfplan
+    else
+        echo "Aborted"
+        exit 1
+    fi
+fi
+
+# Clean up plan file
+rm tfplan
+
+echo "✅ Terraform apply complete"
+```
+
+## Monitoring Scripts
+
+### setup-dashboards.sh
+
+Configures monitoring dashboards in Google Cloud.
+
+```bash
+#!/bin/bash
+# setup-dashboards.sh - Setup monitoring dashboards
+set -euo pipefail
+
+PROJECT_ID="earna-production"
+
+echo "📊 Setting up monitoring dashboards"
+
+# Create dashboards from JSON templates
+for dashboard in dashboards/*.json; do
+    name=$(basename $dashboard .json)
+    echo "Creating dashboard: $name"
+
+    gcloud monitoring dashboards create \
+        --config-from-file=$dashboard \
+        --project=$PROJECT_ID
+done
+
+# Set up alert policies
+gcloud alpha monitoring policies create \
+    --notification-channels=$NOTIFICATION_CHANNEL \
+    --config-from-file=alerts/critical.yaml
+
+echo "✅ Dashboards configured"
+```
+
+### alert-config.sh
+
+Configures alerting rules and notification channels.
+
+```bash
+#!/bin/bash
+# alert-config.sh - Configure alerts
+set -euo pipefail
+
+# Define alert thresholds
+declare -A ALERTS=(
+    ["cpu_usage"]="80"
+    ["memory_usage"]="90"
+    ["disk_usage"]="85"
+    ["error_rate"]="5"
+    ["latency_p99"]="1000"
+)
+
+# Create notification channels
+SLACK_CHANNEL=$(gcloud alpha monitoring channels create \
+    --display-name="Slack #alerts" \
+    --type=slack \
+    --channel-labels="url=$SLACK_WEBHOOK_URL" \
+    --format="value(name)")
+
+PAGERDUTY_CHANNEL=$(gcloud alpha monitoring channels create \
+    --display-name="PagerDuty" \
+    --type=pagerduty \
+    --channel-labels="service_key=$PAGERDUTY_KEY" \
+    --format="value(name)")
+
+# Create alert policies
+for metric in "${!ALERTS[@]}"; do
+    threshold="${ALERTS[$metric]}"
+
+    cat > /tmp/alert_$metric.yaml <<EOF
+displayName: "High $metric"
+conditions:
+  - displayName: "$metric above $threshold"
+    conditionThreshold:
+      filter: "metric.type=\"custom.googleapis.com/$metric\""
+      comparison: COMPARISON_GT
+      thresholdValue: $threshold
+      duration: 300s
+notificationChannels:
+  - $SLACK_CHANNEL
+  - $PAGERDUTY_CHANNEL
+EOF
+
+    gcloud alpha monitoring policies create \
+        --config-from-file=/tmp/alert_$metric.yaml
+done
+
+echo "✅ Alerts configured"
+```
+
+## Security Scripts
+
+### rotate-secrets.sh
+
+Rotates secrets and encryption keys.
+
+```bash
+#!/bin/bash
+# rotate-secrets.sh - Rotate secrets safely
+set -euo pipefail
+
+SERVICE="${1:-all}"
+DRY_RUN="${2:-false}"
+
+echo "🔐 Rotating secrets for: $SERVICE"
+
+rotate_secret() {
+    local secret_name=$1
+    local new_value=$2
+
+    if [ "$DRY_RUN" = "true" ]; then
+        echo "[DRY RUN] Would rotate: $secret_name"
+        return
+    fi
+
+    # Update in Google Secret Manager
+    echo "$new_value" | gcloud secrets versions add $secret_name \
+        --data-file=-
+
+    # Update in Vercel
+    vercel env rm $secret_name production --yes || true
+    printf "%s" "$new_value" | vercel env add $secret_name production
+
+    # Update in Kubernetes
+    kubectl create secret generic $secret_name \
+        --from-literal=value="$new_value" \
+        --dry-run=client -o yaml | kubectl apply -f -
+}
+
+# Generate new encryption key
+if [[ "$SERVICE" == "all" || "$SERVICE" == "encryption" ]]; then
+    NEW_KEY=$(openssl rand -hex 32)
+    rotate_secret "ENCRYPTION_KEY" "$NEW_KEY"
+fi
+
+# Rotate Plaid secrets
+if [[ "$SERVICE" == "all" || "$SERVICE" == "plaid" ]]; then
+    echo "⚠️  Plaid secrets must be rotated manually via dashboard"
+    echo "Visit: https://dashboard.plaid.com/settings/keys"
+fi
+
+# Rotate database passwords
+if [[ "$SERVICE" == "all" || "$SERVICE" == "database" ]]; then
+    NEW_PASSWORD=$(openssl rand -base64 32)
+    rotate_secret "DATABASE_PASSWORD" "$NEW_PASSWORD"
+
+    # Update database user
+    gcloud sql users set-password postgres \
+        --instance=temporal-db \
+        --password="$NEW_PASSWORD"
+fi
+
+echo "✅ Secret rotation complete"
+
+# Trigger redeployment
+if [ "$DRY_RUN" = "false" ]; then
+    ./scripts/deployment/deploy-console.sh production
+    ./scripts/deployment/deploy-platform.sh
+fi
+```
+
+### audit-permissions.sh
+
+Audits IAM permissions and access controls.
+
+```bash
+#!/bin/bash
+# audit-permissions.sh - Audit IAM permissions
+set -euo pipefail
+
+PROJECT_ID="earna-production"
+OUTPUT_FILE="audit-report-$(date +%Y%m%d).json"
+
+echo "🔍 Auditing IAM permissions"
+
+# Get all IAM policy bindings
+gcloud projects get-iam-policy $PROJECT_ID \
+    --format=json > $OUTPUT_FILE
+
+# Check for overly permissive roles
+echo "Checking for risky permissions..."
+
+RISKY_ROLES=(
+    "roles/owner"
+    "roles/editor"
+    "roles/iam.securityAdmin"
+)
+
+for role in "${RISKY_ROLES[@]}"; do
+    members=$(jq -r ".bindings[] | select(.role==\"$role\") | .members[]" $OUTPUT_FILE)
+    if [ ! -z "$members" ]; then
+        echo "⚠️  Warning: $role assigned to:"
+        echo "$members"
+    fi
+done
+
+# Check service account keys
+echo "Checking service account keys..."
+
+for sa in $(gcloud iam service-accounts list --format="value(email)"); do
+    keys=$(gcloud iam service-accounts keys list \
+        --iam-account=$sa \
+        --format="value(name)")
+
+    key_count=$(echo "$keys" | wc -l)
+    if [ $key_count -gt 1 ]; then
+        echo "⚠️  Multiple keys for $sa"
+    fi
+done
+
+echo "✅ Audit complete. Report: $OUTPUT_FILE"
+```
+
+## Utility Scripts
+
+### env-setup.sh
+
+Sets up local development environment.
+
+```bash
+#!/bin/bash
+# env-setup.sh - Setup local environment
+set -euo pipefail
+
+echo "🛠️  Setting up local environment"
+
+# Check prerequisites
+prerequisites=(
+    "node:18.0.0"
+    "pnpm:8.0.0"
+    "gcloud"
+    "kubectl"
+    "terraform:1.5.0"
+    "vercel"
+)
+
+for prereq in "${prerequisites[@]}"; do
+    cmd="${prereq%%:*}"
+    version="${prereq#*:}"
+
+    if ! command -v $cmd >/dev/null 2>&1; then
+        echo "❌ Missing: $cmd"
+        echo "Please install $cmd version $version or higher"
+        exit 1
+    fi
+done
+
+# Create .env files from templates
+for env_file in .env.*.example; do
+    target="${env_file%.example}"
+    if [ ! -f "$target" ]; then
+        cp "$env_file" "$target"
+        echo "Created $target"
+    fi
+done
+
+# Install dependencies
+echo "Installing dependencies..."
+pnpm install
+
+# Setup git hooks
+echo "Setting up git hooks..."
+pnpm husky install
+
+# Configure gcloud
+echo "Configuring gcloud..."
+gcloud config set project earna-production
+
+# Setup kubectl context
+gcloud container clusters get-credentials \
+    platform-production \
+    --region=us-west1
+
+echo "✅ Environment setup complete"
+```
+
+### health-check.sh
+
+Performs health checks on services.
+
+```bash
+#!/bin/bash
+# health-check.sh - Health check script
+set -euo pipefail
+
+SERVICE="${1:-all}"
+ENVIRONMENT="${2:-production}"
+
+check_endpoint() {
+    local url=$1
+    local expected_status=${2:-200}
+
+    status=$(curl -s -o /dev/null -w "%{http_code}" $url)
+
+    if [ "$status" = "$expected_status" ]; then
+        echo "✅ $url - OK"
+        return 0
+    else
+        echo "❌ $url - Failed (Status: $status)"
+        return 1
+    fi
+}
+
+echo "🏥 Running health checks for $SERVICE in $ENVIRONMENT"
+
+# Define endpoints
+declare -A ENDPOINTS=(
+    ["console"]="https://console.earna.ai/api/health"
+    ["api"]="https://api.earna.ai/health"
+    ["plaid"]="https://console.earna.ai/api/plaid/health"
+    ["temporal"]="http://temporal.earna.ai:7233/health"
+    ["tigerbeetle"]="http://tigerbeetle.earna.ai:3000/health"
+)
+
+failed=0
+
+if [ "$SERVICE" = "all" ]; then
+    for service in "${!ENDPOINTS[@]}"; do
+        check_endpoint "${ENDPOINTS[$service]}" || ((failed++))
+    done
+else
+    check_endpoint "${ENDPOINTS[$SERVICE]}" || ((failed++))
+fi
+
+if [ $failed -gt 0 ]; then
+    echo "❌ $failed health checks failed"
+    exit 1
+else
+    echo "✅ All health checks passed"
+fi
+```
+
+### cleanup.sh
+
+Cleans up resources and temporary files.
+
+```bash
+#!/bin/bash
+# cleanup.sh - Clean up resources
+set -euo pipefail
+
+TYPE="${1:-temp}"
+
+echo "🧹 Cleaning up $TYPE resources"
+
+case $TYPE in
+    temp)
+        # Clean temporary files
+        find /tmp -name "earna-*" -mtime +1 -delete
+        rm -rf node_modules/.cache
+        rm -rf .next/cache
+        ;;
+
+    docker)
+        # Clean Docker resources
+        docker system prune -af --volumes
+        ;;
+
+    k8s)
+        # Clean Kubernetes resources
+        kubectl delete pods --field-selector=status.phase=Failed
+        kubectl delete pods --field-selector=status.phase=Succeeded
+        ;;
+
+    logs)
+        # Clean old logs
+        find logs/ -name "*.log" -mtime +30 -delete
+        ;;
+
+    all)
+        $0 temp
+        $0 docker
+        $0 k8s
+        $0 logs
+        ;;
+
+    *)
+        echo "Unknown type: $TYPE"
+        echo "Options: temp, docker, k8s, logs, all"
+        exit 1
+        ;;
+esac
+
+echo "✅ Cleanup complete"
+```
+
+## GitHub Actions Integration
+
+### CI/CD Script Triggers
+
+```yaml
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup environment
+        run: ./scripts/utilities/env-setup.sh
+
+      - name: Deploy Console
+        if: contains(github.event.head_commit.message, '[console]')
+        run: ./scripts/deployment/deploy-console.sh ${{ inputs.environment }}
+
+      - name: Deploy Platform
+        if: contains(github.event.head_commit.message, '[platform]')
+        run: ./scripts/deployment/deploy-platform.sh
+
+      - name: Health Check
+        run: ./scripts/utilities/health-check.sh all ${{ inputs.environment }}
+```
+
+## Script Best Practices
+
+### Error Handling
+
+```bash
+# Always use strict mode
+set -euo pipefail
+
+# Trap errors
+trap 'echo "Error on line $LINENO"' ERR
+
+# Cleanup on exit
+trap cleanup EXIT
+
+cleanup() {
+    rm -f /tmp/tempfile
+    echo "Cleaned up"
+}
+```
+
+### Logging
+
+```bash
+# Centralized logging function
+log() {
+    local level=$1
+    shift
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] [$level] $*" | tee -a $LOG_FILE
+}
+
+log INFO "Starting deployment"
+log ERROR "Failed to connect"
+```
+
+### Configuration Management
+
+```bash
+# Source configuration
+if [ -f config/production.conf ]; then
+    source config/production.conf
+else
+    echo "Configuration file not found"
+    exit 1
+fi
+
+# Use environment variables with defaults
+DATABASE_URL="${DATABASE_URL:-postgresql://localhost/earna}"
+REDIS_URL="${REDIS_URL:-redis://localhost:6379}"
+```
+
+### Idempotency
+
+```bash
+# Make scripts idempotent
+create_resource() {
+    if resource_exists; then
+        echo "Resource already exists"
+        return 0
+    fi
+
+    # Create resource
+    actually_create_resource
+}
+```
+
+## Troubleshooting Scripts
+
+### Common Issues
+
+| Issue | Script | Solution |
+|-------|--------|----------|
+| Deployment failure | `rollback.sh` | Roll back to previous version |
+| Secret rotation issues | `rotate-secrets.sh --dry-run` | Test rotation without applying |
+| Permission errors | `audit-permissions.sh` | Audit and fix IAM roles |
+| Health check failures | `health-check.sh <service>` | Check specific service health |
+| Resource cleanup | `cleanup.sh all` | Clean all temporary resources |
+
+### Debug Mode
+
+Enable debug mode in any script:
+
+```bash
+# Run with debug output
+DEBUG=true ./scripts/deployment/deploy-console.sh
+
+# Or use bash debugging
+bash -x ./scripts/deployment/deploy-console.sh
+```
+
+## Script Maintenance
+
+### Version Control
+
+- All scripts are version controlled in Git
+- Use semantic versioning for major changes
+- Document breaking changes in CHANGELOG
+
+### Testing
+
+```bash
+# Test scripts in dry-run mode
+DRY_RUN=true ./scripts/security/rotate-secrets.sh
+
+# Use shellcheck for linting
+shellcheck scripts/**/*.sh
+
+# Run integration tests
+./tests/scripts/integration.sh
+```
+
+### Documentation
+
+- Keep inline comments up to date
+- Document all parameters and environment variables
+- Include examples in script headers
+- Update this documentation when adding new scripts
+
+## Next Steps
+
+1. Review and customize scripts for your environment
+2. Set up proper secret management
+3. Configure monitoring and alerting
+4. Establish script execution permissions
+5. Create runbooks for common operations
+
+## References
+
+- [Bash Best Practices](https://github.com/progrium/bashstyle)
+- [Google Cloud CLI](https://cloud.google.com/sdk/gcloud)
+- [Kubernetes kubectl](https://kubernetes.io/docs/reference/kubectl/)
+- [Terraform CLI](https://www.terraform.io/cli)
