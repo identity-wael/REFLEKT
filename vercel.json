@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "src/app/**/*.ts": {
+      "maxDuration": 30
+    }
+  },
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./",
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next"
+}
