@@ -1,0 +1,283 @@
+---
+title: Architecture Decisions
+description: Key technical decisions and rationale behind Earna AI Console design
+---
+
+import { Callout, Table } from 'nextra/components'
+
+# Architecture Decisions
+
+This document records the key architectural decisions made for Earna AI Console and the rationale behind them.
+
+## Core Technology Stack
+
+### Why Next.js 15?
+
+**Decision**: Use Next.js 15 with App Router as the primary framework.
+
+**Rationale**:
+- **App Router**: Modern React Server Components for better performance
+- **Edge Runtime**: Optimal for AI streaming responses
+- **Built-in Optimizations**: Automatic code splitting, image optimization
+- **TypeScript First**: Excellent TypeScript support out of the box
+- **Vercel Integration**: Seamless deployment and edge functions
+
+**Alternatives Considered**:
+- Remix: Good alternative but less AI SDK integration
+- Vite + React: More configuration required
+- Nuxt 3: Would require Vue ecosystem
+
+### Why GPT-4o as Primary Model?
+
+**Decision**: GPT-4o as default with multi-model support.
+
+**Rationale**:
+- **Performance**: Best balance of speed and quality (2-3x faster than GPT-4)
+- **Cost Effective**: ~70% cheaper than GPT-4 Turbo
+- **128K Context**: Sufficient for most conversations
+- **Vision Capable**: Supports image inputs
+- **Function Calling**: Advanced tool use capabilities
+
+**Trade-offs**:
+- Not the absolute best model (Claude 3 Opus scores higher on some benchmarks)
+- Requires OpenAI dependency
+- No local/offline option
+
+### Why Supabase?
+
+**Decision**: Supabase for backend infrastructure.
+
+**Rationale**:
+- **All-in-One**: Database, auth, storage, realtime in one service
+- **PostgreSQL**: Robust, battle-tested database
+- **Row Level Security**: Database-level security policies
+- **Real-time**: Built-in WebSocket support
+- **Open Source**: Can self-host if needed
+- **Free Tier**: Generous limits for development
+
+**Alternatives Considered**:
+- Firebase: No PostgreSQL, vendor lock-in
+- AWS Amplify: More complex, higher learning curve
+- Custom Backend: More maintenance overhead
+- PlanetScale + Clerk: Multiple services to manage
+
+## AI Integration Decisions
+
+### Why Vercel AI SDK v5?
+
+**Decision**: Use Vercel AI SDK for unified AI provider interface.
+
+**Rationale**:
+- **Provider Agnostic**: Single API for 20+ providers
+- **Streaming First**: Built for real-time responses
+- **Type Safety**: Full TypeScript support
+- **Edge Compatible**: Works in edge runtime
+- **Active Development**: Regular updates and new features
+
+**Implementation**:
+```typescript
+// Unified interface regardless of provider
+const result = await streamText({
+  model: openai('gpt-4o'), // or anthropic('claude-3-opus')
+  messages,
+  temperature: 0.7
+});
+```
+
+### Why Support Multiple Models?
+
+**Decision**: Allow hot-swapping between AI models.
+
+**Rationale**:
+- **Flexibility**: Users can choose based on needs
+- **Fallbacks**: Automatic failover if one service is down
+- **Cost Control**: Switch to cheaper models for simple tasks
+- **Comparison**: A/B test responses from different models
+- **Future Proof**: Easy to add new models
+
+## Frontend Architecture
+
+### Why Tailwind CSS?
+
+**Decision**: Tailwind CSS with shadcn/ui components.
+
+**Rationale**:
+- **Rapid Development**: Utility-first approach
+- **Consistency**: Design system built-in
+- **Performance**: Minimal CSS output
+- **Component Library**: shadcn/ui provides accessible components
+- **Customization**: Easy to theme and modify
+
+**Trade-offs**:
+- Learning curve for utility classes
+- HTML can become verbose
+- Requires PostCSS build step
+
+### Why Client Components for Chat?
+
+**Decision**: Use client components for chat interface.
+
+**Rationale**:
+- **Real-time Updates**: Need immediate UI feedback
+- **WebSocket Support**: Client-side connection management
+- **State Management**: Complex interaction states
+- **Optimistic UI**: Instant user feedback
+
+```typescript
+'use client' // Required for interactive features
+
+export function ChatInterface() {
+  // Real-time state management
+  const [messages, setMessages] = useState([]);
+  // WebSocket connections
+  const { sendMessage } = useChat();
+}
+```
+
+## Data Architecture
+
+### Why PostgreSQL with RLS?
+
+**Decision**: PostgreSQL with Row Level Security policies.
+
+**Rationale**:
+- **ACID Compliance**: Data consistency guaranteed
+- **JSON Support**: Flexible schema for messages
+- **Row Level Security**: User data isolation at DB level
+- **Performance**: Excellent query performance with indexes
+- **Extensions**: pgvector for embeddings (future)
+
+**RLS Example**:
+```sql
+-- Users can only see their own conversations
+CREATE POLICY "Users can view own conversations"
+ON conversations FOR SELECT
+USING (auth.uid() = user_id);
+```
+
+### Why Separate Message Storage?
+
+**Decision**: Store messages in database, not in browser.
+
+**Rationale**:
+- **Persistence**: Conversations survive browser clears
+- **Multi-device**: Access from any device
+- **Analytics**: Can analyze usage patterns
+- **Backup**: Centralized data backup
+- **Sharing**: Future feature for shared conversations
+
+## Security Decisions
+
+### Why Anonymous Access?
+
+**Decision**: Allow anonymous users with limits.
+
+**Rationale**:
+- **Low Friction**: Users can try without signup
+- **Progressive Enhancement**: Upgrade to account for more features
+- **Privacy Option**: Some users prefer anonymity
+- **Conversion Path**: Try before committing
+
+**Implementation**:
+- 10 messages/day for anonymous
+- 100 messages/day for registered
+- IP-based rate limiting
+
+### Why Environment Variables?
+
+**Decision**: All secrets in environment variables.
+
+**Rationale**:
+- **Security**: Never commit secrets to code
+- **Flexibility**: Different values per environment
+- **Platform Support**: Works with all deployment platforms
+- **Best Practice**: Industry standard approach
+
+## Performance Decisions
+
+### Why Edge Functions?
+
+**Decision**: Deploy API routes as edge functions.
+
+**Rationale**:
+- **Global Distribution**: Low latency worldwide
+- **Auto-scaling**: Handles traffic spikes
+- **Cost Effective**: Pay per request
+- **Cold Start**: Minimal cold start times
+
+### Why Streaming Responses?
+
+**Decision**: Stream all AI responses.
+
+**Rationale**:
+- **User Experience**: Immediate feedback
+- **Perceived Performance**: Feels faster
+- **Memory Efficient**: No need to buffer entire response
+- **Natural Interaction**: Mimics human conversation
+
+## Deployment Decisions
+
+### Why Vercel?
+
+**Decision**: Vercel as primary deployment platform.
+
+**Rationale**:
+- **Next.js Optimization**: Best performance for Next.js
+- **Global CDN**: Automatic edge distribution
+- **Preview Deployments**: Every PR gets a preview
+- **Analytics**: Built-in Web Vitals
+- **DX**: Excellent developer experience
+
+**Alternatives Available**:
+- Netlify: Good alternative
+- Railway: Full stack platform
+- Self-host: Docker support included
+
+### Why Monorepo Structure?
+
+**Decision**: Three separate Next.js apps, not monorepo.
+
+**Rationale**:
+- **Independent Deployment**: Each app deploys separately
+- **Team Scalability**: Teams can work independently
+- **Clear Boundaries**: No shared dependencies issues
+- **Simpler Setup**: Easier to understand
+
+**Structure**:
+```
+earna-ai/
+├── console/     # Main chat application
+├── apps/        # Marketing site
+└── docs-nextra/ # Documentation
+```
+
+## Future Considerations
+
+### Planned Enhancements
+
+1. **Vector Database**: Add pgvector for semantic search
+2. **Edge Caching**: Cache AI responses at edge
+3. **WebRTC Voice**: Direct browser-to-browser voice
+4. **Local Models**: Ollama integration for privacy
+5. **Plugins System**: Extensible architecture
+
+### Scaling Considerations
+
+- **Database**: Can scale to millions of messages
+- **Storage**: S3-compatible for unlimited files
+- **Compute**: Edge functions auto-scale
+- **Models**: Easy to add new providers
+
+<Callout type="info">
+These decisions are not set in stone. As requirements evolve, we'll revisit and update these choices.
+</Callout>
+
+## Decision Log
+
+| Date | Decision | Reason |
+|---|---|---|
+| 2024-01 | Next.js 15 App Router | Better performance, RSC support |
+| 2024-02 | GPT-4o as primary | Cost/performance balance |
+| 2024-02 | Vercel AI SDK v5 | Unified provider interface |
+| 2024-03 | Supabase backend | All-in-one solution |
+| 2024-03 | Anonymous access | Lower barrier to entry |

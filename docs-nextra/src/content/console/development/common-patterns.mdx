@@ -1,0 +1,605 @@
+---
+title: Common Patterns
+description: Implementation patterns and code recipes for Earna AI Console
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# Common Patterns
+
+Practical implementation patterns and reusable code recipes for extending Earna AI Console.
+
+## AI Integration Patterns
+
+### Adding a New AI Model
+
+<Tabs items={['1. Model Configuration', '2. Environment Variables', '3. UI Integration']}>
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/models.ts
+    import { createMyProvider } from '@ai-sdk/my-provider';
+
+    const myProvider = createMyProvider({
+      apiKey: process.env.MY_PROVIDER_API_KEY!,
+    });
+
+    export const modelConfigs = {
+      // ... existing models
+      'my-new-model': {
+        provider: 'my-provider',
+        model: myProvider('my-model-name'),
+        name: 'My New Model',
+        description: 'Description of the model',
+        contextWindow: 32000,
+        maxTokens: 4096,
+        inputCost: 0.001, // per 1K tokens
+        outputCost: 0.002,
+        supportsImages: false,
+        supportsTools: true,
+      }
+    };
+
+    export function getModel(modelId: string) {
+      const config = modelConfigs[modelId];
+      if (!config) {
+        throw new Error(`Model ${modelId} not found`);
+      }
+      return config.model;
+    }
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```env
+    # Add to .env.local and .env.example
+    MY_PROVIDER_API_KEY=your-api-key-here
+    ```
+  </Tabs.Tab>
+  
+  <Tabs.Tab>
+    ```typescript
+    // components/chat/model-selector.tsx
+    import { modelConfigs } from '@/lib/ai/models';
+
+    export function ModelSelector() {
+      return (
+        <Select>
+          {Object.entries(modelConfigs).map(([id, config]) => (
+            <SelectItem key={id} value={id}>
+              <div className="flex items-center gap-2">
+                <span>{config.name}</span>
+                <Badge variant="secondary">
+                  {config.provider}
+                </Badge>
+              </div>
+            </SelectItem>
+          ))}
+        </Select>
+      );
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### Streaming Chat Response
+
+```typescript
+// app/api/chat/route.ts
+import { streamText } from 'ai';
+import { getModel } from '@/lib/ai/models';
+
+export async function POST(req: Request) {
+  const { messages, model = 'gpt-4o' } = await req.json();
+  
+  try {
+    const result = await streamText({
+      model: getModel(model),
+      messages,
+      temperature: 0.7,
+      maxTokens: 4096,
+      onFinish: async ({ text, usage }) => {
+        // Log usage for analytics
+        await logTokenUsage({
+          model,
+          inputTokens: usage.promptTokens,
+          outputTokens: usage.completionTokens,
+        });
+      },
+    });
+
+    return result.toDataStreamResponse();
+  } catch (error) {
+    // Handle rate limits with fallback
+    if (error.code === 'rate_limit_exceeded') {
+      const fallbackResult = await streamText({
+        model: getModel('gpt-4o-mini'), // Cheaper fallback
+        messages,
+      });
+      return fallbackResult.toDataStreamResponse();
+    }
+    
+    throw error;
+  }
+}
+```
+
+### Model Switching Mid-Conversation
+
+```typescript
+// hooks/use-chat.ts
+export function useChat() {
+  const [currentModel, setCurrentModel] = useState('gpt-4o');
+  const [messages, setMessages] = useState([]);
+
+  const sendMessage = async (content: string) => {
+    const newMessage = { role: 'user', content };
+    const updatedMessages = [...messages, newMessage];
+    
+    setMessages(updatedMessages);
+
+    // Stream response with current model
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: updatedMessages,
+        model: currentModel, // Use currently selected model
+      }),
+    });
+
+    // Handle streaming response...
+  };
+
+  const switchModel = (newModel: string) => {
+    setCurrentModel(newModel);
+    // Continue conversation with new model
+  };
+
+  return { messages, sendMessage, switchModel, currentModel };
+}
+```
+
+## Database Patterns
+
+### User Message Limits
+
+```typescript
+// lib/supabase/auth.ts
+export async function checkMessageLimit(userId: string) {
+  const { data: user } = await supabase
+    .from('users')
+    .select('daily_message_count, is_pro')
+    .eq('id', userId)
+    .single();
+
+  const limit = user?.is_pro ? 100 : 10;
+  
+  if (user?.daily_message_count >= limit) {
+    throw new Error('Daily message limit reached');
+  }
+
+  // Increment counter
+  await supabase
+    .from('users')
+    .update({ 
+      daily_message_count: user.daily_message_count + 1 
+    })
+    .eq('id', userId);
+}
+```
+
+### Conversation Management
+
+```typescript
+// lib/supabase/conversations.ts
+export async function createConversation(
+  userId: string, 
+  title?: string,
+  model: string = 'gpt-4o'
+) {
+  const { data, error } = await supabase
+    .from('conversations')
+    .insert({
+      user_id: userId,
+      title: title || 'New Conversation',
+      model,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function saveMessage(
+  conversationId: string,
+  role: 'user' | 'assistant',
+  content: string
+) {
+  const { error } = await supabase
+    .from('messages')
+    .insert({
+      conversation_id: conversationId,
+      role,
+      content,
+    });
+
+  if (error) throw error;
+}
+```
+
+### Real-time Updates
+
+```typescript
+// hooks/use-realtime-chat.ts
+export function useRealtimeChat(conversationId: string) {
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel(`conversation:${conversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`,
+        },
+        (payload) => {
+          setMessages(prev => [...prev, payload.new]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId]);
+
+  return messages;
+}
+```
+
+## Component Patterns
+
+### Error Boundaries
+
+```typescript
+// components/error-boundary.tsx
+interface ErrorBoundaryProps {
+  children: React.ReactNode;
+  fallback?: React.ComponentType<{ error: Error }>;
+}
+
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  { hasError: boolean; error?: Error }
+> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+    // Send to error tracking service
+    if (typeof window !== 'undefined') {
+      window.Sentry?.captureException(error);
+    }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const Fallback = this.props.fallback || DefaultErrorFallback;
+      return <Fallback error={this.state.error!} />;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+### Loading States
+
+```typescript
+// components/ui/loading-state.tsx
+interface LoadingStateProps {
+  isLoading: boolean;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+}
+
+export function LoadingState({ 
+  isLoading, 
+  children, 
+  fallback = <Spinner /> 
+}: LoadingStateProps) {
+  return (
+    <div className="relative">
+      {children}
+      {isLoading && (
+        <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+          {fallback}
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+### Optimistic Updates
+
+```typescript
+// hooks/use-optimistic-chat.ts
+export function useOptimisticChat() {
+  const [messages, setMessages] = useState([]);
+  const [optimisticMessages, setOptimisticMessages] = useState([]);
+
+  const sendMessage = async (content: string) => {
+    const tempId = Math.random().toString(36);
+    const optimisticMessage = {
+      id: tempId,
+      role: 'user' as const,
+      content,
+      isOptimistic: true,
+    };
+
+    // Show immediately
+    setOptimisticMessages(prev => [...prev, optimisticMessage]);
+
+    try {
+      // Send to server
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+      });
+
+      const savedMessage = await response.json();
+      
+      // Replace optimistic with real message
+      setMessages(prev => [...prev, savedMessage]);
+      setOptimisticMessages(prev => 
+        prev.filter(msg => msg.id !== tempId)
+      );
+    } catch (error) {
+      // Remove failed optimistic message
+      setOptimisticMessages(prev => 
+        prev.filter(msg => msg.id !== tempId)
+      );
+      throw error;
+    }
+  };
+
+  const allMessages = [...messages, ...optimisticMessages];
+  return { messages: allMessages, sendMessage };
+}
+```
+
+## Authentication Patterns
+
+### Protected Routes
+
+```typescript
+// components/auth/protected-route.tsx
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+  requireAuth?: boolean;
+  redirectTo?: string;
+}
+
+export function ProtectedRoute({ 
+  children, 
+  requireAuth = true, 
+  redirectTo = '/login' 
+}: ProtectedRouteProps) {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  
+  if (requireAuth && !user) {
+    redirect(redirectTo);
+    return null;
+  }
+  
+  return <>{children}</>;
+}
+```
+
+### Anonymous Access
+
+```typescript
+// lib/auth/anonymous.ts
+export async function createAnonymousUser() {
+  const tempId = `anon_${Math.random().toString(36).substr(2, 9)}`;
+  
+  // Store in localStorage for session persistence
+  localStorage.setItem('anonymous_user_id', tempId);
+  
+  return {
+    id: tempId,
+    isAnonymous: true,
+    dailyMessageCount: 0,
+    maxDailyMessages: 10,
+  };
+}
+
+export function getAnonymousUser() {
+  const id = localStorage.getItem('anonymous_user_id');
+  if (!id) return null;
+  
+  return {
+    id,
+    isAnonymous: true,
+    dailyMessageCount: 0,
+    maxDailyMessages: 10,
+  };
+}
+```
+
+## File Upload Patterns
+
+### Secure File Handling
+
+```typescript
+// app/api/upload/route.ts
+import { createServerClient } from '@/lib/supabase/server';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+
+export async function POST(req: Request) {
+  const formData = await req.formData();
+  const file = formData.get('file') as File;
+  
+  // Validate file
+  if (!file) {
+    return Response.json({ error: 'No file provided' }, { status: 400 });
+  }
+  
+  if (file.size > MAX_FILE_SIZE) {
+    return Response.json({ error: 'File too large' }, { status: 400 });
+  }
+  
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return Response.json({ error: 'Invalid file type' }, { status: 400 });
+  }
+  
+  // Upload to Supabase Storage
+  const supabase = createServerClient();
+  const fileName = `${Date.now()}-${file.name}`;
+  
+  const { data, error } = await supabase.storage
+    .from('user-uploads')
+    .upload(fileName, file);
+    
+  if (error) {
+    return Response.json({ error: 'Upload failed' }, { status: 500 });
+  }
+  
+  return Response.json({ url: data.path });
+}
+```
+
+## Performance Patterns
+
+### Debounced Search
+
+```typescript
+// hooks/use-debounced-search.ts
+export function useDebouncedSearch(
+  searchFn: (query: string) => Promise<any[]>,
+  delay: number = 300
+) {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  const debouncedQuery = useDebounce(query, delay);
+  
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setResults([]);
+      return;
+    }
+    
+    setLoading(true);
+    searchFn(debouncedQuery)
+      .then(setResults)
+      .finally(() => setLoading(false));
+  }, [debouncedQuery, searchFn]);
+  
+  return { query, setQuery, results, loading };
+}
+```
+
+### Memoized Components
+
+```typescript
+// components/chat/message-item.tsx
+interface MessageItemProps {
+  message: Message;
+  onEdit?: (content: string) => void;
+}
+
+export const MessageItem = React.memo<MessageItemProps>(({ 
+  message, 
+  onEdit 
+}) => {
+  // Expensive formatting logic
+  const formattedContent = useMemo(() => {
+    return formatMarkdown(message.content);
+  }, [message.content]);
+  
+  return (
+    <div className="message">
+      <div dangerouslySetInnerHTML={{ __html: formattedContent }} />
+      {onEdit && (
+        <Button onClick={() => onEdit(message.content)}>
+          Edit
+        </Button>
+      )}
+    </div>
+  );
+});
+```
+
+<Callout type="info">
+**Pro Tip**: These patterns are battle-tested and follow Next.js and React best practices. Copy and adapt them for your specific use case.
+</Callout>
+
+## Testing Patterns
+
+### API Route Testing
+
+```typescript
+// __tests__/api/chat.test.ts
+import { POST } from '@/app/api/chat/route';
+
+describe('/api/chat', () => {
+  it('should stream chat response', async () => {
+    const request = new Request('http://localhost/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: 'Hello' }],
+        model: 'gpt-4o'
+      }),
+    });
+    
+    const response = await POST(request);
+    
+    expect(response.ok).toBe(true);
+    expect(response.headers.get('content-type')).toContain('text/event-stream');
+  });
+});
+```
+
+### Component Testing
+
+```typescript
+// __tests__/components/chat-interface.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { ChatInterface } from '@/components/chat/chat-interface';
+
+describe('ChatInterface', () => {
+  it('should send message on enter key', async () => {
+    const onSendMessage = jest.fn();
+    
+    render(<ChatInterface onSendMessage={onSendMessage} />);
+    
+    const input = screen.getByPlaceholderText('Type a message...');
+    fireEvent.change(input, { target: { value: 'Hello' } });
+    fireEvent.keyDown(input, { key: 'Enter', ctrlKey: true });
+    
+    await waitFor(() => {
+      expect(onSendMessage).toHaveBeenCalledWith('Hello');
+    });
+  });
+});
+```

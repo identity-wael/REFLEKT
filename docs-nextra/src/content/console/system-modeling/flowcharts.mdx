@@ -1,0 +1,592 @@
+import { Tabs } from 'nextra/components'
+
+# Process Flowcharts
+
+## Chat Conversation Flow with Supabase
+
+This flowchart illustrates the actual chat flow using Supabase backend, multi-model AI support, and real-time messaging.
+
+```mermaid
+flowchart TB
+    Start([User Opens App])
+
+    AuthCheck{User<br/>Authenticated?}
+    
+    AnonUser[Create Anonymous<br/>Session]
+    AuthUser[Load User<br/>Profile]
+    
+    LoadChats[Load Chats<br/>from Supabase]
+    
+    SelectChat{Select or<br/>Create Chat?}
+    
+    CreateChat[Create New Chat<br/>in Supabase]
+    SelectExisting[Select Existing<br/>Chat]
+    
+    MessageInput[User Types<br/>Message]
+    
+    DailyLimit{Daily Limit<br/>Reached?}
+    
+    SelectModel[Select AI Model<br/>GPT-4o - Default]
+    
+    SaveUserMsg[Save to messages<br/>table]
+    
+    ModelRouter[Route to<br/>Selected Model]
+    
+    GPT4API[GPT-4o<br/>Primary API]
+    ClaudeAPI[Claude 3 Opus<br/>Alternative]
+    GeminiAPI[Gemini Pro<br/>Alternative]
+    
+    ToolExecution{Tools<br/>Required?}
+    
+    ExecuteTools[Execute<br/>Tool Functions]
+    
+    GenerateResponse[Generate AI<br/>Response]
+    
+    SaveAIMsg[Save to messages<br/>table with usage]
+    
+    RealtimeUpdate[Trigger Realtime<br/>Subscription]
+    
+    StreamToClient[Stream Response<br/>via SSE]
+    
+    UserReads([User Reads Response])
+    
+    AttachFile{Attach<br/>File?}
+    
+    UploadToStorage[Upload to<br/>Supabase Storage]
+    SaveAttachment[Save to<br/>chat_attachments]
+    
+    ContinueChat{Continue<br/>Chat?}
+    
+    UpdateCounts[Update message<br/>counts]
+    
+    EndSession[End Session]
+    
+    Start --> AuthCheck
+    
+    AuthCheck -->|No| AnonUser
+    AuthCheck -->|Yes| AuthUser
+    
+    AnonUser --> LoadChats
+    AuthUser --> LoadChats
+    
+    LoadChats --> SelectChat
+    
+    SelectChat -->|Create| CreateChat
+    SelectChat -->|Select| SelectExisting
+    
+    CreateChat --> MessageInput
+    SelectExisting --> MessageInput
+    
+    MessageInput --> DailyLimit
+    
+    DailyLimit -->|Yes| EndSession
+    DailyLimit -->|No| SelectModel
+    
+    SelectModel --> SaveUserMsg
+    
+    SaveUserMsg --> ModelRouter
+    
+    ModelRouter -->|Default| GPT4API
+    ModelRouter -->|Alternative| ClaudeAPI
+    ModelRouter -->|Alternative| GeminiAPI
+    
+    GPT4API --> ToolExecution
+    ClaudeAPI --> ToolExecution
+    GeminiAPI --> ToolExecution
+    
+    ToolExecution -->|Yes| ExecuteTools
+    ToolExecution -->|No| GenerateResponse
+    
+    ExecuteTools --> GenerateResponse
+    
+    GenerateResponse --> SaveAIMsg
+    
+    SaveAIMsg --> RealtimeUpdate
+    
+    RealtimeUpdate --> StreamToClient
+    
+    StreamToClient --> UserReads
+    
+    UserReads --> AttachFile
+    
+    AttachFile -->|Yes| UploadToStorage
+    AttachFile -->|No| ContinueChat
+    
+    UploadToStorage --> SaveAttachment
+    SaveAttachment --> ContinueChat
+    
+    ContinueChat -->|Yes| MessageInput
+    ContinueChat -->|No| UpdateCounts
+    
+    UpdateCounts --> EndSession
+
+    style Start fill:#10B981
+    style GPT4API fill:#8B5CF6
+    style ClaudeAPI fill:#EC4899
+    style GeminiAPI fill:#F59E0B
+    style SaveUserMsg fill:#3ECF8E
+    style SaveAIMsg fill:#3ECF8E
+    style RealtimeUpdate fill:#3ECF8E
+```
+
+## User Authentication Flow with Supabase
+
+This flowchart shows the actual authentication process using Supabase Auth, including anonymous users and premium features.
+
+```mermaid
+flowchart TB
+    Start([User Visits App])
+    
+    CheckSession{Existing<br/>Session?}
+    
+    LoadSession[Load Session<br/>from Supabase Auth]
+    
+    ValidSession{Session<br/>Valid?}
+    
+    ShowOptions[Show Auth<br/>Options]
+    
+    AuthChoice{User<br/>Choice}
+    
+    EmailSignup[Email<br/>Signup]
+    GoogleOAuth[Google<br/>OAuth]
+    AnonymousAuth[Anonymous<br/>Auth]
+    
+    CreateSupabaseUser[Create user in<br/>auth.users]
+    
+    CreateProfile[Create profile in<br/>public.users]
+    
+    SetAnonymous[Set anonymous<br/>flag = true]
+    SetRegistered[Set anonymous<br/>flag = false]
+    
+    CheckPremium{Premium<br/>User?}
+    
+    SetPremium[Set premium<br/>flag = true]
+    SetFree[Set premium<br/>flag = false]
+    
+    InitLimits[Initialize Daily<br/>Message Limits]
+    
+    FreeLimit[Set limit = 10<br/>messages/day]
+    ProLimit[Set limit = 100<br/>messages/day]
+    
+    CreateSession[Create JWT<br/>Session]
+    
+    SetRLS[Apply RLS<br/>Policies]
+    
+    LoadUserData[Load chats &<br/>messages]
+    
+    Dashboard([User Dashboard])
+    
+    SessionExpired[Session<br/>Expired]
+    RefreshToken[Refresh<br/>Token]
+    
+    Start --> CheckSession
+    
+    CheckSession -->|Yes| LoadSession
+    CheckSession -->|No| ShowOptions
+    
+    LoadSession --> ValidSession
+    
+    ValidSession -->|Yes| LoadUserData
+    ValidSession -->|No| SessionExpired
+    
+    SessionExpired --> RefreshToken
+    RefreshToken --> ShowOptions
+    
+    ShowOptions --> AuthChoice
+    
+    AuthChoice -->|Email| EmailSignup
+    AuthChoice -->|Google| GoogleOAuth
+    AuthChoice -->|Skip| AnonymousAuth
+    
+    EmailSignup --> CreateSupabaseUser
+    GoogleOAuth --> CreateSupabaseUser
+    AnonymousAuth --> CreateSupabaseUser
+    
+    CreateSupabaseUser --> CreateProfile
+    
+    AnonymousAuth --> SetAnonymous
+    EmailSignup --> SetRegistered
+    GoogleOAuth --> SetRegistered
+    
+    SetAnonymous --> CheckPremium
+    SetRegistered --> CheckPremium
+    
+    CheckPremium -->|Yes| SetPremium
+    CheckPremium -->|No| SetFree
+    
+    SetPremium --> ProLimit
+    SetFree --> FreeLimit
+    
+    ProLimit --> InitLimits
+    FreeLimit --> InitLimits
+    
+    CreateProfile --> InitLimits
+    
+    InitLimits --> CreateSession
+    
+    CreateSession --> SetRLS
+    
+    SetRLS --> LoadUserData
+    
+    LoadUserData --> Dashboard
+    
+    style Start fill:#10B981
+    style CreateSupabaseUser fill:#3ECF8E
+    style CreateProfile fill:#3ECF8E
+    style SetRLS fill:#3ECF8E
+    style Dashboard fill:#3B82F6
+    style SessionExpired fill:#EF4444
+```
+
+## File Attachment Flow with Supabase Storage
+
+This flowchart shows how file attachments are handled using Supabase Storage buckets.
+
+```mermaid
+flowchart TB
+    Start([User Selects File])
+    
+    FileSelect[Choose File<br/>to Upload]
+    
+    FileValidation{Valid File<br/>Type & Size?}
+    
+    AuthCheck{User<br/>Authenticated?}
+    
+    GetChatId[Get Current<br/>Chat ID]
+    
+    GenerateURL[Generate Signed<br/>Upload URL]
+    
+    UploadToStorage[Upload to<br/>Supabase Storage]
+    
+    UploadSuccess{Upload<br/>Successful?}
+    
+    SaveAttachment[Save to<br/>chat_attachments table]
+    
+    UpdateUI[Update Chat UI<br/>with Attachment]
+    
+    NotifyRealtime[Trigger Realtime<br/>Update]
+    
+    Complete([File Attached])
+    
+    Error[Upload<br/>Error]
+    
+    Retry{Retry<br/>Upload?}
+    
+    Start --> FileSelect
+    FileSelect --> FileValidation
+    
+    FileValidation -->|Invalid| Error
+    FileValidation -->|Valid| AuthCheck
+    
+    AuthCheck -->|No| Error
+    AuthCheck -->|Yes| GetChatId
+    
+    GetChatId --> GenerateURL
+    GenerateURL --> UploadToStorage
+    
+    UploadToStorage --> UploadSuccess
+    
+    UploadSuccess -->|No| Error
+    UploadSuccess -->|Yes| SaveAttachment
+    
+    SaveAttachment --> UpdateUI
+    UpdateUI --> NotifyRealtime
+    NotifyRealtime --> Complete
+    
+    Error --> Retry
+    Retry -->|Yes| GenerateURL
+    Retry -->|No| Complete
+
+    style Start fill:#10B981
+    style GenerateURL fill:#3ECF8E
+    style UploadToStorage fill:#3ECF8E
+    style SaveAttachment fill:#3ECF8E
+    style Complete fill:#3B82F6
+    style Error fill:#EF4444
+```
+
+## Improvement Plan Execution Flow
+
+This flowchart shows how credit improvement plans are generated and executed.
+
+```mermaid
+flowchart TB
+    Start([Plan Request])
+    
+    CurrentScore[Get Current<br/>Score]
+    
+    TargetInput[User Sets<br/>Target Score]
+    
+    TimeframeSelect[Select<br/>Timeframe]
+    
+    FactorAnalysis[Analyze Current<br/>Factors]
+    
+    ImpactCalc[Calculate Factor<br/>Impact]
+    
+    ActionIdentify[Identify<br/>Actions]
+    
+    PaymentActions[Payment<br/>Improvements]
+    UtilizationActions[Utilization<br/>Optimization]
+    AccountActions[Account<br/>Management]
+    DisputeActions[Dispute<br/>Opportunities]
+    
+    PriorityCalc[Calculate Action<br/>Priority]
+    
+    TimelineGen[Generate<br/>Timeline]
+    
+    MilestoneSet[Set<br/>Milestones]
+    
+    ReminderSchedule[Schedule<br/>Reminders]
+    
+    PlanValidation{Feasible<br/>Plan?}
+    
+    AdjustPlan[Adjust<br/>Expectations]
+    
+    PlanApproval{User<br/>Approves?}
+    
+    ActivatePlan[Activate<br/>Plan]
+    
+    MonitoringSetup[Setup<br/>Monitoring]
+    
+    NotificationSetup[Setup<br/>Notifications]
+    
+    PlanActive([Plan Active])
+    
+    RevisePlan[Revise<br/>Plan]
+    
+    Start --> CurrentScore
+    CurrentScore --> TargetInput
+    TargetInput --> TimeframeSelect
+    TimeframeSelect --> FactorAnalysis
+    
+    FactorAnalysis --> ImpactCalc
+    ImpactCalc --> ActionIdentify
+    
+    ActionIdentify --> PaymentActions
+    ActionIdentify --> UtilizationActions
+    ActionIdentify --> AccountActions
+    ActionIdentify --> DisputeActions
+    
+    PaymentActions --> PriorityCalc
+    UtilizationActions --> PriorityCalc
+    AccountActions --> PriorityCalc
+    DisputeActions --> PriorityCalc
+    
+    PriorityCalc --> TimelineGen
+    TimelineGen --> MilestoneSet
+    MilestoneSet --> ReminderSchedule
+    
+    ReminderSchedule --> PlanValidation
+    
+    PlanValidation -->|No| AdjustPlan
+    PlanValidation -->|Yes| PlanApproval
+    
+    AdjustPlan --> ActionIdentify
+    
+    PlanApproval -->|No| RevisePlan
+    PlanApproval -->|Yes| ActivatePlan
+    
+    RevisePlan --> TargetInput
+    
+    ActivatePlan --> MonitoringSetup
+    MonitoringSetup --> NotificationSetup
+    NotificationSetup --> PlanActive
+
+    style Start fill:#10B981
+    style ImpactCalc fill:#8B5CF6
+    style PlanActive fill:#10B981
+```
+
+## Real-time Monitoring Flow
+
+This flowchart illustrates the continuous credit monitoring and alert system.
+
+```mermaid
+flowchart TB
+    Start([Monitoring Service])
+    
+    ScheduledCheck[Scheduled<br/>Check]
+    
+    UserList[Get Active<br/>Users]
+    
+    UserLoop{Process Each<br/>User}
+    
+    CheckFrequency{Check<br/>Due?}
+    
+    BureauPoll[Poll Credit<br/>Bureaus]
+    
+    ScoreCompare{Score<br/>Changed?}
+    
+    FactorCompare{Factors<br/>Changed?}
+    
+    ChangeAnalysis[Analyze<br/>Changes]
+    
+    ImpactAssess[Assess<br/>Impact]
+    
+    AlertTrigger{Alert<br/>Needed?}
+    
+    AlertType{Alert<br/>Type}
+    
+    ScoreAlert[Score Change<br/>Alert]
+    UtilizationAlert[Utilization<br/>Alert]
+    PaymentAlert[Payment<br/>Reminder]
+    MilestoneAlert[Milestone<br/>Reached]
+    
+    NotificationSend[Send<br/>Notification]
+    
+    UpdateDashboard[Update<br/>Dashboard]
+    
+    LogActivity[Log<br/>Activity]
+    
+    NextUser[Next<br/>User]
+    
+    SleepCycle[Wait for<br/>Next Cycle]
+    
+    Start --> ScheduledCheck
+    ScheduledCheck --> UserList
+    UserList --> UserLoop
+    
+    UserLoop -->|Has Users| CheckFrequency
+    UserLoop -->|Complete| SleepCycle
+    
+    CheckFrequency -->|No| NextUser
+    CheckFrequency -->|Yes| BureauPoll
+    
+    BureauPoll --> ScoreCompare
+    
+    ScoreCompare -->|No| FactorCompare
+    ScoreCompare -->|Yes| ChangeAnalysis
+    
+    FactorCompare -->|No| NextUser
+    FactorCompare -->|Yes| ChangeAnalysis
+    
+    ChangeAnalysis --> ImpactAssess
+    ImpactAssess --> AlertTrigger
+    
+    AlertTrigger -->|No| UpdateDashboard
+    AlertTrigger -->|Yes| AlertType
+    
+    AlertType -->|Score| ScoreAlert
+    AlertType -->|Utilization| UtilizationAlert
+    AlertType -->|Payment| PaymentAlert
+    AlertType -->|Milestone| MilestoneAlert
+    
+    ScoreAlert --> NotificationSend
+    UtilizationAlert --> NotificationSend
+    PaymentAlert --> NotificationSend
+    MilestoneAlert --> NotificationSend
+    
+    NotificationSend --> UpdateDashboard
+    UpdateDashboard --> LogActivity
+    LogActivity --> NextUser
+    
+    NextUser --> UserLoop
+    SleepCycle --> ScheduledCheck
+
+    style Start fill:#10B981
+    style BureauPoll fill:#F59E0B
+    style ChangeAnalysis fill:#8B5CF6
+    style NotificationSend fill:#3B82F6
+```
+
+## Error Handling Flow
+
+This flowchart shows the comprehensive error handling and recovery mechanisms.
+
+```mermaid
+flowchart TB
+    Start([Error Detected])
+    
+    ErrorClassify[Classify<br/>Error]
+    
+    ErrorType{Error<br/>Type}
+    
+    AuthError[Authentication<br/>Error]
+    APIError[API<br/>Error]
+    AIError[AI Service<br/>Error]
+    DataError[Data<br/>Error]
+    NetworkError[Network<br/>Error]
+    
+    LogError[Log Error<br/>Details]
+    
+    SeverityCheck{Severity<br/>Level}
+    
+    CriticalHandle[Critical<br/>Handler]
+    WarningHandle[Warning<br/>Handler]
+    InfoHandle[Info<br/>Handler]
+    
+    UserImpact{User<br/>Impacted?}
+    
+    UserNotify[Notify<br/>User]
+    
+    RetryLogic{Can<br/>Retry?}
+    
+    RetryAttempt[Retry<br/>Operation]
+    
+    RetrySuccess{Retry<br/>Successful?}
+    
+    FallbackCheck{Fallback<br/>Available?}
+    
+    ExecuteFallback[Execute<br/>Fallback]
+    
+    AlertOps[Alert<br/>Operations Team]
+    
+    RecordMetrics[Record<br/>Metrics]
+    
+    Resolution([Error Resolved])
+    
+    FailureMode([Graceful Failure])
+    
+    Start --> ErrorClassify
+    ErrorClassify --> ErrorType
+    
+    ErrorType -->|Auth| AuthError
+    ErrorType -->|API| APIError
+    ErrorType -->|AI| AIError
+    ErrorType -->|Data| DataError
+    ErrorType -->|Network| NetworkError
+    
+    AuthError --> LogError
+    APIError --> LogError
+    AIError --> LogError
+    DataError --> LogError
+    NetworkError --> LogError
+    
+    LogError --> SeverityCheck
+    
+    SeverityCheck -->|Critical| CriticalHandle
+    SeverityCheck -->|Warning| WarningHandle
+    SeverityCheck -->|Info| InfoHandle
+    
+    CriticalHandle --> AlertOps
+    WarningHandle --> UserImpact
+    InfoHandle --> RecordMetrics
+    
+    AlertOps --> UserImpact
+    
+    UserImpact -->|Yes| UserNotify
+    UserImpact -->|No| RetryLogic
+    
+    UserNotify --> RetryLogic
+    
+    RetryLogic -->|Yes| RetryAttempt
+    RetryLogic -->|No| FallbackCheck
+    
+    RetryAttempt --> RetrySuccess
+    
+    RetrySuccess -->|Yes| Resolution
+    RetrySuccess -->|No| FallbackCheck
+    
+    FallbackCheck -->|Yes| ExecuteFallback
+    FallbackCheck -->|No| FailureMode
+    
+    ExecuteFallback --> Resolution
+    
+    Resolution --> RecordMetrics
+    FailureMode --> RecordMetrics
+
+    style Start fill:#EF4444
+    style CriticalHandle fill:#EF4444
+    style Resolution fill:#10B981
+    style FailureMode fill:#F59E0B
+```

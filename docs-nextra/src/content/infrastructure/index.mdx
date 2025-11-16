@@ -1,0 +1,117 @@
+# Infrastructure & DevOps
+
+This section covers the infrastructure, build systems, and DevOps practices for the Earna AI platform.
+
+## Overview
+
+The Earna AI platform uses modern infrastructure and build tools to ensure efficient development, testing, and deployment across multiple applications.
+
+## Key Technologies
+
+### Infrastructure as Code
+- **[Terraform](./terraform)**: Declarative infrastructure management
+- **GCS Remote State**: Version-controlled infrastructure state
+- **GitHub Actions**: Automated Terraform deployment pipelines
+
+### Cloud Infrastructure
+- **[TigerBeetle on GKE](./tigerbeetle-gke)**: High-performance financial ledger
+- **Google Kubernetes Engine**: Standard cluster with local SSD optimization
+- **Istio Service Mesh**: Traffic management and observability
+- **Prometheus & Grafana**: Comprehensive monitoring stack
+
+### Build & Package Management
+- **[Turborepo](./turborepo-migration)**: Monorepo build orchestration
+- **[PNPM](./pnpm-guide)**: Fast, disk-efficient package manager
+- **Next.js 15.5.2**: React framework for all applications
+- **TypeScript 5.x**: Type-safe development
+
+### Deployment & CI/CD
+- **Vercel**: Serverless deployment platform
+- **GitHub Actions**: Automated workflows
+- **Preview Deployments**: Automatic branch deployments
+- **Workload Identity**: Secure GCP authentication
+
+### Monorepo Structure
+```
+earna-ai/
+├── apps/           # Main application
+├── console/        # Admin console
+├── docs-nextra/    # Documentation site
+├── credit-engine/  # Credit processing engine
+├── turbo.json      # Turborepo configuration
+├── pnpm-workspace.yaml  # Workspace configuration
+└── package.json    # Root package configuration
+```
+
+## Quick Links
+
+### Cloud Infrastructure
+- [TigerBeetle on GKE - Complete Guide](./tigerbeetle-gke)
+- [GKE Cluster Management](./tigerbeetle-gke#gke-standard-cluster-configuration)
+- [Monitoring Stack (Prometheus/Grafana)](./tigerbeetle-gke#monitoring-stack)
+- [Service Mesh Configuration](./tigerbeetle-gke#service-mesh-integration)
+
+### Infrastructure Management
+- [Terraform Infrastructure as Code](./terraform)
+- [GCP Resource Management](./gcp)
+- [Monitoring & Observability](./monitoring)
+
+### Development & Build
+- [Turborepo & PNPM Migration Guide](./turborepo-migration)
+- [Monorepo Best Practices](./monorepo-practices)
+- [Build Pipeline Configuration](./build-pipeline)
+- [Vercel Configuration & Secrets](./vercel-deployment)
+- [Complete Deployment Guide](./deployment-guide)
+
+## Recent Updates
+
+### September 2025
+- ✅ Deployed TigerBeetle 3-node cluster on GKE Standard
+- ✅ Implemented Prometheus & Grafana monitoring stack
+- ✅ Configured StatsD metrics collection for TigerBeetle
+- ✅ Enabled Istio service mesh (excluding TigerBeetle)
+- ✅ Optimized with local SSD nodes (c3-standard-4-lssd)
+- ✅ Set up CloudSQL for Temporal workflow engine
+- ✅ Configured Workload Identity Federation for secure access
+
+### August 2025
+- ✅ Migrated from NPM to PNPM
+- ✅ Implemented Turborepo for build orchestration
+- ✅ Fixed native dependency issues
+- ✅ Optimized D3.js imports for production
+- ✅ Resolved preview deployment 404 errors
+
+## Getting Started
+
+1. **Install PNPM**:
+   ```bash
+   npm install -g pnpm@9.14.4
+   ```
+
+2. **Clone and Install**:
+   ```bash
+   git clone [repository]
+   cd earna-ai
+   pnpm install
+   ```
+
+3. **Run Development**:
+   ```bash
+   # Run all apps
+   pnpm turbo dev
+
+   # Run specific app
+   pnpm --filter console dev
+   ```
+
+4. **Build for Production**:
+   ```bash
+   pnpm turbo build
+   ```
+
+## Support
+
+For infrastructure-related issues or questions:
+- Check the [Troubleshooting Guide](./troubleshooting)
+- Review the [Migration Guide](./turborepo-migration)
+- Contact the DevOps team

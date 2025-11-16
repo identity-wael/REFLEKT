@@ -1,0 +1,28 @@
+/* Global styles for Earna AI Documentation */
+
+/* Remove border from main navbar */
+nav.nx-sticky {
+  border-bottom: none !important;
+}
+
+.dark nav.nx-sticky {
+  border-bottom: none !important;
+}
+
+/* Hide footer on API reference page */
+.api-reference-page ~ footer,
+body:has(.api-reference-page) footer {
+  display: none !important;
+}
+
+/* Ensure full height for API reference */
+.api-reference-container {
+  height: calc(100vh - 64px); /* Subtract navbar height */
+  position: relative;
+}
+
+/* Allow scrolling in Scalar API content */
+.api-reference-container .scalar-api-reference {
+  height: 100%;
+  overflow: auto;
+}

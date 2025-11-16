@@ -1,0 +1,681 @@
+# Security & Encryption
+
+## Overview
+
+The Console application implements multiple layers of security to protect sensitive financial data, including AES-256 encryption, row-level security, and comprehensive authentication mechanisms.
+
+## Encryption Implementation
+
+### AES-256-CBC Encryption
+
+```typescript
+// lib/security/encryption.ts
+import crypto from 'crypto'
+
+export class EncryptionService {
+  private algorithm = 'aes-256-cbc'
+  private key: Buffer
+
+  constructor() {
+    const keyHex = process.env.TOKEN_ENCRYPTION_KEY
+    if (!keyHex || keyHex.length !== 64) {
+      throw new Error('Invalid encryption key: must be 32-byte hex string')
+    }
+    this.key = Buffer.from(keyHex, 'hex')
+  }
+
+  encrypt(plaintext: string): string {
+    const iv = crypto.randomBytes(16)
+    const cipher = crypto.createCipheriv(this.algorithm, this.key, iv)
+
+    let encrypted = cipher.update(plaintext, 'utf8', 'hex')
+    encrypted += cipher.final('hex')
+
+    // Return IV:encrypted format
+    return `${iv.toString('hex')}:${encrypted}`
+  }
+
+  decrypt(ciphertext: string): string {
+    const [ivHex, encrypted] = ciphertext.split(':')
+    if (!ivHex || !encrypted) {
+      throw new Error('Invalid encrypted format')
+    }
+
+    const iv = Buffer.from(ivHex, 'hex')
+    const decipher = crypto.createDecipheriv(this.algorithm, this.key, iv)
+
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8')
+    decrypted += decipher.final('utf8')
+
+    return decrypted
+  }
+
+  // Rotate encryption key
+  async rotateKey(oldKey: string, newKey: string): Promise<void> {
+    const oldService = new EncryptionService()
+    oldService.key = Buffer.from(oldKey, 'hex')
+
+    // Fetch all encrypted data
+    const { data: connections } = await supabase
+      .from('plaid_connections')
+      .select('id, access_token')
+
+    // Re-encrypt with new key
+    for (const conn of connections) {
+      const decrypted = oldService.decrypt(conn.access_token)
+      const reencrypted = this.encrypt(decrypted)
+
+      await supabase
+        .from('plaid_connections')
+        .update({ access_token: reencrypted })
+        .eq('id', conn.id)
+    }
+  }
+}
+```
+
+### Field-Level Encryption
+
+```typescript
+// lib/security/field-encryption.ts
+interface EncryptedField<T> {
+  encrypted: string
+  metadata: {
+    algorithm: string
+    keyVersion: number
+    timestamp: string
+  }
+}
+
+export class FieldEncryption {
+  private keyVersion = parseInt(process.env.KEY_VERSION || '1')
+
+  encryptField<T>(value: T): EncryptedField<T> {
+    const json = JSON.stringify(value)
+    const encrypted = this.encrypt(json)
+
+    return {
+      encrypted,
+      metadata: {
+        algorithm: 'aes-256-cbc',
+        keyVersion: this.keyVersion,
+        timestamp: new Date().toISOString()
+      }
+    }
+  }
+
+  decryptField<T>(field: EncryptedField<T>): T {
+    // Check key version
+    if (field.metadata.keyVersion !== this.keyVersion) {
+      // Handle key rotation
+      return this.decryptWithOldKey(field)
+    }
+
+    const json = this.decrypt(field.encrypted)
+    return JSON.parse(json)
+  }
+}
+```
+
+## Authentication & Authorization
+
+### NextAuth Configuration
+
+```typescript
+// lib/auth/config.ts
+import NextAuth from 'next-auth'
+import { SupabaseAdapter } from '@auth/supabase-adapter'
+import GoogleProvider from 'next-auth/providers/google'
+import EmailProvider from 'next-auth/providers/email'
+
+export const authOptions = {
+  adapter: SupabaseAdapter({
+    url: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    secret: process.env.SUPABASE_SERVICE_ROLE!,
+  }),
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code'
+        }
+      }
+    }),
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD
+        }
+      },
+      from: process.env.EMAIL_FROM
+    })
+  ],
+  callbacks: {
+    async session({ session, user }) {
+      // Add user permissions
+      const permissions = await getUserPermissions(user.id)
+      session.user.permissions = permissions
+      session.user.id = user.id
+      return session
+    },
+    async jwt({ token, user, account }) {
+      if (account && user) {
+        token.accessToken = account.access_token
+        token.userId = user.id
+      }
+      return token
+    }
+  },
+  pages: {
+    signIn: '/auth/signin',
+    signOut: '/auth/signout',
+    error: '/auth/error',
+    verifyRequest: '/auth/verify-request',
+  },
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  }
+}
+```
+
+### Role-Based Access Control (RBAC)
+
+```typescript
+// lib/auth/rbac.ts
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'user',
+  VIEWER = 'viewer'
+}
+
+export enum Permission {
+  // Financial permissions
+  VIEW_ACCOUNTS = 'view_accounts',
+  CONNECT_ACCOUNTS = 'connect_accounts',
+  VIEW_TRANSACTIONS = 'view_transactions',
+  EXPORT_DATA = 'export_data',
+
+  // Admin permissions
+  MANAGE_USERS = 'manage_users',
+  VIEW_AUDIT_LOGS = 'view_audit_logs',
+  CONFIGURE_SYSTEM = 'configure_system'
+}
+
+const rolePermissions: Record<Role, Permission[]> = {
+  [Role.ADMIN]: [
+    Permission.VIEW_ACCOUNTS,
+    Permission.CONNECT_ACCOUNTS,
+    Permission.VIEW_TRANSACTIONS,
+    Permission.EXPORT_DATA,
+    Permission.MANAGE_USERS,
+    Permission.VIEW_AUDIT_LOGS,
+    Permission.CONFIGURE_SYSTEM
+  ],
+  [Role.USER]: [
+    Permission.VIEW_ACCOUNTS,
+    Permission.CONNECT_ACCOUNTS,
+    Permission.VIEW_TRANSACTIONS,
+    Permission.EXPORT_DATA
+  ],
+  [Role.VIEWER]: [
+    Permission.VIEW_ACCOUNTS,
+    Permission.VIEW_TRANSACTIONS
+  ]
+}
+
+export function hasPermission(
+  userRole: Role,
+  permission: Permission
+): boolean {
+  return rolePermissions[userRole]?.includes(permission) ?? false
+}
+
+// Middleware for API routes
+export function requirePermission(permission: Permission) {
+  return async (req: Request) => {
+    const session = await getServerSession()
+    if (!session?.user) {
+      return new Response('Unauthorized', { status: 401 })
+    }
+
+    const userRole = await getUserRole(session.user.id)
+    if (!hasPermission(userRole, permission)) {
+      return new Response('Forbidden', { status: 403 })
+    }
+  }
+}
+```
+
+## Database Security
+
+### Row Level Security (RLS)
+
+```sql
+-- Enable RLS on all tables
+ALTER TABLE plaid_connections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plaid_accounts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE plaid_transactions ENABLE ROW LEVEL SECURITY;
+
+-- User can only see their own data
+CREATE POLICY "Users can view own connections"
+  ON plaid_connections
+  FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert own connections"
+  ON plaid_connections
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own connections"
+  ON plaid_connections
+  FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- Prevent deletion of connections
+CREATE POLICY "No deletion of connections"
+  ON plaid_connections
+  FOR DELETE
+  USING (false);
+
+-- Account visibility
+CREATE POLICY "Users can view linked accounts"
+  ON plaid_accounts
+  FOR SELECT
+  USING (
+    user_id = auth.uid() OR
+    EXISTS (
+      SELECT 1 FROM account_shares
+      WHERE account_id = plaid_accounts.id
+      AND shared_with_user_id = auth.uid()
+      AND expires_at > NOW()
+    )
+  );
+```
+
+### Data Masking
+
+```typescript
+// lib/security/data-masking.ts
+export class DataMasker {
+  // Mask sensitive account numbers
+  maskAccountNumber(accountNumber: string): string {
+    if (accountNumber.length <= 4) return '****'
+    return '*'.repeat(accountNumber.length - 4) + accountNumber.slice(-4)
+  }
+
+  // Mask SSN
+  maskSSN(ssn: string): string {
+    const cleaned = ssn.replace(/\D/g, '')
+    if (cleaned.length !== 9) return '***-**-****'
+    return `***-**-${cleaned.slice(-4)}`
+  }
+
+  // Mask email
+  maskEmail(email: string): string {
+    const [local, domain] = email.split('@')
+    if (local.length <= 2) return '**@' + domain
+    return local[0] + '*'.repeat(local.length - 2) + local.slice(-1) + '@' + domain
+  }
+
+  // Mask API keys
+  maskApiKey(key: string): string {
+    if (key.length <= 8) return '********'
+    return key.slice(0, 4) + '...' + key.slice(-4)
+  }
+
+  // Apply masking to object
+  maskObject<T extends Record<string, any>>(
+    obj: T,
+    fields: Array<keyof T>
+  ): T {
+    const masked = { ...obj }
+
+    for (const field of fields) {
+      if (field.toString().includes('account')) {
+        masked[field] = this.maskAccountNumber(String(obj[field]))
+      } else if (field.toString().includes('ssn')) {
+        masked[field] = this.maskSSN(String(obj[field]))
+      } else if (field.toString().includes('email')) {
+        masked[field] = this.maskEmail(String(obj[field]))
+      } else if (field.toString().includes('key') || field.toString().includes('token')) {
+        masked[field] = this.maskApiKey(String(obj[field]))
+      }
+    }
+
+    return masked
+  }
+}
+```
+
+## API Security
+
+### Rate Limiting
+
+```typescript
+// middleware/rate-limit.ts
+import { Ratelimit } from '@upstash/ratelimit'
+import { Redis } from '@upstash/redis'
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_URL!,
+  token: process.env.UPSTASH_REDIS_TOKEN!,
+})
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(100, '1 m'), // 100 requests per minute
+  analytics: true,
+})
+
+export async function rateLimitMiddleware(request: Request) {
+  const ip = request.headers.get('x-forwarded-for') ?? 'anonymous'
+  const { success, limit, reset, remaining } = await ratelimit.limit(ip)
+
+  if (!success) {
+    return new Response('Too Many Requests', {
+      status: 429,
+      headers: {
+        'X-RateLimit-Limit': limit.toString(),
+        'X-RateLimit-Remaining': remaining.toString(),
+        'X-RateLimit-Reset': new Date(reset).toISOString(),
+      },
+    })
+  }
+}
+```
+
+### CSRF Protection
+
+```typescript
+// lib/security/csrf.ts
+import { randomBytes } from 'crypto'
+
+export class CSRFProtection {
+  private secret = process.env.CSRF_SECRET!
+
+  generateToken(sessionId: string): string {
+    const token = randomBytes(32).toString('hex')
+    const hash = this.hashToken(token, sessionId)
+
+    // Store in session
+    return `${token}.${hash}`
+  }
+
+  verifyToken(token: string, sessionId: string): boolean {
+    const [tokenPart, hashPart] = token.split('.')
+    const expectedHash = this.hashToken(tokenPart, sessionId)
+
+    // Constant-time comparison
+    return crypto.timingSafeEqual(
+      Buffer.from(hashPart),
+      Buffer.from(expectedHash)
+    )
+  }
+
+  private hashToken(token: string, sessionId: string): string {
+    return crypto
+      .createHmac('sha256', this.secret)
+      .update(`${token}.${sessionId}`)
+      .digest('hex')
+  }
+}
+
+// Middleware
+export async function csrfMiddleware(request: Request) {
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(request.method)) {
+    const token = request.headers.get('x-csrf-token')
+    const session = await getSession(request)
+
+    if (!token || !csrf.verifyToken(token, session.id)) {
+      return new Response('Invalid CSRF token', { status: 403 })
+    }
+  }
+}
+```
+
+## Audit Logging
+
+### Comprehensive Audit Trail
+
+```typescript
+// lib/security/audit.ts
+interface AuditLog {
+  id: string
+  timestamp: Date
+  userId: string
+  action: string
+  resource: string
+  resourceId?: string
+  metadata?: Record<string, any>
+  ipAddress: string
+  userAgent: string
+  result: 'success' | 'failure'
+  errorMessage?: string
+}
+
+export class AuditLogger {
+  async log(entry: Omit<AuditLog, 'id' | 'timestamp'>): Promise<void> {
+    const log: AuditLog = {
+      id: crypto.randomUUID(),
+      timestamp: new Date(),
+      ...entry
+    }
+
+    // Store in database
+    await supabase.from('audit_logs').insert(log)
+
+    // Alert on suspicious activity
+    if (this.isSuspicious(log)) {
+      await this.alertSecurityTeam(log)
+    }
+  }
+
+  private isSuspicious(log: AuditLog): boolean {
+    // Multiple failed login attempts
+    if (log.action === 'login' && log.result === 'failure') {
+      const recentFailures = await this.getRecentFailures(log.userId)
+      if (recentFailures > 5) return true
+    }
+
+    // Unusual access patterns
+    if (log.action === 'data_export') {
+      const exportCount = await this.getRecentExports(log.userId)
+      if (exportCount > 10) return true
+    }
+
+    // Access from new location
+    const isNewLocation = await this.isNewIPLocation(log.userId, log.ipAddress)
+    if (isNewLocation) return true
+
+    return false
+  }
+
+  private async alertSecurityTeam(log: AuditLog): Promise<void> {
+    await sendEmail({
+      to: process.env.SECURITY_TEAM_EMAIL!,
+      subject: 'Suspicious Activity Detected',
+      body: `
+        User: ${log.userId}
+        Action: ${log.action}
+        IP: ${log.ipAddress}
+        Time: ${log.timestamp}
+        Details: ${JSON.stringify(log.metadata)}
+      `
+    })
+  }
+}
+```
+
+## Security Headers
+
+### Next.js Security Configuration
+
+```typescript
+// next.config.js
+const securityHeaders = [
+  {
+    key: 'X-DNS-Prefetch-Control',
+    value: 'on'
+  },
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload'
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block'
+  },
+  {
+    key: 'X-Frame-Options',
+    value: 'SAMEORIGIN'
+  },
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff'
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'origin-when-cross-origin'
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: `
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' *.plaid.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' blob: data: https:;
+      font-src 'self';
+      connect-src 'self' *.plaid.com *.supabase.co wss://*.supabase.co;
+      frame-src 'self' *.plaid.com;
+    `.replace(/\s{2,}/g, ' ').trim()
+  }
+]
+
+module.exports = {
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ]
+  },
+}
+```
+
+## Environment Security
+
+### Secure Environment Variables
+
+```bash
+# Generate secure keys
+openssl rand -hex 32 > token_encryption_key.txt
+openssl rand -base64 32 > csrf_secret.txt
+openssl rand -hex 64 > session_secret.txt
+
+# Set in Vercel without newlines
+printf "$(cat token_encryption_key.txt)" | vercel env add TOKEN_ENCRYPTION_KEY production
+printf "$(cat csrf_secret.txt)" | vercel env add CSRF_SECRET production
+printf "$(cat session_secret.txt)" | vercel env add SESSION_SECRET production
+
+# Clean up
+rm token_encryption_key.txt csrf_secret.txt session_secret.txt
+```
+
+### Secret Rotation
+
+```typescript
+// scripts/rotate-secrets.ts
+async function rotateSecrets() {
+  // Generate new keys
+  const newEncryptionKey = crypto.randomBytes(32).toString('hex')
+  const newCSRFSecret = crypto.randomBytes(32).toString('base64')
+
+  // Re-encrypt existing data
+  await reencryptData(
+    process.env.TOKEN_ENCRYPTION_KEY!,
+    newEncryptionKey
+  )
+
+  // Update environment variables
+  await updateVercelEnv('TOKEN_ENCRYPTION_KEY', newEncryptionKey)
+  await updateVercelEnv('CSRF_SECRET', newCSRFSecret)
+
+  // Trigger deployment
+  await triggerVercelDeployment()
+
+  console.log('Secrets rotated successfully')
+}
+```
+
+## Security Best Practices
+
+### Development Guidelines
+
+1. **Never log sensitive data**
+   ```typescript
+   // Bad
+   console.log('Access token:', accessToken)
+
+   // Good
+   console.log('Access token:', maskApiKey(accessToken))
+   ```
+
+2. **Always validate input**
+   ```typescript
+   import { z } from 'zod'
+
+   const schema = z.object({
+     amount: z.number().positive().max(1000000),
+     account_id: z.string().uuid(),
+     description: z.string().max(500)
+   })
+
+   const validated = schema.parse(request.body)
+   ```
+
+3. **Use parameterized queries**
+   ```typescript
+   // Bad
+   const query = `SELECT * FROM users WHERE id = ${userId}`
+
+   // Good
+   const query = 'SELECT * FROM users WHERE id = $1'
+   const result = await db.query(query, [userId])
+   ```
+
+4. **Implement defense in depth**
+   - Multiple authentication factors
+   - Layered authorization checks
+   - Encrypted storage and transmission
+   - Regular security audits
+
+## Compliance
+
+### PCI DSS Requirements
+- Never store card numbers unencrypted
+- Implement network segmentation
+- Regular security testing
+- Maintain audit logs
+
+### GDPR Compliance
+- Data minimization
+- Right to erasure implementation
+- Consent management
+- Data portability
+
+## Next Steps
+
+1. [API Reference](/console/reference/api) - Complete API documentation
+2. [Security SOC2](/security) - SOC2 compliance details
+3. [Compliance](/compliance) - Regulatory requirements

@@ -1,0 +1,482 @@
+openapi: 3.0.0
+info:
+  title: Earna AI Authentication API
+  description: Authentication and authorization API for Earna AI services
+  version: 1.0.0
+  contact:
+    name: Earna AI Support
+    email: support@earna.ai
+    url: https://earna.ai
+
+servers:
+  - url: http://localhost:3000/api/auth
+    description: Local Development
+  - url: https://api.earna.ai/auth
+    description: Production
+
+tags:
+  - name: Authentication
+    description: User authentication operations
+  - name: Sessions
+    description: Session management
+  - name: OAuth
+    description: OAuth provider integrations
+
+paths:
+  /login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      description: Authenticate user with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                rememberMe:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /register:
+    post:
+      tags: [Authentication]
+      summary: Register new user
+      description: Create a new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /logout:
+    post:
+      tags: [Authentication]
+      summary: User logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Successfully logged out
+
+  /refresh:
+    post:
+      tags: [Authentication]
+      summary: Refresh access token
+      description: Exchange refresh token for new access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /forgot-password:
+    post:
+      tags: [Authentication]
+      summary: Request password reset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Password reset email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset email sent
+
+  /reset-password:
+    post:
+      tags: [Authentication]
+      summary: Reset password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - password
+              properties:
+                token:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password reset successful
+        '400':
+          description: Invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /verify-email:
+    post:
+      tags: [Authentication]
+      summary: Verify email address
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Email verified successfully
+        '400':
+          description: Invalid or expired token
+
+  /session:
+    get:
+      tags: [Sessions]
+      summary: Get current session
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Current session information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /sessions:
+    get:
+      tags: [Sessions]
+      summary: List all sessions
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of active sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Session'
+
+  /sessions/{sessionId}:
+    delete:
+      tags: [Sessions]
+      summary: Revoke session
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session revoked successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /oauth/{provider}:
+    get:
+      tags: [OAuth]
+      summary: Initiate OAuth flow
+      parameters:
+        - in: path
+          name: provider
+          required: true
+          schema:
+            type: string
+            enum: [google, github, microsoft]
+        - in: query
+          name: redirectUrl
+          schema:
+            type: string
+          description: URL to redirect after authentication
+      responses:
+        '302':
+          description: Redirect to OAuth provider
+          headers:
+            Location:
+              schema:
+                type: string
+              description: OAuth provider authorization URL
+
+  /oauth/{provider}/callback:
+    get:
+      tags: [OAuth]
+      summary: OAuth callback
+      parameters:
+        - in: path
+          name: provider
+          required: true
+          schema:
+            type: string
+            enum: [google, github, microsoft]
+        - in: query
+          name: code
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: state
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirect to application with tokens
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        tokens:
+          $ref: '#/components/schemas/TokenResponse'
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresIn:
+          type: integer
+          description: Expiration time in seconds
+        tokenType:
+          type: string
+          example: Bearer
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        name:
+          type: string
+        organizationName:
+          type: string
+        acceptTerms:
+          type: boolean
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        emailVerified:
+          type: boolean
+        role:
+          type: string
+          enum: [admin, user, viewer]
+        organizationId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        deviceName:
+          type: string
+        deviceType:
+          type: string
+        ipAddress:
+          type: string
+        location:
+          type: string
+        lastActivity:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+        details:
+          type: object
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Rate limit exceeded
+              retryAfter:
+                type: integer
+                description: Seconds until rate limit resets
+              limit:
+                type: integer
+                description: Request limit
+              remaining:
+                type: integer
+                description: Remaining requests

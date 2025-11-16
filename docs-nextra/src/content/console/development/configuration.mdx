@@ -1,0 +1,1229 @@
+---
+title: Configuration
+description: Configure Earna AI Console with GPT-4o, alternative AI models, Supabase, and real-time features
+---
+
+import { Steps, Tabs, Callout } from 'nextra/components'
+
+# Configuration
+
+Complete configuration guide for Earna AI Console. This covers GPT-4o integration, alternative AI models via Vercel AI SDK v5, Supabase backend, HeyGen avatars, real-time voice features, and TypeScript strict mode.
+
+## Environment Variables
+
+Earna AI Console requires several environment variables for proper operation. Create a `.env.local` file in your project root:
+
+```env
+# Primary AI Model - OpenAI GPT-4o
+OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Alternative AI Models (Optional)
+ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GOOGLE_GENERATIVE_AI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+MISTRAL_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+PERPLEXITY_API_KEY=pplx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+XAI_API_KEY=xai-xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Supabase Backend
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# HeyGen Avatars
+HEYGEN_API_KEY=your_heygen_api_key
+NEXT_PUBLIC_HEYGEN_APP_ID=your_heygen_app_id
+
+# Real-time Voice
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
+DEEPGRAM_API_KEY=your_deepgram_api_key
+
+# Application
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+
+# Analytics & Monitoring
+VERCEL_ANALYTICS_ID=your_vercel_analytics_id
+SENTRY_DSN=https://xxxx@sentry.io/project
+
+# Feature Flags
+ENABLE_GPT4O_VISION=true
+ENABLE_ALTERNATIVE_MODELS=true
+ENABLE_AVATARS=true
+ENABLE_VOICE_MODE=true
+ENABLE_FILE_UPLOADS=true
+ENABLE_DEBUG_MODE=false
+```
+
+<Callout type="warning">
+Never commit your `.env.local` file to version control. Add it to your `.gitignore` file.
+</Callout>
+
+## GPT-4o Configuration
+
+### Primary Model Setup
+
+Configure GPT-4o as the primary AI model:
+
+<Tabs items={['Basic Setup', 'Streaming Response', 'Tool Configuration']}>
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/openai.ts
+    import { openai } from '@ai-sdk/openai';
+    import { streamText, generateText } from 'ai';
+
+    export const gpt4oConfig = {
+      model: 'gpt-4o',
+      temperature: 0.7,
+      maxTokens: 4096,
+      topP: 1,
+      frequencyPenalty: 0,
+      presencePenalty: 0,
+      systemPrompt: `You are a helpful AI assistant powered by GPT-4o.
+      Provide clear, accurate, and helpful responses.
+      You have access to vision capabilities for analyzing images.
+      You can execute tools and functions when needed.`
+    };
+
+    export async function sendMessage(
+      message: string,
+      images?: string[],
+      history: any[] = []
+    ) {
+      const messages = [
+        { role: 'system', content: gpt4oConfig.systemPrompt },
+        ...history,
+        {
+          role: 'user',
+          content: images ? [
+            { type: 'text', text: message },
+            ...images.map(url => ({ type: 'image', image: url }))
+          ] : message
+        }
+      ];
+
+      const response = await generateText({
+        model: openai('gpt-4o'),
+        messages,
+        temperature: gpt4oConfig.temperature,
+        maxTokens: gpt4oConfig.maxTokens
+      });
+
+      return response;
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // app/api/chat/route.ts
+    import { openai } from '@ai-sdk/openai';
+    import { streamText } from 'ai';
+
+    export async function POST(req: Request) {
+      const { messages, model = 'gpt-4o' } = await req.json();
+
+      const result = await streamText({
+        model: openai(model),
+        messages,
+        temperature: 0.7,
+        maxTokens: 4096,
+        onFinish: async ({ text, usage }) => {
+          // Save to Supabase
+          await saveToDatabase({
+            content: text,
+            model,
+            usage
+          });
+        }
+      });
+
+      // Return Server-Sent Events stream
+      return result.toDataStreamResponse();
+    }
+
+    // Handle streaming on the client
+    export function ChatComponent() {
+      const { messages, append, isLoading } = useChat({
+        api: '/api/chat',
+        onResponse(response) {
+          console.log('Streaming started');
+        },
+        onFinish(message) {
+          console.log('Message complete:', message);
+        }
+      });
+
+      return (
+        <div>
+          {messages.map(m => (
+            <div key={m.id}>
+              {m.role}: {m.content}
+            </div>
+          ))}
+        </div>
+      );
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/tools.ts
+    import { tool } from 'ai';
+    import { z } from 'zod';
+
+    export const tools = {
+      searchWeb: tool({
+        description: 'Search the web for information',
+        parameters: z.object({
+          query: z.string().describe('Search query'),
+          limit: z.number().optional().default(5)
+        }),
+        execute: async ({ query, limit }) => {
+          // Implement web search
+          const results = await searchWeb(query, limit);
+          return results;
+        }
+      }),
+
+      analyzeImage: tool({
+        description: 'Analyze an image using GPT-4o vision',
+        parameters: z.object({
+          imageUrl: z.string().url(),
+          prompt: z.string()
+        }),
+        execute: async ({ imageUrl, prompt }) => {
+          const result = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'text', text: prompt },
+                { type: 'image_url', image_url: { url: imageUrl }}
+              ]
+            }]
+          });
+          return result.choices[0].message.content;
+        }
+      }),
+
+      executeCode: tool({
+        description: 'Execute Python or JavaScript code',
+        parameters: z.object({
+          language: z.enum(['python', 'javascript']),
+          code: z.string()
+        }),
+        execute: async ({ language, code }) => {
+          // Implement code execution
+          const result = await executeInSandbox(language, code);
+          return result;
+        }
+      })
+    };
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Alternative Models Configuration
+
+### Multi-Model Support via Vercel AI SDK
+
+Configure alternative AI models alongside GPT-4o:
+
+<Tabs items={['Model Registry', 'Claude 3 Opus', 'Gemini Pro', 'Model Routing']}>
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/models.ts
+    import { openai } from '@ai-sdk/openai';
+    import { anthropic } from '@ai-sdk/anthropic';
+    import { google } from '@ai-sdk/google';
+    import { mistral } from '@ai-sdk/mistral';
+    import { xai } from '@ai-sdk/xai';
+    import { createOllama } from 'ollama-ai-provider';
+
+    export const models = {
+      // Primary Model
+      'gpt-4o': {
+        provider: openai('gpt-4o'),
+        name: 'GPT-4o',
+        features: ['chat', 'vision', 'tools', 'voice'],
+        contextLength: 128000,
+        primary: true
+      },
+
+      // Alternative Models
+      'claude-3-opus': {
+        provider: anthropic('claude-3-opus-20240229'),
+        name: 'Claude 3 Opus',
+        features: ['chat', 'vision', 'tools'],
+        contextLength: 200000
+      },
+
+      'gemini-1.5-pro': {
+        provider: google('gemini-1.5-pro-latest'),
+        name: 'Gemini 1.5 Pro',
+        features: ['chat', 'vision', 'tools'],
+        contextLength: 1000000
+      },
+
+      'mistral-large': {
+        provider: mistral('mistral-large-latest'),
+        name: 'Mistral Large',
+        features: ['chat', 'tools'],
+        contextLength: 32000
+      },
+
+      'grok-2': {
+        provider: xai('grok-2-latest'),
+        name: 'xAI Grok 2',
+        features: ['chat', 'tools'],
+        contextLength: 100000
+      },
+
+      // Local Model
+      'llama-3.1': {
+        provider: createOllama()('llama3.1:70b'),
+        name: 'Llama 3.1 70B',
+        features: ['chat'],
+        contextLength: 8192,
+        local: true
+      }
+    };
+
+    export function getModel(modelId: string) {
+      return models[modelId] || models['gpt-4o'];
+    }
+
+    export function isModelAvailable(modelId: string): boolean {
+      const model = models[modelId];
+      if (!model) return false;
+
+      // Check if API key is configured
+      switch (modelId) {
+        case 'gpt-4o':
+          return !!process.env.OPENAI_API_KEY;
+        case 'claude-3-opus':
+          return !!process.env.ANTHROPIC_API_KEY;
+        case 'gemini-1.5-pro':
+          return !!process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+        default:
+          return true;
+      }
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/claude.ts
+    import { anthropic } from '@ai-sdk/anthropic';
+    import { streamText } from 'ai';
+
+    export const claudeConfig = {
+      model: 'claude-3-opus-20240229',
+      maxTokens: 4096,
+      temperature: 0.7,
+      systemPrompt: `You are Claude, an AI assistant created by Anthropic.
+      You are helpful, harmless, and honest.`
+    };
+
+    export async function streamClaudeResponse(
+      messages: any[],
+      tools?: any[]
+    ) {
+      const result = await streamText({
+        model: anthropic(claudeConfig.model),
+        messages,
+        temperature: claudeConfig.temperature,
+        maxTokens: claudeConfig.maxTokens,
+        tools,
+        onFinish: async ({ text, usage }) => {
+          console.log('Claude response complete:', {
+            tokensUsed: usage.totalTokens,
+            model: claudeConfig.model
+          });
+        }
+      });
+
+      return result;
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/gemini.ts
+    import { google } from '@ai-sdk/google';
+    import { streamText } from 'ai';
+
+    export const geminiConfig = {
+      model: 'gemini-1.5-pro-latest',
+      maxTokens: 8192,
+      temperature: 0.7,
+      topK: 40,
+      topP: 0.95,
+      systemPrompt: `You are Gemini, Google's advanced AI model.
+      You can process text, images, and long documents.`
+    };
+
+    export async function streamGeminiResponse(
+      messages: any[],
+      tools?: any[]
+    ) {
+      const result = await streamText({
+        model: google(geminiConfig.model),
+        messages,
+        temperature: geminiConfig.temperature,
+        maxTokens: geminiConfig.maxTokens,
+        topK: geminiConfig.topK,
+        topP: geminiConfig.topP,
+        tools,
+        onFinish: async ({ text, usage }) => {
+          console.log('Gemini response complete:', {
+            tokensUsed: usage.totalTokens,
+            model: geminiConfig.model
+          });
+        }
+      });
+
+      return result;
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/router.ts
+    import { streamText } from 'ai';
+    import { getModel, isModelAvailable } from './models';
+
+    export async function routeToModel(
+      modelId: string,
+      messages: any[],
+      options: any = {}
+    ) {
+      // Fallback to GPT-4o if requested model unavailable
+      if (!isModelAvailable(modelId)) {
+        console.warn(`Model ${modelId} unavailable, falling back to GPT-4o`);
+        modelId = 'gpt-4o';
+      }
+
+      const model = getModel(modelId);
+
+      try {
+        const result = await streamText({
+          model: model.provider,
+          messages,
+          ...options,
+          onFinish: async ({ text, usage }) => {
+            // Track usage across models
+            await trackModelUsage({
+              model: modelId,
+              tokensUsed: usage.totalTokens,
+              cost: calculateCost(modelId, usage)
+            });
+          }
+        });
+
+        return result;
+      } catch (error) {
+        // Fallback to GPT-4o on error
+        if (modelId !== 'gpt-4o') {
+          console.error(`Error with ${modelId}, falling back to GPT-4o:`, error);
+          return routeToModel('gpt-4o', messages, options);
+        }
+        throw error;
+      }
+    }
+
+    function calculateCost(modelId: string, usage: any): number {
+      const pricing = {
+        'gpt-4o': { input: 0.005, output: 0.015 }, // per 1K tokens
+        'claude-3-opus': { input: 0.015, output: 0.075 },
+        'gemini-1.5-pro': { input: 0.00125, output: 0.005 },
+        'mistral-large': { input: 0.004, output: 0.012 }
+      };
+
+      const rates = pricing[modelId] || { input: 0, output: 0 };
+      return (usage.promptTokens * rates.input +
+              usage.completionTokens * rates.output) / 1000;
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Supabase Configuration
+
+### Database & Authentication Setup
+
+Configure Supabase for backend services:
+
+<Tabs items={['Client Setup', 'Authentication', 'Database Schema', 'Realtime']}>
+  <Tabs.Tab>
+    ```typescript
+    // lib/supabase/client.ts
+    import { createBrowserClient } from '@supabase/ssr';
+    import { Database } from '@/types/database';
+
+    export function createClient() {
+      return createBrowserClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+          },
+          global: {
+            headers: {
+              'x-application-name': 'earna-ai-console'
+            }
+          }
+        }
+      );
+    }
+
+    // Server client for API routes
+    import { createServerClient } from '@supabase/ssr';
+    import { cookies } from 'next/headers';
+
+    export function createServerSupabaseClient() {
+      const cookieStore = cookies();
+
+      return createServerClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get(name: string) {
+              return cookieStore.get(name)?.value;
+            },
+            set(name: string, value: string, options: any) {
+              cookieStore.set({ name, value, ...options });
+            },
+            remove(name: string, options: any) {
+              cookieStore.set({ name, value: '', ...options });
+            }
+          }
+        }
+      );
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/supabase/auth.ts
+    import { createClient } from './client';
+
+    export async function signUp(email: string, password: string) {
+      const supabase = createClient();
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+        }
+      });
+
+      if (error) throw error;
+
+      // Create user profile
+      if (data.user) {
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email: data.user.email,
+          subscription_tier: 'free',
+          daily_message_limit: 10,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      return data;
+    }
+
+    export async function signInWithGoogle() {
+      const supabase = createClient();
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+          scopes: 'email profile'
+        }
+      });
+
+      if (error) throw error;
+      return data;
+    }
+
+    export async function signInAnonymously() {
+      const supabase = createClient();
+
+      const { data, error } = await supabase.auth.signInAnonymously();
+
+      if (error) throw error;
+
+      // Create anonymous user profile
+      if (data.user) {
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email: null,
+          is_anonymous: true,
+          subscription_tier: 'free',
+          daily_message_limit: 10,
+          created_at: new Date().toISOString()
+        });
+      }
+
+      return data;
+    }
+
+    export async function getCurrentUser() {
+      const supabase = createClient();
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) return null;
+
+      // Get user profile with limits
+      const { data: profile } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      return { ...user, profile };
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```sql
+    -- Supabase SQL Schema
+
+    -- Users table
+    CREATE TABLE users (
+      id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+      email TEXT UNIQUE,
+      username TEXT UNIQUE,
+      is_anonymous BOOLEAN DEFAULT false,
+      subscription_tier TEXT DEFAULT 'free',
+      daily_message_limit INTEGER DEFAULT 10,
+      messages_used_today INTEGER DEFAULT 0,
+      last_message_reset TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Chats table
+    CREATE TABLE chats (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      title TEXT,
+      model TEXT DEFAULT 'gpt-4o',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Messages table
+    CREATE TABLE messages (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
+      role TEXT CHECK (role IN ('user', 'assistant', 'system')),
+      content TEXT NOT NULL,
+      model TEXT,
+      tokens_used INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Chat attachments
+    CREATE TABLE chat_attachments (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      chat_id UUID REFERENCES chats(id) ON DELETE CASCADE,
+      message_id UUID REFERENCES messages(id) ON DELETE CASCADE,
+      file_name TEXT NOT NULL,
+      file_type TEXT NOT NULL,
+      file_size INTEGER,
+      storage_path TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Avatar sessions
+    CREATE TABLE avatar_sessions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      session_id TEXT UNIQUE NOT NULL,
+      avatar_id TEXT NOT NULL,
+      status TEXT DEFAULT 'active',
+      duration_seconds INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ended_at TIMESTAMP
+    );
+
+    -- Voice sessions
+    CREATE TABLE voice_sessions (
+      id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+      user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+      session_id TEXT UNIQUE NOT NULL,
+      voice TEXT DEFAULT 'alloy',
+      duration_seconds INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      ended_at TIMESTAMP
+    );
+
+    -- Row Level Security
+    ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE chats ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+    ALTER TABLE chat_attachments ENABLE ROW LEVEL SECURITY;
+
+    -- RLS Policies
+    CREATE POLICY "Users can view own profile" ON users
+      FOR SELECT USING (auth.uid() = id);
+
+    CREATE POLICY "Users can update own profile" ON users
+      FOR UPDATE USING (auth.uid() = id);
+
+    CREATE POLICY "Users can view own chats" ON chats
+      FOR ALL USING (auth.uid() = user_id);
+
+    CREATE POLICY "Users can view own messages" ON messages
+      FOR ALL USING (
+        EXISTS (
+          SELECT 1 FROM chats
+          WHERE chats.id = messages.chat_id
+          AND chats.user_id = auth.uid()
+        )
+      );
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/supabase/realtime.ts
+    import { createClient } from './client';
+
+    export function subscribeToMessages(
+      chatId: string,
+      onMessage: (message: any) => void
+    ) {
+      const supabase = createClient();
+
+      const channel = supabase
+        .channel(`chat:${chatId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `chat_id=eq.${chatId}`
+          },
+          (payload) => {
+            onMessage(payload.new);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+
+    export function subscribeToTyping(
+      chatId: string,
+      onTyping: (data: any) => void
+    ) {
+      const supabase = createClient();
+
+      const channel = supabase
+        .channel(`typing:${chatId}`)
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          onTyping(state);
+        })
+        .subscribe();
+
+      return {
+        sendTyping: (isTyping: boolean) => {
+          channel.track({ typing: isTyping });
+        },
+        unsubscribe: () => {
+          supabase.removeChannel(channel);
+        }
+      };
+    }
+
+    export function broadcastCursorPosition(
+      chatId: string,
+      position: { x: number; y: number }
+    ) {
+      const supabase = createClient();
+
+      const channel = supabase.channel(`cursor:${chatId}`);
+
+      channel.send({
+        type: 'broadcast',
+        event: 'cursor',
+        payload: position
+      });
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Avatar Configuration
+
+### HeyGen Streaming Avatars
+
+Configure interactive avatars:
+
+```typescript
+// lib/avatars/heygen.ts
+import { StreamingAvatar, AvatarQuality } from '@heygen/streaming-avatar';
+
+export const heygenConfig = {
+  apiKey: process.env.HEYGEN_API_KEY!,
+  appId: process.env.NEXT_PUBLIC_HEYGEN_APP_ID!,
+  defaultAvatar: 'josh_lite3_20230714',
+  quality: AvatarQuality.High,
+  voice: {
+    voiceId: 'en-US-BrianNeural',
+    rate: 1.0,
+    pitch: 0,
+    emotion: 'friendly'
+  }
+};
+
+export async function createAvatarSession(avatarId?: string) {
+  const response = await fetch('https://api.heygen.com/v1/streaming.new', {
+    method: 'POST',
+    headers: {
+      'X-Api-Key': heygenConfig.apiKey,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      avatar_id: avatarId || heygenConfig.defaultAvatar,
+      voice: heygenConfig.voice,
+      quality: heygenConfig.quality
+    })
+  });
+
+  const data = await response.json();
+
+  return {
+    sessionId: data.session_id,
+    accessToken: data.access_token,
+    iceServers: data.ice_servers
+  };
+}
+
+export class AvatarController {
+  private avatar: StreamingAvatar;
+
+  constructor(token: string) {
+    this.avatar = new StreamingAvatar({ token });
+  }
+
+  async initialize(videoElement: HTMLVideoElement) {
+    await this.avatar.init(videoElement);
+  }
+
+  async speak(text: string) {
+    await this.avatar.speak({
+      text,
+      taskType: 'talk',
+      taskMode: 'sync'
+    });
+  }
+
+  async interrupt() {
+    await this.avatar.interrupt();
+  }
+
+  async terminate() {
+    await this.avatar.terminate();
+  }
+}
+```
+
+## Voice Configuration
+
+### GPT-4o Realtime Voice
+
+Configure real-time voice conversations:
+
+```typescript
+// lib/voice/realtime.ts
+export const realtimeConfig = {
+  url: 'wss://api.openai.com/v1/realtime',
+  model: 'gpt-4o-realtime-preview',
+  voice: 'alloy', // alloy, echo, fable, onyx, nova, shimmer
+  turnDetection: {
+    type: 'server_vad',
+    threshold: 0.5,
+    prefixPaddingMs: 300,
+    silenceDurationMs: 500
+  }
+};
+
+export async function createRealtimeSession() {
+  // Get ephemeral key
+  const response = await fetch('/api/realtime-session', {
+    method: 'POST'
+  });
+
+  const { key, url } = await response.json();
+
+  // Connect to WebSocket
+  const ws = new WebSocket(url);
+
+  ws.onopen = () => {
+    ws.send(JSON.stringify({
+      type: 'session.update',
+      session: {
+        modalities: ['text', 'audio'],
+        voice: realtimeConfig.voice,
+        instructions: 'You are a helpful assistant.',
+        turn_detection: realtimeConfig.turnDetection
+      }
+    }));
+  };
+
+  return ws;
+}
+
+// Text-to-Speech with OpenAI
+export async function textToSpeech(text: string, voice = 'nova') {
+  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      model: 'tts-1',
+      input: text,
+      voice,
+      response_format: 'mp3'
+    })
+  });
+
+  return response.blob();
+}
+
+// Speech-to-Text with Whisper
+export async function speechToText(audioBlob: Blob) {
+  const formData = new FormData();
+  formData.append('file', audioBlob, 'audio.webm');
+  formData.append('model', 'whisper-1');
+
+  const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: formData
+  });
+
+  const { text } = await response.json();
+  return text;
+}
+```
+
+## Application Configuration
+
+### Next.js 15 Configuration
+
+Configure Next.js for optimal performance:
+
+```javascript
+// next.config.js
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ['@supabase/ssr'],
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+        pathname: '/storage/v1/object/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.heygen.com',
+      }
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/api/:path*',
+        headers: [
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT' },
+          { key: 'Access-Control-Allow-Headers', value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization' },
+        ],
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/realtime/:path*',
+        destination: '/api/realtime/:path*',
+      },
+    ];
+  },
+};
+
+module.exports = nextConfig;
+```
+
+### TypeScript Configuration
+
+<Callout type="info">
+**Strict Mode Enabled**: We use TypeScript strict mode for maximum type safety and AI SDK v5 compatibility.
+</Callout>
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,                    // Enables all strict type checking options
+    "strictNullChecks": true,          // Enable strict null checks
+    "strictFunctionTypes": true,       // Enable strict checking of function types
+    "strictBindCallApply": true,       // Enable strict 'bind', 'call', and 'apply' methods
+    "strictPropertyInitialization": true, // Enable strict checking of property initialization
+    "noImplicitThis": true,            // Raise error on 'this' expressions with an implied 'any' type
+    "alwaysStrict": true,              // Ensure 'use strict' is always emitted
+    "noImplicitAny": true,             // Raise error on expressions with an implied 'any' type
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/app/*": ["./app/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+```
+
+## Performance Configuration
+
+### Caching Strategy
+
+```typescript
+// lib/config/cache.ts
+export const cacheConfig = {
+  // AI responses
+  aiResponses: {
+    ttl: 60 * 60, // 1 hour
+    maxSize: 1000
+  },
+  // User sessions
+  userSessions: {
+    ttl: 24 * 60 * 60, // 24 hours
+    maxSize: 500
+  },
+  // File uploads
+  fileUploads: {
+    ttl: 7 * 24 * 60 * 60, // 7 days
+    maxSize: 100
+  }
+};
+
+// Edge config for Vercel
+export const edgeConfig = {
+  runtime: 'edge',
+  regions: ['iad1', 'sfo1', 'sin1'],
+  maxDuration: 25 // seconds
+};
+```
+
+## Security Configuration
+
+```typescript
+// lib/config/security.ts
+export const securityConfig = {
+  // Rate limiting
+  rateLimiting: {
+    chat: {
+      windowMs: 60 * 1000, // 1 minute
+      maxFree: 10, // 10 messages per minute (free)
+      maxPro: 100, // 100 messages per minute (pro)
+    },
+    api: {
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 100
+    }
+  },
+
+  // CORS settings
+  cors: {
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://earna.sh', 'https://app.earna.sh']
+      : ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true
+  },
+
+  // Content Security Policy
+  csp: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'"],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    imgSrc: ["'self'", "data:", "https:", "blob:"],
+    connectSrc: [
+      "'self'",
+      "https://api.openai.com",
+      "wss://api.openai.com",
+      "https://*.supabase.co",
+      "https://api.heygen.com"
+    ],
+    mediaSrc: ["'self'", "blob:", "https:"],
+    frameSrc: ["'self'", "https://www.heygen.com"]
+  }
+};
+```
+
+## Feature Flags
+
+Control feature availability:
+
+```typescript
+// lib/config/features.ts
+export interface FeatureFlags {
+  enableGPT4oVision: boolean;
+  enableAlternativeModels: boolean;
+  enableAvatars: boolean;
+  enableVoiceMode: boolean;
+  enableFileUploads: boolean;
+  enableCodeExecution: boolean;
+  enableWebSearch: boolean;
+}
+
+export const featureFlags: FeatureFlags = {
+  enableGPT4oVision: process.env.ENABLE_GPT4O_VISION === 'true',
+  enableAlternativeModels: process.env.ENABLE_ALTERNATIVE_MODELS === 'true',
+  enableAvatars: process.env.ENABLE_AVATARS === 'true',
+  enableVoiceMode: process.env.ENABLE_VOICE_MODE === 'true',
+  enableFileUploads: process.env.ENABLE_FILE_UPLOADS === 'true',
+  enableCodeExecution: false, // Beta feature
+  enableWebSearch: false // Coming soon
+};
+
+export function isFeatureEnabled(flag: keyof FeatureFlags): boolean {
+  if (process.env.NODE_ENV === 'development') {
+    return true; // All features enabled in development
+  }
+  return featureFlags[flag];
+}
+```
+
+## Daily Limits Configuration
+
+```typescript
+// lib/config/limits.ts
+export const subscriptionLimits = {
+  free: {
+    dailyMessages: 10,
+    avatarMinutes: 5,
+    voiceMinutes: 10,
+    maxFileSize: 5 * 1024 * 1024, // 5 MB
+    maxFilesPerMessage: 1
+  },
+  pro: {
+    dailyMessages: 100,
+    avatarMinutes: Infinity,
+    voiceMinutes: Infinity,
+    maxFileSize: 50 * 1024 * 1024, // 50 MB
+    maxFilesPerMessage: 5
+  },
+  enterprise: {
+    dailyMessages: Infinity,
+    avatarMinutes: Infinity,
+    voiceMinutes: Infinity,
+    maxFileSize: 500 * 1024 * 1024, // 500 MB
+    maxFilesPerMessage: 10
+  }
+};
+
+export async function checkDailyLimit(userId: string): Promise<boolean> {
+  const supabase = createClient();
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('subscription_tier, daily_message_limit, messages_used_today')
+    .eq('id', userId)
+    .single();
+
+  if (!user) return false;
+
+  return user.messages_used_today < user.daily_message_limit;
+}
+```
+
+<Callout type="info">
+For production deployment, ensure all API keys are properly secured and never expose them in client-side code. Use environment variables and secure secret management systems.
+</Callout>
+
+## Troubleshooting
+
+### Common Configuration Issues
+
+1. **GPT-4o API Not Working**
+   - Verify OPENAI_API_KEY is correctly set
+   - Check API key has access to GPT-4o model
+   - Ensure proper error handling for streaming responses
+   - Monitor rate limits (10,000 requests/min for GPT-4o)
+
+2. **Alternative Models Not Available**
+   - Validate respective API keys (ANTHROPIC_API_KEY, etc.)
+   - Check model availability in your region
+   - Verify Vercel AI SDK provider configuration
+   - Test fallback to GPT-4o is working
+
+3. **Supabase Connection Issues**
+   - Check SUPABASE_URL and SUPABASE_ANON_KEY format
+   - Ensure Row Level Security policies are configured
+   - Verify database migrations are applied
+   - Check Realtime subscriptions are enabled
+
+4. **Avatar/Voice Features Not Working**
+   - Validate HeyGen API credentials
+   - Check WebRTC connectivity for avatars
+   - Ensure microphone permissions for voice
+   - Verify OpenAI Realtime API access
+
+5. **File Upload Issues**
+   - Check Supabase Storage bucket configuration
+   - Verify file size limits per subscription tier
+   - Ensure proper CORS configuration
+   - Test file type validation
+
+For more help, see our [Troubleshooting Guide](/troubleshooting) or visit [GitHub Issues](https://github.com/earna-ai/console/issues).
