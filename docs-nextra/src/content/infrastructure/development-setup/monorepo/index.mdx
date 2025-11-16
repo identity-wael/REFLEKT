@@ -1,0 +1,386 @@
+# Monorepo Best Practices
+
+## Overview
+
+The REFLEKT platform uses a monorepo structure to manage multiple related applications and services. This guide outlines best practices for working within our monorepo.
+
+## Repository Structure
+
+```
+reflekt-ai/
+├── apps/                 # Main customer-facing application
+│   ├── package.json     # App-specific dependencies
+│   ├── vercel.json      # Deployment configuration
+│   └── components/      # App-specific components
+├── console/             # Admin console application
+│   ├── package.json
+│   ├── vercel.json
+│   └── app/            # Next.js app directory
+├── docs-nextra/        # Documentation website
+│   ├── package.json
+│   ├── vercel.json
+│   └── src/content/    # MDX documentation files
+├── credit-engine/      # Credit processing service
+│   ├── package.json
+│   └── vercel.json
+├── turbo.json          # Turborepo configuration
+├── pnpm-workspace.yaml # Workspace definitions
+├── package.json        # Root dependencies
+└── pnpm-lock.yaml     # Lockfile for all workspaces
+```
+
+## Workspace Management
+
+### 1. Dependency Management
+
+#### Installing Dependencies
+```bash
+# Add to specific workspace
+pnpm --filter console add react-query
+
+# Add to root (shared tooling)
+pnpm add -w -D eslint
+
+# Add to all workspaces
+pnpm add -r lodash
+```
+
+#### Dependency Rules
+- **Application dependencies**: Install in specific workspace
+- **Dev tools**: Install in root workspace with `-w -D`
+- **Shared utilities**: Consider creating a shared package
+
+### 2. Cross-Workspace Dependencies
+
+#### Internal Package References
+```json
+{
+  "dependencies": {
+    "@reflekt/shared": "workspace:*",
+    "@reflekt/ui": "workspace:^"
+  }
+}
+```
+
+#### Import Patterns
+```typescript
+// Good: Absolute imports within workspace
+import { Button } from '@/components/ui/button'
+
+// Good: Cross-workspace imports
+import { utils } from '@reflekt/shared'
+
+// Bad: Relative imports across workspaces
+import { Button } from '../../../console/components/button'
+```
+
+## Development Workflow
+
+### 1. Running Services
+
+#### Individual Services
+```bash
+# Run specific app
+pnpm --filter console dev
+pnpm --filter apps dev
+pnpm --filter docs-nextra dev
+```
+
+#### Multiple Services
+```bash
+# Run all development servers
+pnpm turbo dev
+
+# Run specific combination
+pnpm turbo dev --filter=console --filter=apps
+```
+
+### 2. Building Projects
+
+#### Build Order
+Turborepo automatically handles build dependencies:
+```json
+{
+  "build": {
+    "dependsOn": ["^build"],
+    "outputs": [".next/**", "dist/**"]
+  }
+}
+```
+
+#### Build Commands
+```bash
+# Build everything
+pnpm turbo build
+
+# Build specific project and dependencies
+pnpm turbo build --filter=console...
+
+# Build without cache
+pnpm turbo build --force
+```
+
+### 3. Testing Strategy
+
+#### Unit Tests
+```bash
+# Test specific workspace
+pnpm --filter console test
+
+# Test all workspaces
+pnpm turbo test
+```
+
+#### Integration Tests
+```bash
+# Run integration tests
+pnpm turbo test:integration
+
+# Run E2E tests
+pnpm turbo test:e2e
+```
+
+## Code Organization
+
+### 1. Shared Code
+
+#### When to Share
+- **Share**: Utilities used by 2+ workspaces
+- **Share**: Common UI components
+- **Share**: Type definitions
+- **Don't Share**: Business logic specific to one app
+
+#### Creating Shared Packages
+```bash
+# Create shared package
+mkdir packages/shared
+cd packages/shared
+pnpm init
+
+# Configure package.json
+{
+  "name": "@reflekt/shared",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
+}
+```
+
+### 2. Configuration Management
+
+#### Shared Configurations
+```
+packages/
+├── eslint-config/      # Shared ESLint rules
+├── tsconfig/          # Shared TypeScript configs
+└── tailwind-config/   # Shared Tailwind presets
+```
+
+#### Extending Configurations
+```json
+// apps/tsconfig.json
+{
+  "extends": "@reflekt/tsconfig/nextjs.json",
+  "compilerOptions": {
+    "baseUrl": "."
+  }
+}
+```
+
+## Version Control
+
+### 1. Commit Conventions
+
+#### Commit Message Format
+```
+type(scope): description
+
+[optional body]
+
+[optional footer]
+```
+
+#### Examples
+```bash
+feat(console): add user authentication
+fix(apps): resolve D3 import issues
+docs(infrastructure): add Turborepo migration guide
+chore: update dependencies
+```
+
+### 2. Branch Strategy
+
+#### Branch Naming
+```
+feature/[workspace]-description
+fix/[workspace]-issue
+docs/topic
+chore/description
+```
+
+#### Examples
+```
+feature/console-user-management
+fix/apps-d3-imports
+docs/turborepo-migration
+chore/update-dependencies
+```
+
+## CI/CD Practices
+
+### 1. Selective Builds
+
+#### Turborepo Filtering
+```bash
+# Only build changed packages
+pnpm turbo build --filter=[HEAD^1]
+
+# Build affected by changes
+pnpm turbo build --filter=...[origin/main]
+```
+
+### 2. Deployment Strategy
+
+#### Independent Deployments
+Each workspace deploys independently:
+- Apps → app.reflekt.ai
+- Console → console.reflekt.ai
+- Docs → docs.reflekt.ai
+
+#### Vercel Configuration
+```json
+{
+  "buildCommand": "pnpm turbo build --filter=workspace-name",
+  "installCommand": "pnpm install",
+  "outputDirectory": ".next"
+}
+```
+
+## Performance Optimization
+
+### 1. Build Caching
+
+#### Local Caching
+```bash
+# Cache location
+.turbo/
+
+# Clear cache
+rm -rf .turbo
+pnpm turbo build --force
+```
+
+#### Remote Caching
+```json
+{
+  "remoteCache": {
+    "signature": true
+  }
+}
+```
+
+### 2. Dependency Optimization
+
+#### Analyze Dependencies
+```bash
+# Check bundle size
+pnpm --filter console analyze
+
+# Find duplicate dependencies
+pnpm dedupe
+
+# Prune unnecessary packages
+pnpm prune
+```
+
+## Common Patterns
+
+### 1. Environment Variables
+
+#### Structure
+```
+.env.local           # Local development (gitignored)
+.env.development     # Development defaults
+.env.production      # Production defaults
+.env.example         # Template for developers
+```
+
+#### Sharing Variables
+```javascript
+// turbo.json
+{
+  "globalEnv": ["NODE_ENV"],
+  "env": ["NEXT_PUBLIC_*", "DATABASE_URL"]
+}
+```
+
+### 2. Scripts Organization
+
+#### Root Scripts
+```json
+{
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "clean": "turbo clean && rm -rf node_modules"
+  }
+}
+```
+
+#### Workspace Scripts
+```json
+{
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Issue: Dependency Conflicts
+```bash
+# Reset and reinstall
+pnpm store prune
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+#### Issue: Build Failures
+```bash
+# Clear all caches
+rm -rf .turbo .next
+pnpm turbo build --force
+```
+
+#### Issue: Type Errors Across Workspaces
+```bash
+# Rebuild TypeScript references
+pnpm turbo typecheck --force
+```
+
+## Best Practices Checklist
+
+- [ ] Keep workspaces focused and independent
+- [ ] Use Turborepo for all multi-workspace commands
+- [ ] Commit pnpm-lock.yaml after dependency changes
+- [ ] Follow naming conventions for branches and commits
+- [ ] Test changes across affected workspaces
+- [ ] Document workspace-specific setup requirements
+- [ ] Use shared configurations to maintain consistency
+- [ ] Regular dependency audits and updates
+- [ ] Monitor and optimize build performance
+- [ ] Keep documentation up-to-date
+
+## Resources
+
+- [Turborepo Documentation](https://turbo.build/repo/docs)
+- [PNPM Workspaces](https://pnpm.io/workspaces)
+- [Monorepo Tools Comparison](https://monorepo.tools)
+- [Vercel Monorepo Guide](https://vercel.com/docs/monorepos)

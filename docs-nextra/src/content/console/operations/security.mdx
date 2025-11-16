@@ -1,0 +1,807 @@
+---
+title: Security & Privacy
+description: Enterprise-grade security and privacy protection for REFLEKT Console
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# Security & Privacy
+
+REFLEKT Console implements enterprise-grade security and comprehensive privacy protection. Our security framework protects user data, conversation history, and uploaded files throughout the entire data lifecycle.
+
+## Security Architecture
+
+### Defense in Depth
+
+REFLEKT Console follows Defense in Depth principles:
+
+- **Multi-layered Security**: Multiple security controls at different layers
+- **Zero Trust Architecture**: Never trust, always verify
+- **Principle of Least Privilege**: Minimal access rights by default
+- **End-to-End Encryption**: Protection throughout data lifecycle
+- **Security by Design**: Built-in security from the ground up
+- **Continuous Monitoring**: Real-time threat detection and response
+
+## Data Protection
+
+### Encryption Framework
+
+All data is protected with industry-standard encryption:
+
+```typescript
+// lib/security/encryption.ts
+import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const scryptAsync = promisify(scrypt);
+
+export class EncryptionService {
+  private static instance: EncryptionService;
+  private readonly algorithm = 'aes-256-gcm';
+  private readonly keyLength = 32;
+
+  static getInstance(): EncryptionService {
+    if (!EncryptionService.instance) {
+      EncryptionService.instance = new EncryptionService();
+    }
+    return EncryptionService.instance;
+  }
+
+  async encrypt(text: string, password: string): Promise<string> {
+    const salt = randomBytes(16);
+    const iv = randomBytes(16);
+    const key = await this.deriveKey(password, salt);
+
+    const cipher = createCipheriv(this.algorithm, key, iv);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    const authTag = cipher.getAuthTag();
+
+    // Combine salt, iv, authTag, and encrypted data
+    const combined = Buffer.concat([
+      salt,
+      iv,
+      authTag,
+      Buffer.from(encrypted, 'hex')
+    ]);
+
+    return combined.toString('base64');
+  }
+
+  async decrypt(encryptedData: string, password: string): Promise<string> {
+    const combined = Buffer.from(encryptedData, 'base64');
+
+    const salt = combined.subarray(0, 16);
+    const iv = combined.subarray(16, 32);
+    const authTag = combined.subarray(32, 48);
+    const encrypted = combined.subarray(48);
+
+    const key = await this.deriveKey(password, salt);
+
+    const decipher = createDecipheriv(this.algorithm, key, iv);
+    decipher.setAuthTag(authTag);
+
+    let decrypted = decipher.update(encrypted, undefined, 'utf8');
+    decrypted += decipher.final('utf8');
+
+    return decrypted;
+  }
+
+  private async deriveKey(password: string, salt: Buffer): Promise<Buffer> {
+    return (await scryptAsync(password, salt, this.keyLength)) as Buffer;
+  }
+}
+```
+
+### Supabase Row Level Security
+
+Database-level access control with RLS policies:
+
+```sql
+-- Row Level Security Policies
+
+-- Users can only see their own data
+CREATE POLICY "Users can view own profile" ON users
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can update own profile" ON users
+  FOR UPDATE USING (auth.uid() = id);
+
+-- Chats are private to their owners
+CREATE POLICY "Users can view own chats" ON chats
+  FOR ALL USING (auth.uid() = user_id);
+
+-- Messages are accessible only through owned chats
+CREATE POLICY "Users can view own messages" ON messages
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM chats 
+      WHERE chats.id = messages.chat_id 
+      AND chats.user_id = auth.uid()
+    )
+  );
+
+-- File attachments follow chat ownership
+CREATE POLICY "Users can manage own attachments" ON chat_attachments
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM chats 
+      WHERE chats.id = chat_attachments.chat_id 
+      AND chats.user_id = auth.uid()
+    )
+  );
+```
+
+## Authentication & Authorization
+
+### Multi-Provider Authentication
+
+Secure authentication via Supabase Auth:
+
+```typescript
+// lib/auth/supabase-auth.ts
+import { createClient } from '@supabase/supabase-js';
+
+export class AuthService {
+  private supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  // Email/Password authentication
+  async signUp(email: string, password: string) {
+    const { data, error } = await this.supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: {
+          subscription_tier: 'free'
+        }
+      }
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  // OAuth providers
+  async signInWithProvider(provider: 'google' | 'github') {
+    const { data, error } = await this.supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        scopes: provider === 'google' ? 'email profile' : 'read:user'
+      }
+    });
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Anonymous authentication
+  async signInAnonymously() {
+    const { data, error } = await this.supabase.auth.signInAnonymously();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  // Session management
+  async getSession() {
+    const { data: { session } } = await this.supabase.auth.getSession();
+    return session;
+  }
+
+  // Sign out
+  async signOut() {
+    const { error } = await this.supabase.auth.signOut();
+    if (error) throw error;
+  }
+}
+```
+
+### JWT Token Validation
+
+Secure token validation for API access:
+
+```typescript
+// lib/auth/jwt-validation.ts
+import jwt from 'jsonwebtoken';
+
+export async function validateToken(token: string): Promise<any> {
+  try {
+    // Verify Supabase JWT
+    const decoded = jwt.verify(token, process.env.SUPABASE_JWT_SECRET!);
+    
+    // Additional validation
+    if (!decoded.sub || !decoded.email) {
+      throw new Error('Invalid token payload');
+    }
+
+    // Check token expiration
+    const now = Math.floor(Date.now() / 1000);
+    if (decoded.exp && decoded.exp < now) {
+      throw new Error('Token expired');
+    }
+
+    return {
+      userId: decoded.sub,
+      email: decoded.email,
+      role: decoded.role || 'user'
+    };
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
+```
+
+## API Security
+
+### Rate Limiting
+
+Protect against abuse with rate limiting:
+
+```typescript
+// lib/security/rate-limit.ts
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!
+});
+
+// Different rate limits for different tiers
+const rateLimiters = {
+  free: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, '1 m'), // 10 requests per minute
+    analytics: true
+  }),
+  pro: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(100, '1 m'), // 100 requests per minute
+    analytics: true
+  }),
+  api: new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(1000, '1 h'), // 1000 requests per hour
+    analytics: true
+  })
+};
+
+export async function rateLimit(
+  identifier: string,
+  tier: 'free' | 'pro' | 'api' = 'free'
+): Promise<{ success: boolean; limit: number; remaining: number; reset: number }> {
+  const limiter = rateLimiters[tier];
+  const { success, limit, remaining, reset } = await limiter.limit(identifier);
+
+  return { success, limit, remaining, reset };
+}
+```
+
+### Input Validation
+
+Comprehensive input validation and sanitization:
+
+```typescript
+// lib/security/validation.ts
+import { z } from 'zod';
+import DOMPurify from 'isomorphic-dompurify';
+
+// Chat message validation
+export const chatMessageSchema = z.object({
+  message: z.string().min(1).max(10000),
+  chatId: z.string().uuid(),
+  model: z.enum(['gpt-4o', 'claude-3-opus', 'gemini-1.5-pro']).optional(),
+  attachments: z.array(z.string().url()).optional()
+});
+
+// File upload validation
+export const fileUploadSchema = z.object({
+  fileName: z.string().max(255),
+  fileType: z.enum(['image/jpeg', 'image/png', 'image/gif', 'application/pdf']),
+  fileSize: z.number().max(10 * 1024 * 1024) // 10MB max
+});
+
+// Sanitize HTML content
+export function sanitizeHtml(dirty: string): string {
+  return DOMPurify.sanitize(dirty, {
+    ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'a', 'code', 'pre'],
+    ALLOWED_ATTR: ['href', 'target', 'rel']
+  });
+}
+
+// Sanitize user input
+export function sanitizeInput(input: string): string {
+  return input
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+\s*=/gi, '') // Remove event handlers
+    .trim();
+}
+```
+
+## Privacy Controls
+
+### Data Minimization
+
+Collect only necessary information:
+
+```typescript
+// lib/privacy/data-minimization.ts
+export class DataMinimization {
+  // Only store essential user data
+  async createUserProfile(authUser: any) {
+    return {
+      id: authUser.id,
+      email: authUser.email,
+      created_at: new Date().toISOString(),
+      // Don't store unnecessary personal info
+      subscription_tier: 'free',
+      daily_message_limit: 10
+    };
+  }
+
+  // Minimize chat data storage
+  async saveChatMessage(message: any) {
+    return {
+      id: crypto.randomUUID(),
+      chat_id: message.chatId,
+      role: message.role,
+      content: message.content,
+      model: message.model,
+      created_at: new Date().toISOString()
+      // Don't store IP addresses, user agents, etc.
+    };
+  }
+
+  // Anonymous analytics
+  async trackEvent(event: string, properties: any) {
+    // Hash user ID for privacy
+    const hashedUserId = this.hashUserId(properties.userId);
+    
+    return {
+      event,
+      timestamp: new Date().toISOString(),
+      properties: {
+        ...properties,
+        userId: hashedUserId
+      }
+    };
+  }
+
+  private hashUserId(userId: string): string {
+    const crypto = require('crypto');
+    return crypto
+      .createHash('sha256')
+      .update(userId + process.env.HASH_SALT!)
+      .digest('hex')
+      .substring(0, 16);
+  }
+}
+```
+
+### Data Retention
+
+Automatic data cleanup:
+
+```typescript
+// lib/privacy/data-retention.ts
+export class DataRetention {
+  // Configure retention periods
+  private retentionPolicies = {
+    chat_messages: 30, // 30 days for free tier
+    chat_messages_pro: 365, // 1 year for pro tier
+    file_uploads: 7, // 7 days
+    anonymous_users: 30, // 30 days
+    audit_logs: 90 // 90 days
+  };
+
+  async cleanupOldData() {
+    const now = new Date();
+
+    // Cleanup old chat messages
+    await this.deleteOldChatMessages(now);
+
+    // Cleanup old file uploads
+    await this.deleteOldFiles(now);
+
+    // Cleanup anonymous user data
+    await this.deleteOldAnonymousUsers(now);
+
+    // Cleanup old audit logs
+    await this.deleteOldAuditLogs(now);
+  }
+
+  private async deleteOldChatMessages(now: Date) {
+    const cutoffDate = new Date(
+      now.getTime() - this.retentionPolicies.chat_messages * 24 * 60 * 60 * 1000
+    );
+
+    await supabase
+      .from('messages')
+      .delete()
+      .lt('created_at', cutoffDate.toISOString())
+      .eq('user_tier', 'free');
+  }
+
+  private async deleteOldFiles(now: Date) {
+    const cutoffDate = new Date(
+      now.getTime() - this.retentionPolicies.file_uploads * 24 * 60 * 60 * 1000
+    );
+
+    // List old files
+    const { data: oldFiles } = await supabase
+      .from('chat_attachments')
+      .select('storage_path')
+      .lt('created_at', cutoffDate.toISOString());
+
+    // Delete from storage
+    if (oldFiles && oldFiles.length > 0) {
+      const paths = oldFiles.map(f => f.storage_path);
+      await supabase.storage.from('chat-attachments').remove(paths);
+      
+      // Delete records
+      await supabase
+        .from('chat_attachments')
+        .delete()
+        .lt('created_at', cutoffDate.toISOString());
+    }
+  }
+}
+```
+
+### User Rights
+
+GDPR-compliant user rights:
+
+```typescript
+// lib/privacy/user-rights.ts
+export class UserRights {
+  // Right to access
+  async exportUserData(userId: string) {
+    const userData = await supabase
+      .from('users')
+      .select(`
+        *,
+        chats (
+          *,
+          messages (*),
+          chat_attachments (*)
+        )
+      `)
+      .eq('id', userId)
+      .single();
+
+    return {
+      profile: userData.data,
+      exportDate: new Date().toISOString(),
+      format: 'json'
+    };
+  }
+
+  // Right to deletion
+  async deleteUserAccount(userId: string) {
+    // Delete in correct order due to foreign keys
+    await supabase.rpc('delete_user_data', { user_id: userId });
+    
+    // Delete auth account
+    await supabase.auth.admin.deleteUser(userId);
+    
+    return { deleted: true, timestamp: new Date().toISOString() };
+  }
+
+  // Right to rectification
+  async updateUserData(userId: string, updates: any) {
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId);
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Right to portability
+  async exportDataPortable(userId: string) {
+    const data = await this.exportUserData(userId);
+    
+    // Convert to standard format (JSON-LD)
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      identifier: userId,
+      email: data.profile.email,
+      dateCreated: data.profile.created_at,
+      data: data.profile
+    };
+  }
+}
+```
+
+## Security Monitoring
+
+### Threat Detection
+
+Real-time security monitoring:
+
+```typescript
+// lib/security/monitoring.ts
+export class SecurityMonitor {
+  private alertThresholds = {
+    failedLogins: 5,
+    rapidRequests: 100,
+    largeDataExport: 1000,
+    suspiciousPatterns: ['sql', 'script', 'eval', 'exec']
+  };
+
+  async detectThreats(activity: any) {
+    // Check for brute force attempts
+    if (activity.type === 'login_failed') {
+      await this.checkBruteForce(activity);
+    }
+
+    // Check for rate limit violations
+    if (activity.type === 'api_request') {
+      await this.checkRateLimit(activity);
+    }
+
+    // Check for data exfiltration
+    if (activity.type === 'data_export') {
+      await this.checkDataExfiltration(activity);
+    }
+
+    // Check for injection attempts
+    if (activity.type === 'user_input') {
+      await this.checkInjectionAttempts(activity);
+    }
+  }
+
+  private async checkBruteForce(activity: any) {
+    const recentFailures = await this.getRecentFailedLogins(
+      activity.email,
+      5 // last 5 minutes
+    );
+
+    if (recentFailures >= this.alertThresholds.failedLogins) {
+      await this.triggerAlert('brute_force_attempt', {
+        email: activity.email,
+        attempts: recentFailures,
+        ip: activity.ip
+      });
+
+      // Block IP temporarily
+      await this.blockIP(activity.ip, 3600); // 1 hour
+    }
+  }
+
+  private async checkInjectionAttempts(activity: any) {
+    const input = activity.input.toLowerCase();
+    
+    for (const pattern of this.alertThresholds.suspiciousPatterns) {
+      if (input.includes(pattern)) {
+        await this.triggerAlert('possible_injection', {
+          userId: activity.userId,
+          input: activity.input.substring(0, 100),
+          pattern: pattern,
+          ip: activity.ip
+        });
+        break;
+      }
+    }
+  }
+
+  private async triggerAlert(type: string, details: any) {
+    // Log to security audit
+    await supabase.from('security_alerts').insert({
+      type,
+      severity: this.getSeverity(type),
+      details,
+      timestamp: new Date().toISOString()
+    });
+
+    // Send notifications for high severity
+    if (this.getSeverity(type) === 'high') {
+      await this.notifySecurityTeam(type, details);
+    }
+  }
+
+  private getSeverity(type: string): 'low' | 'medium' | 'high' {
+    const highSeverity = ['brute_force_attempt', 'data_breach', 'account_takeover'];
+    const mediumSeverity = ['possible_injection', 'rate_limit_violation'];
+    
+    if (highSeverity.includes(type)) return 'high';
+    if (mediumSeverity.includes(type)) return 'medium';
+    return 'low';
+  }
+}
+```
+
+### Audit Logging
+
+Comprehensive audit trail:
+
+```typescript
+// lib/security/audit.ts
+export class AuditLogger {
+  async log(event: {
+    userId?: string;
+    action: string;
+    resource: string;
+    details?: any;
+    ip?: string;
+    userAgent?: string;
+  }) {
+    await supabase.from('audit_logs').insert({
+      user_id: event.userId,
+      action: event.action,
+      resource: event.resource,
+      details: event.details,
+      ip_address: event.ip,
+      user_agent: event.userAgent,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  async logApiAccess(request: Request, userId?: string) {
+    await this.log({
+      userId,
+      action: 'api_access',
+      resource: new URL(request.url).pathname,
+      details: {
+        method: request.method,
+        headers: this.sanitizeHeaders(request.headers)
+      },
+      ip: request.headers.get('x-forwarded-for') || 'unknown',
+      userAgent: request.headers.get('user-agent') || 'unknown'
+    });
+  }
+
+  async logDataAccess(userId: string, dataType: string, operation: string) {
+    await this.log({
+      userId,
+      action: `data_${operation}`,
+      resource: dataType,
+      details: {
+        timestamp: new Date().toISOString()
+      }
+    });
+  }
+
+  private sanitizeHeaders(headers: Headers): any {
+    const sanitized: any = {};
+    const safeHeaders = ['content-type', 'user-agent', 'referer'];
+    
+    for (const header of safeHeaders) {
+      if (headers.has(header)) {
+        sanitized[header] = headers.get(header);
+      }
+    }
+    
+    return sanitized;
+  }
+}
+```
+
+## Security Headers
+
+Comprehensive security headers:
+
+```typescript
+// middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+
+  // Security headers
+  response.headers.set('X-Frame-Options', 'DENY');
+  response.headers.set('X-Content-Type-Options', 'nosniff');
+  response.headers.set('X-XSS-Protection', '1; mode=block');
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
+  // Content Security Policy
+  response.headers.set(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; " +
+    "style-src 'self' 'unsafe-inline'; " +
+    "img-src 'self' data: https: blob:; " +
+    "font-src 'self' data:; " +
+    "connect-src 'self' https://api.openai.com wss://api.openai.com https://*.supabase.co wss://*.supabase.co https://api.heygen.com; " +
+    "media-src 'self' blob: https:; " +
+    "frame-src 'self' https://www.heygen.com;"
+  );
+
+  // Strict Transport Security (HSTS)
+  if (request.nextUrl.protocol === 'https:') {
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains; preload'
+    );
+  }
+
+  return response;
+}
+
+export const config = {
+  matcher: '/((?!_next/static|_next/image|favicon.ico).*)',
+};
+```
+
+## Compliance
+
+### GDPR Compliance
+
+- **Lawful Basis**: Explicit consent for data processing
+- **Data Minimization**: Only collect necessary data
+- **Purpose Limitation**: Clear purposes for data collection
+- **Storage Limitation**: Automatic data retention policies
+- **Integrity & Confidentiality**: Encryption and access controls
+- **Accountability**: Audit logs and compliance documentation
+
+### CCPA Compliance
+
+- **Right to Know**: Data export functionality
+- **Right to Delete**: Account deletion options
+- **Right to Opt-Out**: Granular privacy controls
+- **Non-Discrimination**: Equal service regardless of privacy choices
+
+### SOC 2 Type II Principles
+
+- **Security**: Comprehensive security controls
+- **Availability**: 99.9% uptime SLA
+- **Processing Integrity**: Accurate data processing
+- **Confidentiality**: Data encryption and access controls
+- **Privacy**: Privacy by design implementation
+
+## Security Best Practices
+
+### For Developers
+
+1. **Never commit secrets**: Use environment variables
+2. **Validate all inputs**: Use zod schemas
+3. **Sanitize outputs**: Prevent XSS attacks
+4. **Use parameterized queries**: Prevent SQL injection
+5. **Implement rate limiting**: Prevent abuse
+6. **Log security events**: Maintain audit trail
+7. **Keep dependencies updated**: Regular security patches
+
+### For Users
+
+1. **Use strong passwords**: Minimum 12 characters
+2. **Enable 2FA**: When available
+3. **Review permissions**: Regularly check app permissions
+4. **Report suspicious activity**: Contact security team
+5. **Keep software updated**: Browser and OS updates
+6. **Use secure networks**: Avoid public WiFi
+
+## Incident Response
+
+### Security Incident Procedure
+
+1. **Detection**: Automated monitoring and alerts
+2. **Containment**: Isolate affected systems
+3. **Investigation**: Determine scope and impact
+4. **Eradication**: Remove threat and vulnerabilities
+5. **Recovery**: Restore normal operations
+6. **Lessons Learned**: Post-incident review
+
+### Contact Information
+
+- **Security Team**: security@reflekt.sh
+- **Privacy Officer**: privacy@reflekt.sh
+- **Bug Bounty**: security.reflekt.sh
+- **Status Page**: status.reflekt.sh
+
+<Callout type="success">
+REFLEKT Console implements comprehensive security measures to protect user data, conversations, and uploaded files. Our security framework is continuously monitored and updated to address emerging threats.
+</Callout>
+
+For security concerns or to report vulnerabilities, please contact [security@reflekt.sh](mailto:security@reflekt.sh).

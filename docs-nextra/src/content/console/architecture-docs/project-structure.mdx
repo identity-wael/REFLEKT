@@ -1,0 +1,345 @@
+---
+title: Project Structure
+description: Complete repository layout and file organization
+---
+
+import { FileTree, Callout } from 'nextra/components'
+
+# Project Structure
+
+Comprehensive overview of the REFLEKT Console repository organization and key files.
+
+## Repository Overview
+
+The project consists of three independent Next.js applications:
+
+<FileTree>
+  <FileTree.Folder name="reflekt-ai" defaultOpen>
+    <FileTree.Folder name="console" defaultOpen>
+      <FileTree.File name="Main chat application (Next.js 15)" />
+    </FileTree.Folder>
+    <FileTree.Folder name="apps">
+      <FileTree.File name="Marketing/landing site (Next.js 15)" />
+    </FileTree.Folder>
+    <FileTree.Folder name="docs-nextra">
+      <FileTree.File name="Documentation site (Nextra)" />
+    </FileTree.Folder>
+    <FileTree.File name="README.md" />
+    <FileTree.File name=".gitignore" />
+  </FileTree.Folder>
+</FileTree>
+
+## Console Application Structure
+
+<FileTree>
+  <FileTree.Folder name="console" defaultOpen>
+    <FileTree.Folder name="app" defaultOpen>
+      <FileTree.Folder name="(auth)">
+        <FileTree.File name="login/page.tsx" />
+        <FileTree.File name="signup/page.tsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="api" defaultOpen>
+        <FileTree.Folder name="chat">
+          <FileTree.File name="route.ts" />
+          <FileTree.File name="history/route.ts" />
+          <FileTree.File name="title/route.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="models">
+          <FileTree.File name="route.ts" />
+          <FileTree.File name="[id]/status/route.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="avatar">
+          <FileTree.File name="session/route.ts" />
+          <FileTree.File name="speak/route.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="tts">
+          <FileTree.File name="route.ts" />
+        </FileTree.Folder>
+        <FileTree.Folder name="voice">
+          <FileTree.File name="stream/route.ts" />
+        </FileTree.Folder>
+      </FileTree.Folder>
+      <FileTree.File name="layout.tsx" />
+      <FileTree.File name="page.tsx" />
+      <FileTree.File name="globals.css" />
+    </FileTree.Folder>
+    <FileTree.Folder name="components" defaultOpen>
+      <FileTree.Folder name="chat">
+        <FileTree.File name="chat-interface.tsx" />
+        <FileTree.File name="message-list.tsx" />
+        <FileTree.File name="message-item.tsx" />
+        <FileTree.File name="chat-input.tsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="ui">
+        <FileTree.File name="button.tsx" />
+        <FileTree.File name="card.tsx" />
+        <FileTree.File name="dialog.tsx" />
+        <FileTree.File name="input.tsx" />
+        <FileTree.File name="select.tsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="avatar">
+        <FileTree.File name="avatar-display.tsx" />
+        <FileTree.File name="avatar-controls.tsx" />
+      </FileTree.Folder>
+      <FileTree.Folder name="voice">
+        <FileTree.File name="voice-recorder.tsx" />
+        <FileTree.File name="voice-player.tsx" />
+      </FileTree.Folder>
+    </FileTree.Folder>
+    <FileTree.Folder name="lib" defaultOpen>
+      <FileTree.Folder name="ai">
+        <FileTree.File name="models.ts" />
+        <FileTree.File name="stream.ts" />
+        <FileTree.File name="tools.ts" />
+      </FileTree.Folder>
+      <FileTree.Folder name="supabase">
+        <FileTree.File name="client.ts" />
+        <FileTree.File name="server.ts" />
+        <FileTree.File name="types.ts" />
+      </FileTree.Folder>
+      <FileTree.Folder name="hooks">
+        <FileTree.File name="use-chat.ts" />
+        <FileTree.File name="use-avatar.ts" />
+        <FileTree.File name="use-voice.ts" />
+      </FileTree.Folder>
+      <FileTree.File name="utils.ts" />
+      <FileTree.File name="constants.ts" />
+    </FileTree.Folder>
+    <FileTree.Folder name="public">
+      <FileTree.File name="favicon.ico" />
+      <FileTree.File name="logo.svg" />
+    </FileTree.Folder>
+    <FileTree.File name="package.json" />
+    <FileTree.File name="tsconfig.json" />
+    <FileTree.File name="next.config.js" />
+    <FileTree.File name="tailwind.config.ts" />
+    <FileTree.File name=".env.example" />
+  </FileTree.Folder>
+</FileTree>
+
+## Key Directories Explained
+
+### `/app` - Next.js App Router
+
+The main application directory using Next.js 15 App Router:
+
+- **`(auth)/`** - Grouped authentication routes
+- **`api/`** - API route handlers for all endpoints
+- **`layout.tsx`** - Root layout with providers
+- **`page.tsx`** - Main chat interface page
+
+### `/components` - React Components
+
+Organized by feature:
+
+- **`chat/`** - Chat-specific components
+- **`ui/`** - Reusable UI components (shadcn/ui)
+- **`avatar/`** - HeyGen avatar components
+- **`voice/`** - Voice/audio components
+
+### `/lib` - Core Libraries
+
+Business logic and utilities:
+
+- **`ai/`** - AI model configurations and helpers
+- **`supabase/`** - Database client and types
+- **`hooks/`** - Custom React hooks
+- **`utils.ts`** - Utility functions
+
+## Important Files
+
+### Configuration Files
+
+<FileTree>
+  <FileTree.File name="next.config.js">
+    Next.js configuration, environment variables, redirects
+  </FileTree.File>
+  <FileTree.File name="tsconfig.json">
+    TypeScript configuration, path aliases
+  </FileTree.File>
+  <FileTree.File name="tailwind.config.ts">
+    Tailwind CSS configuration, theme customization
+  </FileTree.File>
+  <FileTree.File name="package.json">
+    Dependencies, scripts, Node.js version
+  </FileTree.File>
+  <FileTree.File name=".env.example">
+    Environment variable template
+  </FileTree.File>
+</FileTree>
+
+### API Routes
+
+**`/app/api/chat/route.ts`**
+```typescript
+// Main chat endpoint - handles streaming responses
+export async function POST(req: Request) {
+  const { messages, model } = await req.json();
+  // Stream AI response
+}
+```
+
+**`/app/api/models/route.ts`**
+```typescript
+// List available models and their status
+export async function GET() {
+  return Response.json(availableModels);
+}
+```
+
+### Component Structure
+
+**`/components/chat/chat-interface.tsx`**
+```typescript
+// Main chat UI component
+export function ChatInterface() {
+  // Manages conversation state
+  // Handles message sending
+  // Renders message list
+}
+```
+
+**`/lib/ai/models.ts`**
+```typescript
+// Model configuration and management
+export function getModel(modelId: string) {
+  // Returns configured AI model
+}
+```
+
+## File Naming Conventions
+
+### Components
+- **PascalCase**: `ChatInterface.tsx`, `MessageList.tsx`
+- **Suffix with type**: `.tsx` for components, `.ts` for utilities
+- **Index files**: Use `index.ts` for barrel exports
+
+### API Routes
+- **Lowercase**: `route.ts` for App Router
+- **Dynamic routes**: `[id]/route.ts` for parameters
+- **Nested structure**: Mirror URL structure
+
+### Utilities
+- **camelCase**: `useChat.ts`, `formatMessage.ts`
+- **Descriptive names**: `generateChatTitle.ts`
+- **Group by feature**: `/lib/ai/`, `/lib/supabase/`
+
+## Environment Files
+
+```bash
+.env.example     # Template with all variables
+.env.local       # Local development (gitignored)
+.env.production  # Production values (gitignored)
+.env.test        # Test environment
+```
+
+## Build Output
+
+<FileTree>
+  <FileTree.Folder name=".next">
+    <FileTree.File name="Build output (gitignored)" />
+  </FileTree.Folder>
+  <FileTree.Folder name="node_modules">
+    <FileTree.File name="Dependencies (gitignored)" />
+  </FileTree.Folder>
+  <FileTree.Folder name="out">
+    <FileTree.File name="Static export (if used)" />
+  </FileTree.Folder>
+</FileTree>
+
+## Database Structure
+
+Located in Supabase, not in repository:
+
+```sql
+-- Main tables
+users
+conversations
+messages
+files
+
+-- Functions
+generate_chat_title()
+check_message_limit()
+
+-- RLS Policies
+users_own_conversations
+users_own_messages
+```
+
+## Documentation Structure
+
+<FileTree>
+  <FileTree.Folder name="docs-nextra/src/content" defaultOpen>
+    <FileTree.File name="index.mdx" />
+    <FileTree.File name="get-started.mdx" />
+    <FileTree.Folder name="core-features">
+      <FileTree.File name="ai-integration.mdx" />
+      <FileTree.File name="interactive-avatars.mdx" />
+    </FileTree.Folder>
+    <FileTree.Folder name="architecture-docs">
+      <FileTree.File name="architecture.mdx" />
+      <FileTree.File name="project-structure.mdx" />
+    </FileTree.Folder>
+  </FileTree.Folder>
+</FileTree>
+
+## Scripts Reference
+
+**Development**
+```json
+{
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start"
+}
+```
+
+**Type Checking**
+```json
+{
+  "type-check": "tsc --noEmit",
+  "lint": "next lint",
+  "format": "prettier --write ."
+}
+```
+
+**Database**
+```json
+{
+  "generate:types": "supabase gen types",
+  "db:migrate": "supabase db push"
+}
+```
+
+<Callout type="info">
+**Pro Tip**: Use path aliases configured in `tsconfig.json`:
+- `@/components/*` → `./components/*`
+- `@/lib/*` → `./lib/*`
+- `@/app/*` → `./app/*`
+</Callout>
+
+## Adding New Features
+
+### 1. New API Endpoint
+1. Create route in `/app/api/[feature]/route.ts`
+2. Add types to `/lib/types/[feature].ts`
+3. Create hook in `/lib/hooks/use-[feature].ts`
+
+### 2. New UI Component
+1. Create component in `/components/[feature]/`
+2. Add to barrel export in `/components/[feature]/index.ts`
+3. Import using `@/components/[feature]`
+
+### 3. New AI Model
+1. Add configuration to `/lib/ai/models.ts`
+2. Update environment variables
+3. Add to model selector UI
+
+## Best Practices
+
+1. **Keep API routes thin** - Business logic in `/lib`
+2. **Use Server Components** - Where possible for performance
+3. **Colocate related files** - Feature-based organization
+4. **Type everything** - Full TypeScript coverage
+5. **Document complex logic** - Inline comments for clarity

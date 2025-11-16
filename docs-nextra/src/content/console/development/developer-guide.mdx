@@ -1,0 +1,811 @@
+---
+title: Developer Guide
+description: Complete development workflow for REFLEKT Console using Next.js 15 and GPT-4o
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# Developer Guide
+
+Complete guide for developing REFLEKT Console using Next.js 15, TypeScript, GPT-4o API, and modern development tools. Learn best practices for multi-model AI integration, real-time features, and Supabase backend development.
+
+## Development Environment Setup
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js 22+** (LTS recommended)
+- **pnpm 9+**
+- **TypeScript 5+**
+- **Git**
+- **VS Code** (recommended) with extensions
+
+### VS Code Extensions
+
+Install these recommended extensions:
+
+```json
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "ms-playwright.playwright",
+    "ms-vscode.vscode-json",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "github.copilot",
+    "supermaven.supermaven"
+  ]
+}
+```
+
+### Project Structure
+
+```
+reflekt-ai/
+├── apps/                         # Next.js 15.4.6 Application
+│   ├── app/                      # App Router
+│   │   ├── (auth)/              # Auth routes
+│   │   ├── api/                 # API routes
+│   │   │   ├── chat/           # Chat endpoints
+│   │   │   ├── heygen/         # Avatar endpoints
+│   │   │   ├── realtime-session/ # Voice endpoints
+│   │   │   ├── tts/            # Text-to-speech
+│   │   │   └── models/         # Model management
+│   │   ├── chat/               # Chat interface
+│   │   └── settings/           # User settings
+│   ├── components/              # React components
+│   │   ├── ui/                 # shadcn/ui components
+│   │   ├── chat/               # Chat components
+│   │   └── providers/          # Context providers
+│   ├── lib/                     # Utility libraries
+│   │   ├── ai/                 # AI integration
+│   │   ├── supabase/           # Supabase client
+│   │   └── utils/              # Common utilities
+│   └── hooks/                   # Custom React hooks
+├── docs-nextra/                  # Documentation site
+│   ├── src/                     # Nextra content
+│   └── public/                  # Static assets
+├── supabase/                     # Supabase config
+│   ├── migrations/              # Database migrations
+│   └── functions/               # Edge functions
+├── .env.example                  # Environment template
+├── next.config.js                # Next.js configuration
+├── tailwind.config.ts            # Tailwind CSS config
+├── tsconfig.json                 # TypeScript config
+└── package.json                  # Dependencies
+```
+
+## Development Workflow
+
+### Initial Setup
+
+<Tabs items={['Clone & Install', 'Environment Setup', 'Database Setup']}>
+  <Tabs.Tab>
+    ```bash
+    # Clone the repository
+    git clone https://github.com/identity-wael/reflekt-ai.git
+    cd reflekt-ai/apps
+
+    # Install dependencies
+    pnpm install
+
+    # Copy environment template
+    cp .env.example .env.local
+
+    # Start development server
+    pnpm dev
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```bash
+    # Edit .env.local with your API keys
+    code .env.local
+    ```
+
+    ```env
+    # Supabase
+    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+    SUPABASE_SERVICE_ROLE_KEY=your-service-key
+
+    # AI Providers (OpenAI Required for GPT-4o)
+    OPENAI_API_KEY=sk-...  # Required for primary model
+    ANTHROPIC_API_KEY=sk-ant-...  # Optional for Claude
+    GOOGLE_AI_API_KEY=AIza...  # Optional for Gemini
+    MISTRAL_API_KEY=...
+    XAI_API_KEY=xai-...
+    PERPLEXITY_API_KEY=pplx-...
+
+    # HeyGen Avatar
+    NEXT_PUBLIC_HEYGEN_API_KEY=your-heygen-key
+    HEYGEN_SECRET_KEY=your-heygen-secret
+
+    # Optional Services
+    OPENROUTER_API_KEY=sk-or-...
+    DEEPSEEK_API_KEY=...
+
+    # Authentication
+    NEXTAUTH_SECRET="your-secret-key-here"
+    NEXTAUTH_URL="http://localhost:3000"
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```bash
+    # Install Supabase CLI
+    pnpm add -g supabase
+
+    # Start Supabase locally
+    supabase start
+
+    # Run migrations
+    supabase db push
+
+    # Or connect to cloud Supabase
+    supabase link --project-ref your-project-ref
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Core Development
+
+### AI Integration with Vercel AI SDK
+
+<Tabs items={['Basic Chat', 'Streaming Response', 'Tool Calling', 'Multi-Model']}>
+  <Tabs.Tab>
+    ```typescript
+    // app/api/chat/route.ts
+    import { openai } from '@ai-sdk/openai';
+    import { streamText } from 'ai';
+
+    export async function POST(req: Request) {
+      const { messages } = await req.json();
+
+      const result = await streamText({
+        model: openai('gpt-4o'),
+        messages,
+        temperature: 0.7,
+        maxTokens: 4096,
+      });
+
+      return result.toDataStreamResponse();
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // components/chat/chat-interface.tsx
+    import { useChat } from 'ai/react';
+
+    export function ChatInterface() {
+      const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+        api: '/api/chat',
+        initialMessages: [],
+        onResponse: (response) => {
+          console.log('Streaming started');
+        },
+        onFinish: (message) => {
+          console.log('Message complete:', message);
+        },
+      });
+
+      return (
+        <div className="flex flex-col h-full">
+          <div className="flex-1 overflow-y-auto">
+            {messages.map((message) => (
+              <div key={message.id} className={cn(
+                'p-4',
+                message.role === 'user' ? 'bg-blue-50' : 'bg-gray-50'
+              )}>
+                {message.content}
+              </div>
+            ))}
+          </div>
+          <form onSubmit={handleSubmit} className="p-4 border-t">
+            <input
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Type a message..."
+              disabled={isLoading}
+              className="w-full p-2 border rounded"
+            />
+          </form>
+        </div>
+      );
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/tools.ts
+    import { tool } from 'ai';
+    import { z } from 'zod';
+
+    export const searchTool = tool({
+      description: 'Search for information',
+      parameters: z.object({
+        query: z.string(),
+        limit: z.number().optional(),
+      }),
+      execute: async ({ query, limit = 5 }) => {
+        // Implement search logic
+        const results = await searchDatabase(query, limit);
+        return results;
+      },
+    });
+
+    // Use in chat
+    const result = await streamText({
+      model: openai('gpt-4o'),
+      messages,
+      tools: {
+        search: searchTool,
+      },
+      toolChoice: 'auto',
+    });
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/ai/model-router.ts
+    import { openai } from '@ai-sdk/openai';
+    import { anthropic } from '@ai-sdk/anthropic';
+    import { google } from '@ai-sdk/google';
+
+    export function getModel(modelId: string) {
+      switch (modelId) {
+        case 'gpt-4o':
+          return openai('gpt-4o');
+        case 'claude-3-opus':
+          return anthropic('claude-3-opus-20240229');
+        case 'gemini-pro':
+          return google('gemini-1.5-pro');
+        default:
+          return openai('gpt-4o'); // Default to GPT-4o
+      }
+    }
+
+    // Dynamic model selection
+    export async function chatWithModel(modelId: string, messages: any[]) {
+      const model = getModel(modelId);
+
+      return streamText({
+        model,
+        messages,
+      });
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### Supabase Integration
+
+<Tabs items={['Client Setup', 'Database Queries', 'Real-time', 'Authentication']}>
+  <Tabs.Tab>
+    ```typescript
+    // lib/supabase/client.ts
+    import { createBrowserClient } from '@supabase/ssr';
+    import type { Database } from '@/types/database';
+
+    export function createClient() {
+      return createBrowserClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      );
+    }
+
+    // Server client
+    import { cookies } from 'next/headers';
+    import { createServerClient } from '@supabase/ssr';
+
+    export async function createServerSupabaseClient() {
+      const cookieStore = await cookies();
+
+      return createServerClient<Database>(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            getAll() {
+              return cookieStore.getAll();
+            },
+            setAll(cookiesToSet) {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            },
+          },
+        }
+      );
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // lib/queries/chat-queries.ts
+    export async function createChat(userId: string, title: string) {
+      const supabase = await createServerSupabaseClient();
+
+      const { data, error } = await supabase
+        .from('chats')
+        .insert({
+          user_id: userId,
+          title,
+          model: 'gpt-4o',
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+
+    export async function saveMessage(chatId: string, message: any) {
+      const supabase = await createServerSupabaseClient();
+
+      const { data, error } = await supabase
+        .from('messages')
+        .insert({
+          chat_id: chatId,
+          role: message.role,
+          content: message.content,
+          model: message.model,
+          tokens_used: message.usage?.totalTokens,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // hooks/use-realtime.ts
+    import { useEffect } from 'react';
+    import { createClient } from '@/lib/supabase/client';
+
+    export function useRealtimeMessages(chatId: string) {
+      const supabase = createClient();
+
+      useEffect(() => {
+        const channel = supabase
+          .channel(`messages:${chatId}`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'INSERT',
+              schema: 'public',
+              table: 'messages',
+              filter: `chat_id=eq.${chatId}`,
+            },
+            (payload) => {
+              console.log('New message:', payload.new);
+              // Handle new message
+            }
+          )
+          .subscribe();
+
+        return () => {
+          supabase.removeChannel(channel);
+        };
+      }, [chatId]);
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // app/auth/sign-in/page.tsx
+    'use client';
+
+    import { createClient } from '@/lib/supabase/client';
+
+    export default function SignIn() {
+      const supabase = createClient();
+
+      const handleSignIn = async (email: string, password: string) => {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) {
+          console.error('Sign in error:', error);
+        } else {
+          // Redirect to chat
+          window.location.href = '/chat';
+        }
+      };
+
+      const handleOAuth = async (provider: 'google' | 'github') => {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+      };
+
+      return (
+        // Sign in UI
+      );
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+### Avatar Integration (HeyGen)
+
+```typescript
+// components/avatar/streaming-avatar.tsx
+import { StreamingAvatar } from '@heygen/streaming-avatar';
+
+export function AvatarComponent() {
+  const [avatar, setAvatar] = useState<StreamingAvatar | null>(null);
+
+  const initializeAvatar = async () => {
+    const newAvatar = new StreamingAvatar({
+      token: await getAccessToken(),
+    });
+
+    await newAvatar.createStartAvatar({
+      avatarName: 'josh_lite3_20230714',
+      voice: {
+        voiceId: 'en-US-BrianNeural',
+        rate: 1.0,
+      },
+    });
+
+    setAvatar(newAvatar);
+  };
+
+  const speak = async (text: string) => {
+    if (avatar) {
+      await avatar.speak({ text });
+    }
+  };
+
+  return (
+    <div>
+      <video id="avatarVideo" autoPlay playsInline />
+      <button onClick={() => speak('Hello from GPT-4o!')}>
+        Speak
+      </button>
+    </div>
+  );
+}
+```
+
+### Voice Mode (GPT-4o Realtime)
+
+```typescript
+// hooks/use-voice-mode.ts
+export function useVoiceMode() {
+  const [ws, setWs] = useState<WebSocket | null>(null);
+
+  const connect = async () => {
+    const { key, url } = await fetch('/api/realtime-session', {
+      method: 'POST',
+    }).then(r => r.json());
+
+    const websocket = new WebSocket(url);
+
+    websocket.onopen = () => {
+      websocket.send(JSON.stringify({
+        type: 'session.update',
+        session: {
+          modalities: ['text', 'audio'],
+          voice: 'alloy',
+          instructions: 'You are a helpful assistant powered by GPT-4o',
+        },
+      }));
+    };
+
+    websocket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // Handle audio chunks, transcripts, etc.
+    };
+
+    setWs(websocket);
+  };
+
+  return { connect, ws };
+}
+```
+
+## Testing
+
+### Unit Testing
+
+```typescript
+// __tests__/chat.test.ts
+import { render, screen, fireEvent } from '@testing-library/react';
+import { ChatInterface } from '@/components/chat/chat-interface';
+
+describe('ChatInterface', () => {
+  it('sends message on form submit', async () => {
+    render(<ChatInterface />);
+
+    const input = screen.getByPlaceholderText('Type a message...');
+    const form = screen.getByRole('form');
+
+    fireEvent.change(input, { target: { value: 'Hello GPT-4o' } });
+    fireEvent.submit(form);
+
+    // Assert message sent
+    expect(input.value).toBe('');
+  });
+});
+```
+
+### E2E Testing with Playwright
+
+```typescript
+// e2e/chat.spec.ts
+import { test, expect } from '@playwright/test';
+
+test('chat flow', async ({ page }) => {
+  await page.goto('/chat');
+
+  // Type message
+  await page.fill('[data-testid="chat-input"]', 'Hello GPT-4o');
+  await page.press('[data-testid="chat-input"]', 'Enter');
+
+  // Wait for response
+  await expect(page.locator('[data-testid="ai-message"]')).toBeVisible();
+
+  // Verify GPT-4o response
+  const response = await page.textContent('[data-testid="ai-message"]');
+  expect(response).toContain('Hello');
+});
+```
+
+## Performance Optimization
+
+### Code Splitting
+
+```typescript
+// Dynamic imports for heavy components
+const AvatarModal = dynamic(() => import('@/components/avatar/avatar-modal'), {
+  loading: () => <Skeleton className="h-96 w-full" />,
+  ssr: false,
+});
+
+const VoiceMode = dynamic(() => import('@/components/voice/voice-mode'), {
+  loading: () => <div>Loading voice mode...</div>,
+  ssr: false,
+});
+```
+
+### Image Optimization
+
+```tsx
+import Image from 'next/image';
+
+export function OptimizedImage() {
+  return (
+    <Image
+      src="/avatar.png"
+      alt="Avatar"
+      width={300}
+      height={300}
+      priority
+      placeholder="blur"
+      blurDataURL="data:image/jpeg;base64,..."
+    />
+  );
+}
+```
+
+### Response Caching
+
+```typescript
+// app/api/models/route.ts
+export const revalidate = 3600; // Cache for 1 hour
+
+export async function GET() {
+  const models = getAvailableModels();
+
+  return NextResponse.json(models, {
+    headers: {
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+    },
+  });
+}
+```
+
+## Deployment
+
+### Build for Production
+
+```bash
+# Build the application
+pnpm build
+
+# Run production build locally
+pnpm start
+
+# Type check
+pnpm type-check
+
+# Lint and format
+pnpm lint
+pnpm format
+```
+
+### Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+pnpm add -g vercel
+
+# Deploy
+vercel
+
+# Deploy to production
+vercel --prod
+
+# Set environment variables
+vercel env add OPENAI_API_KEY
+vercel env add SUPABASE_URL
+# ... add all required env vars
+```
+
+### Docker Deployment
+
+```dockerfile
+# Dockerfile
+FROM node:22-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+RUN pnpm build
+
+FROM node:22-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV production
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
+EXPOSE 3000
+CMD ["node", "server.js"]
+```
+
+## Monitoring & Debugging
+
+### Error Tracking
+
+```typescript
+// lib/monitoring/sentry.ts
+import * as Sentry from '@sentry/nextjs';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 1.0,
+});
+
+// Capture errors
+export function captureError(error: Error, context?: any) {
+  Sentry.captureException(error, {
+    extra: context,
+  });
+}
+```
+
+### Performance Monitoring
+
+```typescript
+// app/layout.tsx
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
+
+export default function RootLayout({ children }) {
+  return (
+    <html>
+      <body>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
+}
+```
+
+## Security Best Practices
+
+### API Route Protection
+
+```typescript
+// middleware.ts
+import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { NextResponse } from 'next/server';
+
+export async function middleware(request: Request) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session && request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.json(
+      { error: 'Unauthorized' },
+      { status: 401 }
+    );
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ['/api/:path*', '/chat/:path*'],
+};
+```
+
+### Input Validation
+
+```typescript
+// lib/validation/schemas.ts
+import { z } from 'zod';
+
+export const chatMessageSchema = z.object({
+  message: z.string().min(1).max(10000),
+  model: z.enum(['gpt-4o', 'claude-3-opus', 'gemini-pro']).default('gpt-4o'),
+  temperature: z.number().min(0).max(2).default(0.7),
+});
+
+// Use in API route
+export async function POST(req: Request) {
+  const body = await req.json();
+  const validated = chatMessageSchema.parse(body);
+  // Process validated input
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+<Callout type="warning">
+**API Key Issues**: Ensure all API keys are correctly set in `.env.local` and have proper permissions.
+</Callout>
+
+| Issue | Solution |
+|-------|----------|
+| Build fails | Check TypeScript errors with `pnpm type-check` |
+| Supabase connection error | Verify SUPABASE_URL and keys are correct |
+| GPT-4o not responding | Check OpenAI API key and rate limits |
+| Avatar not loading | Verify HeyGen API credentials |
+| Voice mode issues | Check browser permissions for microphone |
+
+### Debug Mode
+
+```typescript
+// Enable debug logging
+if (process.env.NODE_ENV === 'development') {
+  console.log('Debug: API Response', response);
+  console.log('Debug: Supabase Query', query);
+}
+```
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- [Supabase Documentation](https://supabase.com/docs)
+- [OpenAI API Reference](https://platform.openai.com/docs)
+- [HeyGen SDK](https://docs.heygen.com)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs)

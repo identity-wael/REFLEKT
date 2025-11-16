@@ -1,0 +1,325 @@
+# Terraform Infrastructure as Code
+
+## Overview
+
+Our infrastructure is managed using Terraform, providing declarative, version-controlled infrastructure deployment across Google Cloud Platform. All production resources are defined in code, ensuring reproducibility and consistency.
+
+## Repository Structure
+
+```
+infrastructure/
+├── terraform/
+│   ├── environments/
+│   │   ├── production/
+│   │   │   ├── main.tf
+│   │   │   ├── variables.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── terraform.tfvars
+│   │   └── staging/
+│   ├── modules/
+│   │   ├── gke-cluster/
+│   │   ├── tigerbeetle/
+│   │   ├── cloudsql/
+│   │   └── networking/
+│   └── backend.tf
+```
+
+## Core Modules
+
+### GKE Cluster Module
+Manages the Google Kubernetes Engine cluster configuration:
+- Node pools (TigerBeetle dedicated, default)
+- Autoscaling policies
+- Network configuration
+- Workload Identity setup
+
+### TigerBeetle Module
+Deploys and configures TigerBeetle financial ledger:
+- StatefulSet with 3 replicas
+- Local SSD storage provisioning
+- Service and LoadBalancer configuration
+- Monitoring integration
+
+### CloudSQL Module
+Manages PostgreSQL instances for Temporal:
+- Instance configuration (db-g1-small)
+- Database creation
+- Private IP allocation
+- Backup policies
+
+### Networking Module
+Configures VPC and network security:
+- Custom VPC network
+- Subnets with secondary ranges
+- Cloud NAT for outbound connectivity
+- Firewall rules
+
+## State Management
+
+### Remote State
+```hcl
+terraform {
+  backend "gcs" {
+    bucket = "reflekt-terraform-state"
+    prefix = "production"
+  }
+}
+```
+
+### State Locking
+- Uses GCS native locking
+- Prevents concurrent modifications
+- Automatic lock release on errors
+
+## Deployment Workflow
+
+### Local Development
+```bash
+# Initialize Terraform
+cd infrastructure/terraform/environments/production
+terraform init
+
+# Plan changes
+terraform plan -out=tfplan
+
+# Apply changes
+terraform apply tfplan
+```
+
+### CI/CD Pipeline
+```yaml
+# GitHub Actions workflow
+- name: Terraform Plan
+  run: |
+    terraform init
+    terraform plan -out=tfplan
+
+- name: Terraform Apply
+  if: github.ref == 'refs/heads/main'
+  run: terraform apply -auto-approve tfplan
+```
+
+## Resource Tagging
+
+All resources are tagged for cost tracking and management:
+```hcl
+labels = {
+  environment = "production"
+  managed_by  = "terraform"
+  team        = "platform"
+  cost_center = "engineering"
+}
+```
+
+## Key Resources Managed
+
+### Compute Resources
+- GKE cluster: `platform-production`
+- Node pools: `tigerbeetle-pool`, `default-pool`
+- Compute instances for TigerBeetle nodes
+
+### Storage Resources
+- Local SSDs for TigerBeetle (375GB per node)
+- Persistent disks for stateful workloads
+- GCS buckets for backups and artifacts
+
+### Networking Resources
+- VPC: `platform-network`
+- Subnets with /20 CIDR blocks
+- Cloud NAT gateway
+- External LoadBalancers
+
+### Database Resources
+- CloudSQL PostgreSQL: `temporal-production`
+- Databases: `temporal`, `temporal_visibility`
+
+### IAM & Security
+- Service accounts for workload identity
+- IAM bindings for GKE nodes
+- Secret Manager for sensitive data
+
+## Terraform Variables
+
+### Required Variables
+```hcl
+variable "project_id" {
+  description = "GCP Project ID"
+  type        = string
+}
+
+variable "region" {
+  description = "GCP Region"
+  type        = string
+  default     = "us-central1"
+}
+
+variable "cluster_name" {
+  description = "GKE Cluster Name"
+  type        = string
+  default     = "platform-production"
+}
+```
+
+### Environment-Specific Values
+```hcl
+# terraform.tfvars
+project_id = "production-reflekt-ai"
+region     = "us-central1"
+
+tigerbeetle_replicas = 3
+tigerbeetle_storage_size = 375
+
+node_pool_configs = {
+  tigerbeetle = {
+    machine_type = "c3-standard-4-lssd"
+    node_count   = 3
+  }
+  default = {
+    machine_type = "e2-standard-4"
+    node_count   = 2
+  }
+}
+```
+
+## Outputs
+
+Key outputs exported for use by other tools:
+```hcl
+output "cluster_endpoint" {
+  value = google_container_cluster.primary.endpoint
+}
+
+output "tigerbeetle_external_ip" {
+  value = kubernetes_service.tigerbeetle.status[0].load_balancer[0].ingress[0].ip
+}
+
+output "grafana_url" {
+  value = "http://${kubernetes_service.grafana.status[0].load_balancer[0].ingress[0].ip}"
+}
+```
+
+## Best Practices
+
+### Version Pinning
+```hcl
+terraform {
+  required_version = ">= 1.5.0"
+  required_providers {
+    google = {
+      source  = "hashicorp/google"
+      version = "~> 5.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.23"
+    }
+  }
+}
+```
+
+### Resource Naming Convention
+```hcl
+resource "google_compute_instance" "example" {
+  name = "${var.environment}-${var.service}-${var.component}"
+  # Example: production-tigerbeetle-node-1
+}
+```
+
+### Cost Optimization
+- Use preemptible nodes for non-critical workloads
+- Implement auto-scaling policies
+- Regular review of unused resources
+- Committed use discounts for stable workloads
+
+## Disaster Recovery
+
+### Backup Strategy
+- Terraform state backed up to GCS with versioning
+- Infrastructure can be recreated from code
+- Data backups handled separately
+
+### Recovery Procedures
+```bash
+# Restore from state backup
+gsutil cp gs://reflekt-terraform-state-backup/latest.tfstate .
+terraform init -reconfigure
+terraform refresh
+terraform plan
+```
+
+## Security Considerations
+
+### Secrets Management
+- Never commit secrets to repository
+- Use Secret Manager for sensitive values
+- Reference secrets in Terraform:
+```hcl
+data "google_secret_manager_secret_version" "api_key" {
+  secret = "api-key"
+}
+```
+
+### Access Control
+- Terraform service account with minimal permissions
+- Separate accounts for different environments
+- Audit logging enabled for all changes
+
+## Monitoring & Alerts
+
+### Terraform Cloud Integration
+- Remote execution for production changes
+- Policy as code with Sentinel
+- Cost estimation before apply
+
+### Change Notifications
+- Slack notifications for apply operations
+- Email alerts for failed runs
+- Audit trail in Cloud Logging
+
+## Common Operations
+
+### Scaling Node Pools
+```bash
+# Update node count
+terraform apply -var="default_node_count=3"
+```
+
+### Updating TigerBeetle
+```bash
+# Update version
+terraform apply -var="tigerbeetle_version=0.15.6"
+```
+
+### Adding New Resources
+1. Create module in `modules/`
+2. Reference in environment `main.tf`
+3. Run `terraform plan` to preview
+4. Apply after review
+
+## Troubleshooting
+
+### State Lock Issues
+```bash
+# Force unlock (use with caution)
+terraform force-unlock <lock-id>
+```
+
+### Import Existing Resources
+```bash
+# Import GKE cluster
+terraform import google_container_cluster.primary projects/production-reflekt-ai/locations/us-central1/clusters/platform-production
+```
+
+### Debugging
+```bash
+# Enable debug logging
+export TF_LOG=DEBUG
+terraform plan
+```
+
+## Future Improvements
+
+- Implement Terragrunt for DRY configurations
+- Add automated testing with Terratest
+- Implement cost policies with Infracost
+- Multi-region disaster recovery setup

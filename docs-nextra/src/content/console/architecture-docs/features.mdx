@@ -1,0 +1,357 @@
+---
+title: Platform Features
+description: Complete feature set of REFLEKT Console
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+export const FeatureBadge = ({ status }) => {
+  const colors = {
+    'live': 'nx-bg-green-100 nx-text-green-800 dark:nx-bg-green-900 dark:nx-text-green-200',
+    'beta': 'nx-bg-blue-100 nx-text-blue-800 dark:nx-bg-blue-900 dark:nx-text-blue-200',
+    'coming-soon': 'nx-bg-yellow-100 nx-text-yellow-800 dark:nx-bg-yellow-900 dark:nx-text-yellow-200',
+    'planned': 'nx-bg-gray-100 nx-text-gray-800 dark:nx-bg-gray-900 dark:nx-text-gray-200'
+  }
+  return (
+    <span className={`nx-inline-flex nx-items-center nx-px-2.5 nx-py-0.5 nx-rounded-full nx-text-xs nx-font-medium ${colors[status] || colors.planned}`}>
+      {status === 'live' && 'Live'}
+      {status === 'beta' && 'Beta'}
+      {status === 'coming-soon' && 'Coming Soon'}
+      {status === 'planned' && 'Planned'}
+    </span>
+  )
+}
+
+# Platform Features
+
+REFLEKT Console provides a comprehensive suite of AI-powered features, with GPT-4o as the primary model and support for multiple alternative AI providers through Vercel AI SDK v5.
+
+## Multi-Model Chat Interface
+
+### GPT-4o Primary Integration <FeatureBadge status="live" />
+
+Experience cutting-edge AI conversations powered by OpenAI's GPT-4o:
+
+- **Advanced Reasoning**: State-of-the-art language understanding and generation
+- **Vision Capabilities**: Analyze images and documents
+- **Tool Calling**: Execute functions and retrieve data
+- **128K Context Window**: Handle long conversations and documents
+
+```typescript
+// GPT-4o chat integration
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
+
+const response = await streamText({
+  model: openai('gpt-4o'),
+  messages: [{
+    role: 'user',
+    content: 'Explain how this platform works'
+  }],
+  temperature: 0.7,
+  maxTokens: 4096
+});
+
+// Stream response to client
+return response.toDataStreamResponse();
+```
+
+### Alternative Model Support <FeatureBadge status="live" />
+
+Seamlessly switch between multiple AI providers:
+
+- **Claude 3 Opus**: Anthropic's powerful alternative model
+- **Gemini Pro**: Google's multimodal AI
+- **Mistral Large**: Open-weight alternative
+- **xAI Grok**: Real-time knowledge integration
+- **Perplexity**: Web-search enhanced responses
+- **Local Models**: Ollama integration for privacy
+
+<Tabs items={['Model Selection', 'Streaming Response', 'Model Comparison']}>
+  <Tabs.Tab>
+    ```tsx
+    // Dynamic model selection
+    export function ModelSelector() {
+      const [selectedModel, setSelectedModel] = useState('gpt-4o');
+      const availableModels = useAvailableModels();
+
+      return (
+        <Select value={selectedModel} onValueChange={setSelectedModel}>
+          <SelectTrigger>
+            <SelectValue placeholder="Choose AI model" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="gpt-4o">GPT-4o (Primary)</SelectItem>
+            <SelectItem value="claude-3-opus">Claude 3 Opus</SelectItem>
+            <SelectItem value="gemini-1.5-pro">Gemini Pro</SelectItem>
+            <SelectItem value="mistral-large">Mistral Large</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // Server-sent events for streaming
+    export async function POST(request: Request) {
+      const { messages, model } = await request.json();
+
+      const result = await streamText({
+        model: getModelProvider(model),
+        messages,
+        onFinish: async ({ text, usage }) => {
+          // Save to database
+          await saveMessage({
+            content: text,
+            model,
+            tokens: usage.totalTokens
+          });
+        }
+      });
+
+      return result.toDataStreamResponse();
+    }
+    ```
+  </Tabs.Tab>
+
+  <Tabs.Tab>
+    ```typescript
+    // Multi-model comparison
+    export async function compareModels(prompt: string) {
+      const models = ['gpt-4o', 'claude-3-opus', 'gemini-1.5-pro'];
+
+      const responses = await Promise.all(
+        models.map(async (model) => {
+          const result = await streamText({
+            model: getModelProvider(model),
+            messages: [{ role: 'user', content: prompt }]
+          });
+
+          return {
+            model,
+            response: await result.text(),
+            latency: result.experimental_metrics?.timeToFirstToken
+          };
+        })
+      );
+
+      return responses;
+    }
+    ```
+  </Tabs.Tab>
+</Tabs>
+
+## Interactive Avatars <FeatureBadge status="live" />
+
+### HeyGen Streaming Avatars
+
+Real-time interactive avatars that speak AI responses:
+
+- **Multiple Avatar Options**: Professional, casual, and friendly personas
+- **WebRTC Streaming**: Low-latency video delivery
+- **Lip Sync Animation**: Natural speech synchronization
+- **Custom Voices**: Azure Neural voice options
+
+```typescript
+// Avatar session management
+const avatar = new StreamingAvatar({
+  token: accessToken,
+  avatarId: 'josh_lite3_20230714',
+  voice: {
+    voiceId: 'en-US-BrianNeural',
+    rate: 1.0,
+    pitch: 0
+  }
+});
+
+// Make avatar speak GPT-4o response
+avatar.speak({
+  text: aiResponse,
+  taskType: 'talk'
+});
+```
+
+## Voice Conversations <FeatureBadge status="live" />
+
+### GPT-4o Realtime API
+
+Natural voice conversations with real-time processing:
+
+- **Bidirectional Audio**: Speak and listen naturally
+- **Voice Activity Detection**: Automatic turn detection
+- **Multiple Voices**: 6 distinct voice options
+- **Low Latency**: Sub-200ms response times
+
+```typescript
+// Realtime voice connection
+const ws = new WebSocket('wss://api.openai.com/v1/realtime');
+
+ws.send(JSON.stringify({
+  type: 'session.update',
+  session: {
+    modalities: ['text', 'audio'],
+    voice: 'alloy',
+    instructions: 'You are a helpful assistant'
+  }
+}));
+```
+
+## Supabase Backend <FeatureBadge status="live" />
+
+### Database & Authentication
+
+Complete backend infrastructure with Supabase:
+
+- **PostgreSQL Database**: Scalable data storage
+- **Row Level Security**: Database-level access control
+- **Authentication**: Email, OAuth, and anonymous users
+- **Real-time Subscriptions**: Live data updates
+- **File Storage**: Secure file uploads and attachments
+
+```typescript
+// Supabase real-time subscriptions
+const channel = supabase
+  .channel('messages')
+  .on(
+    'postgres_changes',
+    {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'messages'
+    },
+    (payload) => {
+      handleNewMessage(payload.new);
+    }
+  )
+  .subscribe();
+```
+
+## File Handling <FeatureBadge status="live" />
+
+### Document & Image Analysis
+
+Process various file types with AI:
+
+- **Image Analysis**: GPT-4o vision capabilities
+- **PDF Processing**: Extract and analyze text
+- **Document Understanding**: Parse structured data
+- **Secure Storage**: Supabase Storage buckets
+
+```typescript
+// File upload and analysis
+const uploadFile = async (file: File) => {
+  // Upload to Supabase
+  const { data } = await supabase.storage
+    .from('chat-files')
+    .upload(`${userId}/${file.name}`, file);
+
+  // Analyze with GPT-4o vision
+  const analysis = await analyzeWithVision(data.publicUrl);
+  return analysis;
+};
+```
+
+## User Management <FeatureBadge status="live" />
+
+### Flexible Authentication
+
+Support for various user types:
+
+- **Anonymous Users**: Try without signup
+- **Registered Accounts**: Full feature access
+- **OAuth Providers**: Google, GitHub integration
+- **Daily Limits**: 10 messages (free), 100 messages (pro)
+- **Session Management**: Secure cookie-based sessions
+
+## Advanced Features
+
+### Context Management <FeatureBadge status="live" />
+
+Intelligent conversation context handling:
+
+- **Long-term Memory**: Persistent chat history
+- **Context Compression**: Optimize token usage
+- **Smart Truncation**: Maintain relevant context
+- **Multi-turn Conversations**: Natural dialogue flow
+
+### Tool Calling <FeatureBadge status="live" />
+
+Extend AI capabilities with custom tools:
+
+- **Function Execution**: Run code and calculations
+- **API Integration**: Connect to external services
+- **Data Retrieval**: Query databases and APIs
+- **Structured Output**: JSON and formatted responses
+
+### Performance Optimization <FeatureBadge status="live" />
+
+Built for speed and scale:
+
+- **Edge Functions**: Global deployment on Vercel
+- **Response Caching**: Intelligent cache strategies
+- **Connection Pooling**: Optimized database access
+- **CDN Distribution**: Fast asset delivery
+
+## Upcoming Features
+
+### Planned Enhancements <FeatureBadge status="coming-soon" />
+
+- **Collaboration**: Multi-user chat rooms
+- **Custom Prompts**: Personalized AI personalities
+- **API Access**: Developer SDK and REST API
+- **Mobile Apps**: Native iOS and Android
+- **Plugins System**: Extensible functionality
+- **Analytics Dashboard**: Usage insights and metrics
+
+### Beta Features <FeatureBadge status="beta" />
+
+- **Code Execution**: Run Python and JavaScript
+- **Web Search**: Real-time information retrieval
+- **Voice Cloning**: Custom voice models
+- **3D Avatars**: Advanced avatar technology
+
+## Feature Comparison
+
+| Feature | Free Tier | Pro Tier | Enterprise |
+|---------|-----------|----------|------------|
+| **Daily Messages** | 10 | 100 | Unlimited |
+| **GPT-4o Access** | Yes | Yes | Yes |
+| **Alternative Models** | Limited | All | All + Custom |
+| **Avatar Sessions** | 5 min/day | Unlimited | Unlimited |
+| **Voice Mode** | 10 min/day | Unlimited | Unlimited |
+| **File Uploads** | 5 MB | 50 MB | 500 MB |
+| **API Access** | No | Yes | Yes |
+| **Priority Support** | No | Email | Dedicated |
+
+## Security & Compliance
+
+### Data Protection <FeatureBadge status="live" />
+
+- **End-to-End Encryption**: Secure data transmission
+- **GDPR Compliance**: User data protection
+- **SOC 2 Type II**: Security certification
+- **Regular Audits**: Third-party security reviews
+
+## Integration Capabilities
+
+### Third-Party Services <FeatureBadge status="live" />
+
+- **Stripe Payments**: Subscription management
+- **Analytics**: Vercel Analytics integration
+- **Monitoring**: Error tracking and alerting
+- **Webhooks**: Event-driven integrations
+
+<Callout type="info">
+All features are continuously improved based on user feedback and the latest AI advancements.
+</Callout>
+
+## Get Started
+
+Ready to explore these features?
+
+1. [Sign up](https://reflekt.sh/signup) for a free account
+2. [Configure](/docs/configuration) your preferences
+3. [Start chatting](/docs/get-started) with GPT-4o
+4. [Explore](/docs/ai-integration) alternative models

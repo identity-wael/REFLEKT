@@ -1,0 +1,388 @@
+---
+title: Active Mode
+description: Personalized morning dashboard with smart scheduling, daily briefings, and curated content
+---
+
+# Active Mode
+
+REFLEKT's **Active Mode** transforms your smart mirror into a comprehensive morning command center. Get personalized briefings, smart scheduling insights, weather forecasts, news updates, and outfit recommendations—all in one glance while you prepare for your day.
+
+## Overview
+
+Active Mode is your intelligent daily assistant, providing context-aware information tailored to your schedule, preferences, and goals. It helps you start every day informed, organized, and confident.
+
+### Key Features
+
+- **Smart Daily Briefings**: Personalized news, weather, and calendar overview
+- **Intelligent Scheduling**: AI-optimized day planning and time management
+- **Style Recommendations**: Outfit suggestions based on weather and calendar
+- **Contextual Reminders**: Important tasks and appointments at the right time
+- **Real-time Updates**: Live information feeds and notifications
+
+## Dashboard Overview
+
+### Main Interface Elements
+
+The Active Mode dashboard displays:
+
+```
+┌─────────────────────────────────────────┐
+│  Good Morning, Sarah!          🌤️ 72°F  │
+│  Wednesday, November 16, 2025            │
+├─────────────────────────────────────────┤
+│                                          │
+│  📅 TODAY'S SCHEDULE                     │
+│   • 9:00 AM - Team Standup (15 min)     │
+│   • 11:30 AM - Client Presentation      │
+│   • 2:00 PM - Department Meeting        │
+│                                          │
+│  🌟 FOCUS TIME                           │
+│   Best productivity: 10:00 AM - 12:00 PM│
+│                                          │
+│  👔 OUTFIT SUGGESTION                    │
+│   Business casual - Client meeting       │
+│   Recommended: Navy blazer, light top   │
+│                                          │
+│  📰 NEWS BRIEFING                        │
+│   • Top stories in your interests        │
+│   • Local traffic update (15 min delay) │
+│   • Market summary                       │
+│                                          │
+└─────────────────────────────────────────┘
+```
+
+## Smart Briefing Components
+
+### Calendar Integration
+
+**Supported Calendar Services**:
+- Google Calendar
+- Microsoft Outlook
+- Apple Calendar
+- CalDAV (generic)
+
+**Intelligence Features**:
+- **Travel Time Calculation**: Automatic commute estimates
+- **Meeting Preparation**: Pre-meeting briefings and context
+- **Conflict Detection**: Overlapping appointments highlighted
+- **Priority Ranking**: AI-determined meeting importance
+
+### Weather Dashboard
+
+**Information Provided**:
+- Current conditions with "feels like" temperature
+- Hourly forecast (next 12 hours)
+- Daily forecast (7-day outlook)
+- Weather alerts and warnings
+- UV index and air quality
+- Precipitation probability
+
+**Smart Recommendations**:
+```javascript
+// Example weather-based suggestions
+If (rain > 60%) → "Bring umbrella"
+If (temp < 50°F) → "Wear jacket"
+If (UV > 7) → "Apply sunscreen"
+If (AQI > 100) → "Air quality poor - limit outdoor activity"
+```
+
+### News Curation
+
+**Personalized News Sources**:
+- Headlines from preferred outlets
+- Topics matching your interests
+- Local news and events
+- Industry-specific updates
+- Stock market summary (if enabled)
+
+**AI Filtering**:
+- Removes duplicate stories
+- Prioritizes breaking news
+- Balances news categories
+- Respects reading time limits
+
+## Smart Scheduling
+
+### AI-Powered Day Optimization
+
+Active Mode analyzes your calendar and suggests:
+
+#### Focus Time Blocks
+```
+Optimal for deep work:
+• 10:00 AM - 12:00 PM (based on your productivity patterns)
+• 2:30 PM - 4:00 PM (after lunch energy dip)
+```
+
+#### Meeting Efficiency
+- **Pre-meeting prep time**: Suggests 10-min buffer before important meetings
+- **Back-to-back alerts**: Warns about consecutive meetings
+- **Commute integration**: Factors in travel time between locations
+
+#### Task Prioritization
+
+REFLEKT helps you focus on what matters:
+
+| Priority | Criteria | Action |
+|----------|----------|--------|
+| 🔴 Urgent | Deadline < 24 hrs | Show at top of dashboard |
+| 🟡 Important | High impact, not urgent | Suggest scheduling focus time |
+| 🟢 Routine | Regular tasks | Batch into time blocks |
+| 🔵 Low Priority | Can wait | Move to end of day or defer |
+
+## Style Intelligence
+
+### Outfit Recommendations
+
+Active Mode considers multiple factors:
+
+**Weather Conditions**:
+- Temperature range (high/low)
+- Precipitation probability
+- Wind speed
+- Humidity levels
+
+**Calendar Context**:
+- Meeting types (casual vs. formal)
+- Attendees and seniority
+- Location (office, client site, remote)
+- Industry norms
+
+**Personal Preferences**:
+- Favorite colors and styles
+- Comfort preferences
+- Previous outfit choices
+- Seasonal wardrobe availability
+
+### Example Recommendations
+
+```yaml
+Scenario: Client Presentation + Rainy Weather
+Recommendation:
+  - Top: "Navy blazer with light blue shirt"
+  - Bottom: "Charcoal dress pants"
+  - Accessories: "Professional bag, umbrella"
+  - Footwear: "Closed-toe dress shoes (weather-appropriate)"
+  - Notes: "Business formal for client meeting"
+```
+
+```yaml
+Scenario: Remote Work Day + Comfortable
+Recommendation:
+  - Top: "Smart casual button-down or polo"
+  - Bottom: "Comfortable jeans or chinos"
+  - Notes: "Video call ready, but comfortable for home"
+```
+
+## Contextual Intelligence
+
+### Adaptive Information Display
+
+Active Mode adjusts based on:
+
+**Time of Day**:
+- **Early Morning (5-7 AM)**: Gentle wake-up info, minimal brightness
+- **Morning Rush (7-9 AM)**: Full briefing, urgent items highlighted
+- **Midday Check-in**: Afternoon schedule preview
+- **Evening**: Next day preparation
+
+**Day of Week**:
+- **Monday**: Week planning, longer briefings
+- **Friday**: Weekend preview, wrap-up tasks
+- **Weekend**: Relaxed pace, personal activities focus
+
+**Detected Stress Level**:
+- **Calm**: Full information display
+- **Rushed**: Condensed view, key items only
+- **Stressed**: Calming reminder + essential info only
+
+## Customization Options
+
+### Dashboard Layout
+
+Choose your information priority:
+
+1. **Executive View**: Calendar-heavy, minimal distractions
+2. **Wellness Focus**: Balance work info with wellness tips
+3. **Detail-Oriented**: Maximum information density
+4. **Minimalist**: Essential briefing only
+
+### Information Sources
+
+Enable/disable modules:
+- ☑️ Calendar events
+- ☑️ Weather forecast
+- ☑️ News briefing
+- ☑️ Traffic updates
+- ☑️ Stock market
+- ☑️ Outfit suggestions
+- ☑️ Habit tracking
+- ☑️ Fitness goals
+
+### Notification Settings
+
+Control when and how you're informed:
+
+```yaml
+Urgent Notifications:
+  - Meeting in 15 minutes: Audio + Visual
+  - Severe weather alert: Persistent banner
+  - Calendar conflict: Gentle reminder
+
+Standard Updates:
+  - News stories: Silent update
+  - Weather changes: Icon update only
+  - Task reminders: Visual only
+```
+
+## Voice Interaction
+
+### Voice Commands
+
+Control Active Mode hands-free:
+
+```
+"REFLEKT, show my calendar"
+"What's the weather today?"
+"Any important meetings?"
+"What should I wear?"
+"Read me the top news"
+"What time should I leave for my 2 PM meeting?"
+"Add dentist appointment to calendar"
+"Set a reminder for gym bag"
+```
+
+See [Voice Assistant](/console/core-features/voice-assistant) for full command list.
+
+## Smart Integrations
+
+### Third-Party Services
+
+**Productivity Tools**:
+- Todoist, Microsoft To-Do, Google Tasks
+- Asana, Trello, Monday.com
+- Notion, Evernote
+
+**Communication**:
+- Email preview (Gmail, Outlook)
+- Slack status sync
+- Teams availability
+
+**Transportation**:
+- Google Maps traffic
+- Uber/Lyft estimates
+- Public transit schedules
+
+**Fitness**:
+- Morning workout reminder
+- Step goal tracking
+- Water intake nudges
+
+## Privacy & Data
+
+### Data Handling
+
+Active Mode accesses:
+- **Calendar**: Read-only access to events
+- **Location**: For weather and traffic (optional)
+- **Email**: Subject lines only for VIP sender detection
+- **Preferences**: Stored locally on device
+
+### Security
+
+- 🔒 **End-to-end encryption** for calendar sync
+- 🔒 **On-device processing** for scheduling AI
+- 🔒 **No personal data** sent to third parties
+- 🔒 **Optional cloud backup** (encrypted)
+
+## Performance Metrics
+
+| Feature | Target | Actual |
+|---------|--------|--------|
+| Dashboard Load | <500ms | ~380ms |
+| Calendar Sync | <2s | ~1.5s |
+| Weather Update | Real-time | <1s delay |
+| Voice Response | <300ms | ~250ms |
+
+## Use Cases
+
+### Busy Professional
+
+**Morning Flow**:
+1. Approach mirror after shower
+2. Active Mode shows: 3 meetings today, client presentation at 11 AM
+3. Suggests: Business formal outfit, leave 30 min early for traffic
+4. Displays: Pre-meeting brief on client background
+5. Reminds: Bring presentation materials
+
+### Entrepreneur
+
+**Daily Briefing**:
+- Industry news and competitor updates
+- Investor meeting prep
+- Team status overview
+- Revenue dashboard snapshot
+- Networking event reminders
+
+### Remote Worker
+
+**Home Office Setup**:
+- Video call schedule
+- Focus time blocking
+- Lunch break reminder
+- Posture check nudges
+- End-of-day summary
+
+## Troubleshooting
+
+### Common Issues
+
+**Q: Calendar events not showing**
+- A: Check calendar integration in Settings → Integrations
+- A: Verify account permissions and re-authenticate
+
+**Q: Weather location incorrect**
+- A: Update location in Settings → Active Mode → Location
+- A: Enable GPS for automatic location detection
+
+**Q: Outfit suggestions don't match my style**
+- A: Customize preferences in Settings → Style → Preferences
+- A: Provide feedback on recommendations to improve AI
+
+**Q: Too much information on screen**
+- A: Switch to Minimalist layout in Settings → Active Mode → Layout
+- A: Disable modules you don't use in Settings → Modules
+
+## Best Practices
+
+### Optimal Usage
+
+1. **Review briefing while getting ready**: Multitask efficiently
+2. **Interact via voice**: Keep hands free during routine
+3. **Glance, don't stare**: Use mirror as info source, not distraction
+4. **Customize ruthlessly**: Only show what you actually use
+5. **Update preferences weekly**: Refine as routines change
+
+### Time Management
+
+- **Allocate 5-10 minutes** for morning briefing review
+- **Set "briefing time"** in your routine (e.g., during coffee)
+- **Use voice commands** to save time
+- **Enable priority filtering** to focus on what matters
+
+## Related Features
+
+- [Calm Mode](/console/core-features/calm-mode) - Start day centered before Active Mode
+- [AR Style Guidance](/console/core-features/ar-style) - Virtual try-on for outfit recommendations
+- [Voice Assistant](/console/core-features/voice-assistant) - Hands-free Active Mode control
+- [Mood Sensing](/console/core-features/mood-sensing) - Adaptive briefing based on emotional state
+
+## Next Steps
+
+1. [Configure your calendar integration](/console/development/integrations)
+2. [Customize your dashboard layout](/console/development/configuration)
+3. [Set up smart scheduling preferences](/console/get-started)
+
+---
+
+**Your morning, optimized. Your day, organized. Your success, amplified.**

@@ -1,0 +1,111 @@
+# System Modeling Overview
+
+The system modeling documentation provides comprehensive diagrams and models that illustrate REFLEKT's credit improvement platform architecture. These diagrams detail how AI-powered chat interactions, credit monitoring, and financial recommendations work together to help users improve their credit scores.
+
+## Diagram Types
+
+### Flowcharts
+Step-by-step process flows for key credit operations including:
+- Chat conversation flow with GPT-4o (primary) and Claude 3 Opus (alternative)
+- Credit score analysis pipeline
+- Improvement plan generation workflow
+- User onboarding and authentication
+
+### Sequence Diagrams
+Time-ordered interactions between system components showing:
+- AI chat message processing with multi-model support (GPT-4o, Claude 3 Opus)
+- Credit bureau API integration flows
+- Tool execution for credit operations
+- Real-time dashboard updates via WebSockets
+
+### State Diagrams
+State transitions for critical system components:
+- Chat session state management
+- User authentication states
+- Credit monitoring lifecycle
+- Action plan execution states
+
+### Entity Relationship Diagrams
+Data model relationships and schemas including:
+- User profile and credit data models
+- Chat conversation history structure
+- Credit score tracking schemas
+- Action plan and recommendation models
+
+### Component Interaction Diagrams
+Detailed service communication patterns showing:
+- Multi-model AI tool calling architecture (GPT-4o, Claude 3 Opus)
+- Credit service orchestration
+- Notification system flows
+- Real-time data synchronization
+
+## Navigation Guide
+
+Each diagram type has its own dedicated section with:
+- High-resolution diagrams using Mermaid
+- Detailed explanations of each component
+- Implementation notes and best practices
+- Credit-specific design patterns
+
+## Color Coding
+
+All diagrams use a consistent color scheme for clarity:
+- Blue (#3B82F6) - Frontend and UI components
+- Purple (#8B5CF6) - AI and GPT-4o components
+- Green (#10B981) - Data and storage layers
+- Orange (#F59E0B) - External services (Credit bureaus, Plaid)
+- Red (#EF4444) - Error states and alerts
+
+## Key System Models
+
+### 1. Credit Intelligence Model
+Illustrates how credit data flows through the system:
+- Data ingestion from credit bureaus
+- AI-powered analysis and insights
+- Personalized recommendation generation
+- Progress tracking and monitoring
+
+### 2. AI Conversation Model
+Shows the multi-model AI integration architecture:
+- Message processing pipeline
+- Tool execution framework
+- Context management system
+- Response streaming mechanism
+
+### 3. User Journey Model
+Maps the complete user experience:
+- Onboarding and authentication
+- Initial credit assessment
+- Ongoing monitoring and advice
+- Goal achievement tracking
+
+### 4. Security Model
+Details the security architecture:
+- Authentication flow with Firebase
+- Data encryption patterns
+- PII handling and protection
+- Audit logging and compliance
+
+## Implementation Standards
+
+All system models follow these standards:
+- **Notation**: UML 2.0 for consistency
+- **Tools**: Mermaid for version-controlled diagrams
+- **Documentation**: Inline comments for complex flows
+- **Updates**: Models kept in sync with codebase
+
+## Usage Guidelines
+
+When reviewing these models:
+1. Start with the overview diagrams for context
+2. Drill down into specific components as needed
+3. Cross-reference with API documentation
+4. Use models for troubleshooting and optimization
+
+## Model Validation
+
+All models are validated against:
+- Current implementation in codebase
+- API specifications and contracts
+- Database schemas and migrations
+- Business requirements and user stories

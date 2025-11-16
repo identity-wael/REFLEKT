@@ -1,0 +1,438 @@
+# Environment Variables Reference
+
+Complete reference for all environment variables required across the REFLEKT monorepo projects.
+
+## Environment Scopes
+
+### Vercel Environment Scopes
+
+| Scope | Description | When Used |
+|-------|-------------|-----------|
+| **Production** | Live production environment | Main branch deployments |
+| **Preview** | Preview deployments | Pull requests & feature branches |
+| **Development** | Local development | `vercel dev` command |
+
+## Console Project Variables
+
+### Required Variables (All Environments)
+
+```bash
+# Supabase (Required)
+NEXT_PUBLIC_SUPABASE_URL=https://[project].supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
+SUPABASE_SERVICE_ROLE=[service-role-key]  # Backend only
+
+# CSRF Protection (Required)
+CSRF_SECRET=[32-character-random-string]  # Generate: openssl rand -hex 32
+
+# Primary AI Provider (At least one required)
+OPENAI_API_KEY=sk-[...]  # For GPT-4o
+```
+
+### AI Provider Variables (Optional)
+
+```bash
+# Additional AI Providers
+ANTHROPIC_API_KEY=sk-ant-[...]  # Claude 3 Opus
+GOOGLE_GENERATIVE_AI_API_KEY=AIza[...]  # Gemini Pro
+MISTRAL_API_KEY=[...]  # Mistral models
+XAI_API_KEY=xai-[...]  # Grok models
+PERPLEXITY_API_KEY=pplx-[...]  # Perplexity models
+DEEPSEEK_API_KEY=[...]  # DeepSeek models
+OPENROUTER_API_KEY=sk-or-[...]  # OpenRouter gateway
+
+# Local AI Models
+OLLAMA_BASE_URL=http://localhost:11434  # For Ollama
+```
+
+### Interactive Features (Optional)
+
+```bash
+# HeyGen Avatars
+NEXT_PUBLIC_HEYGEN_API_KEY=[...]
+HEYGEN_SECRET_KEY=[...]
+NEXT_PUBLIC_HEYGEN_API_URL=https://api.heygen.com
+
+# Voice Mode (Requires OpenAI)
+NEXT_PUBLIC_OPENAI_API_KEY=sk-[...]  # Client-side voice
+
+# Developer Tools
+EXA_API_KEY=[...]  # Exa search
+GITHUB_TOKEN=ghp_[...]  # GitHub integration
+```
+
+### Production-Only Variables
+
+```bash
+# Vercel
+NEXT_PUBLIC_VERCEL_URL=https://console.reflekt.sh
+
+# Analytics (Optional)
+NEXT_PUBLIC_POSTHOG_KEY=[...]
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-[...]
+```
+
+## Apps Project Variables
+
+### Required Variables
+
+```bash
+# Database
+DATABASE_URL=postgresql://[user]:[pass]@[host]/[db]?sslmode=require
+DIRECT_URL=postgresql://[user]:[pass]@[host]/[db]  # For migrations
+
+# Firebase (Required for Auth)
+NEXT_PUBLIC_FIREBASE_API_KEY=[...]
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=[project].firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=[project-id]
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=[project].appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=[...]
+NEXT_PUBLIC_FIREBASE_APP_ID=1:[...]:[platform]:[...]
+
+# Firebase Admin (Server-side)
+FIREBASE_PROJECT_ID=[project-id]
+FIREBASE_CLIENT_EMAIL=[service-account-email]
+FIREBASE_PRIVATE_KEY="-----BEGIN [REDACTED]-----\n[key-content-here]\n-----END [REDACTED]-----\n"
+```
+
+### Content & Services
+
+```bash
+# Sanity CMS
+NEXT_PUBLIC_SANITY_PROJECT_ID=[...]
+NEXT_PUBLIC_SANITY_DATASET=production
+SANITY_API_TOKEN=sk[...]  # For write operations
+
+# Google Services
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIza[...]
+
+# AI Services
+ANTHROPIC_API_KEY=sk-ant-[...]
+```
+
+### Production-Only
+
+```bash
+# Domain
+NEXT_PUBLIC_APP_URL=https://reflekt.sh
+
+# SEO
+NEXT_PUBLIC_SITE_NAME="REFLEKT"
+```
+
+## Credit Engine Variables
+
+### Required Variables
+
+```bash
+# Database
+DATABASE_URL=postgresql://[user]:[pass]@[host]/[db]?sslmode=require
+DIRECT_URL=postgresql://[user]:[pass]@[host]/[db]
+
+# AI Provider
+ANTHROPIC_API_KEY=sk-ant-[...]  # Required for Claude
+
+# Authentication
+NEXTAUTH_SECRET=[32-char-secret]  # Generate: openssl rand -base64 32
+NEXTAUTH_URL=http://localhost:3004  # Dev
+# NEXTAUTH_URL=https://credit.reflekt.sh  # Production
+```
+
+### Optional Variables
+
+```bash
+# Firebase (If using Firebase Auth)
+FIREBASE_PROJECT_ID=[...]
+FIREBASE_CLIENT_EMAIL=[...]
+FIREBASE_PRIVATE_KEY="-----BEGIN [REDACTED]-----\n[key-content-here]\n-----END [REDACTED]-----\n"
+
+# Monitoring
+SENTRY_DSN=https://[...]@[...].ingest.sentry.io/[...]
+SENTRY_AUTH_TOKEN=[...]
+
+# Performance
+NODE_ENV=production
+```
+
+## Docs-Nextra Variables
+
+### Build Variables Only
+
+```bash
+# No runtime variables required
+# All content is static
+
+# Build-time only
+NODE_ENV=production
+NEXT_TELEMETRY_DISABLED=1
+```
+
+## Infrastructure Variables (GCP/GKE)
+
+### TigerBeetle Configuration
+
+```bash
+# Local Development
+TIGERBEETLE_PORT=3003
+TIGERBEETLE_REPLICA_PORT=3004
+TIGERBEETLE_CONNECTION_STRING=tb://0@localhost:3003
+
+# Production (GKE)
+TIGERBEETLE_CONNECTION_STRING_PROD=tb://0@104.154.31.249:3003
+TIGERBEETLE_CLUSTER_ID=0
+
+# Internal Kubernetes Access
+TIGERBEETLE_K8S_SERVICE=tigerbeetle.tigerbeetle.svc.cluster.local:3003
+```
+
+### Monitoring Stack
+
+```bash
+# Grafana
+GRAFANA_ADMIN_PASSWORD=[Generated - check Secret Manager]
+GRAFANA_URL=http://34.172.102.114
+
+# Prometheus
+PROMETHEUS_RETENTION=15d
+PROMETHEUS_STORAGE_SIZE=50Gi
+
+# StatsD
+STATSD_PORT=8125
+STATSD_EXPORTER_SERVICE=statsd-exporter.observability:8125
+```
+
+### Google Cloud Platform
+
+```bash
+# Project Configuration
+GCP_PROJECT_ID=production-reflekt-ai
+GCP_REGION=us-central1
+
+# GKE Cluster
+GKE_CLUSTER_NAME=platform-production
+GKE_CLUSTER_LOCATION=us-central1
+
+# CloudSQL (Temporal)
+CLOUDSQL_CONNECTION_NAME=production-reflekt-ai:us-central1:temporal-production
+CLOUDSQL_DATABASE=temporal
+CLOUDSQL_DATABASE_VISIBILITY=temporal_visibility
+CLOUDSQL_PRIVATE_IP=10.147.0.2
+
+# Workload Identity
+WIF_SERVICE_ACCOUNT=[service-account]@production-reflekt-ai.iam.gserviceaccount.com
+WIF_PROVIDER=projects/[number]/locations/global/workloadIdentityPools/[pool]/providers/[provider]
+
+# Service Mesh
+ISTIO_ENABLED=true
+ISTIO_NAMESPACE=istio-system
+```
+
+### GitHub Actions Secrets (CI/CD)
+
+```bash
+# Required for infrastructure deployment
+WIF_PROVIDER=[Workload Identity Provider]
+WIF_SERVICE_ACCOUNT=[Service Account Email]
+GCP_PROJECT_ID=production-reflekt-ai
+
+# Monitoring access
+GRAFANA_API_KEY=[For dashboard automation]
+```
+
+## Common Variables (All Projects)
+
+### Required for Vercel Deployment
+
+```bash
+# Package Manager
+PNPM_VERSION=9.14.4
+
+# Monorepo Support
+VERCEL_DEEP_CLONE=true
+
+# Node Version (Set in Vercel Dashboard)
+# Node.js Version: 20.x
+```
+
+### Performance & Monitoring
+
+```bash
+# Disable Telemetry
+NEXT_TELEMETRY_DISABLED=1
+
+# Build Cache
+TURBO_TOKEN=[...]  # For remote caching (optional)
+TURBO_TEAM=[...]  # Team identifier (optional)
+```
+
+## Environment Variable Security
+
+### Best Practices
+
+1. **Never commit secrets to Git**
+   ```bash
+   # Always use .env.local (gitignored)
+   cp .env.example .env.local
+   # Edit .env.local with real values
+   ```
+
+2. **Use different values per environment**
+   ```bash
+   # Development
+   DATABASE_URL=postgresql://localhost/dev_db
+
+   # Preview
+   DATABASE_URL=postgresql://preview.db/preview_db
+
+   # Production
+   DATABASE_URL=postgresql://prod.db/prod_db
+   ```
+
+3. **Rotate secrets regularly**
+   ```bash
+   # Generate new secrets
+   openssl rand -base64 32  # For NEXTAUTH_SECRET
+   openssl rand -hex 32     # For CSRF_SECRET
+   ```
+
+4. **Limit scope appropriately**
+   - Production secrets: Only production environment
+   - Preview secrets: Can be less privileged
+   - Development: Use local/test services
+
+### Secret Generation Commands
+
+```bash
+# Generate NEXTAUTH_SECRET
+openssl rand -base64 32
+
+# Generate CSRF_SECRET
+openssl rand -hex 32
+
+# Generate random API key format
+node -e "console.log('sk-' + require('crypto').randomBytes(24).toString('hex'))"
+
+# Generate UUID
+node -e "console.log(require('crypto').randomUUID())"
+```
+
+## Vercel CLI Commands
+
+### Managing Environment Variables
+
+```bash
+# List all variables
+vercel env ls
+
+# Add variable to all environments
+vercel env add VARIABLE_NAME
+
+# Add to specific environment
+vercel env add VARIABLE_NAME production
+vercel env add VARIABLE_NAME preview
+vercel env add VARIABLE_NAME development
+
+# Remove variable
+vercel env rm VARIABLE_NAME
+
+# Pull to local .env file
+vercel env pull .env.local
+```
+
+### Bulk Import
+
+```bash
+# Import from .env file
+vercel env add < .env.production
+
+# Export current variables
+vercel env ls > current-env.txt
+```
+
+## Validation Script
+
+Create a script to validate environment variables:
+
+```javascript
+// scripts/validate-env.js
+const required = {
+  console: [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'OPENAI_API_KEY',
+    'CSRF_SECRET'
+  ],
+  apps: [
+    'DATABASE_URL',
+    'NEXT_PUBLIC_FIREBASE_API_KEY',
+    'ANTHROPIC_API_KEY'
+  ],
+  'credit-engine': [
+    'DATABASE_URL',
+    'ANTHROPIC_API_KEY',
+    'NEXTAUTH_SECRET'
+  ]
+}
+
+const project = process.env.VERCEL_PROJECT_NAME || 'console'
+const missing = required[project].filter(key => !process.env[key])
+
+if (missing.length > 0) {
+  console.error('Missing required environment variables:')
+  missing.forEach(key => console.error(`  - ${key}`))
+  process.exit(1)
+}
+
+console.log('✅ All required environment variables are set')
+```
+
+## Environment Files Structure
+
+```bash
+reflekt-ai/
+├── .env.example          # Root example (common vars)
+├── .env.local           # Root local (gitignored)
+├── apps/
+│   ├── .env.example     # Apps example
+│   └── .env.local       # Apps local (gitignored)
+├── console/
+│   ├── .env.example     # Console example
+│   └── .env.local       # Console local (gitignored)
+├── credit-engine/
+│   ├── .env.example     # Credit engine example
+│   └── .env.local       # Credit engine local (gitignored)
+└── docs-nextra/
+    └── .env.local       # Docs local (gitignored)
+```
+
+## Troubleshooting
+
+### Variable Not Working
+
+1. **Check naming**: Client-side variables need `NEXT_PUBLIC_` prefix
+2. **Check scope**: Ensure variable is set for correct environment
+3. **Rebuild**: Some variables require rebuild to take effect
+4. **Clear cache**: `rm -rf .next .turbo`
+
+### Common Issues
+
+| Issue | Solution |
+|-------|----------|
+| "undefined" in production | Add to Vercel environment variables |
+| Client can't access variable | Add `NEXT_PUBLIC_` prefix |
+| Build fails with missing var | Add to build environment in Vercel |
+| Different behavior local vs prod | Check `.env.local` vs Vercel settings |
+
+## Security Checklist
+
+- [ ] All secrets in `.env.local` (never committed)
+- [ ] Different secrets for dev/preview/production
+- [ ] API keys have appropriate permissions
+- [ ] Secrets rotated every 90 days
+- [ ] No hardcoded values in code
+- [ ] Client secrets use `NEXT_PUBLIC_` prefix only when safe
+- [ ] Database URLs use SSL in production
+- [ ] Firebase private keys properly escaped
+- [ ] CSRF and session secrets are random
+- [ ] Monitoring tokens are write-only

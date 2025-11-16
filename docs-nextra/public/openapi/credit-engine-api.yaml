@@ -1,0 +1,450 @@
+openapi: 3.0.0
+info:
+  title: Earna AI Credit Engine API
+  description: AI-powered credit score analysis and chat API
+  version: 1.0.0
+  contact:
+    name: Earna AI Support
+    email: support@earna.ai
+    url: https://earna.ai
+
+servers:
+  - url: http://localhost:3004/api
+    description: Local Development
+  - url: https://credit.earna.ai/api
+    description: Production
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Chat
+    description: AI credit advisor chat operations
+  - name: Credit Score
+    description: Credit score analysis and recommendations
+  - name: Sessions
+    description: Chat session management
+  - name: Reports
+    description: Credit report generation
+
+paths:
+  /chat:
+    post:
+      tags: [Chat]
+      summary: Send message to AI credit advisor
+      description: Send a message to the AI credit advisor and receive streaming response
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - messages
+              properties:
+                messages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ChatMessage'
+                sessionId:
+                  type: string
+                  description: Optional session ID to continue conversation
+                locale:
+                  type: string
+                  enum: [en-CA, fr-CA]
+                  default: en-CA
+                  description: Language locale for responses
+      responses:
+        '200':
+          description: Streaming response from AI advisor
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Server-sent events stream
+          headers:
+            X-Session-Id:
+              schema:
+                type: string
+              description: Session ID for conversation continuity
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /chat/sessions:
+    get:
+      tags: [Sessions]
+      summary: List chat sessions
+      description: Get all chat sessions for the current user
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 20
+          description: Number of sessions to return
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: Offset for pagination
+      responses:
+        '200':
+          description: List of chat sessions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ChatSession'
+                  total:
+                    type: integer
+
+  /chat/sessions/{sessionId}:
+    get:
+      tags: [Sessions]
+      summary: Get chat session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chat session with messages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatSessionDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Sessions]
+      summary: Delete chat session
+      parameters:
+        - in: path
+          name: sessionId
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Session deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /credit-score/analyze:
+    post:
+      tags: [Credit Score]
+      summary: Analyze credit score
+      description: Submit credit information for AI analysis and recommendations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditScoreRequest'
+      responses:
+        '200':
+          description: Credit score analysis results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditScoreAnalysis'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /credit-score/factors:
+    get:
+      tags: [Credit Score]
+      summary: Get credit score factors
+      description: Get information about factors that affect credit scores
+      responses:
+        '200':
+          description: Credit score factors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  factors:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreditFactor'
+
+  /credit-score/tips:
+    get:
+      tags: [Credit Score]
+      summary: Get credit improvement tips
+      parameters:
+        - in: query
+          name: scoreRange
+          schema:
+            type: string
+            enum: [poor, fair, good, excellent]
+          description: Current credit score range
+      responses:
+        '200':
+          description: Credit improvement tips
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tips:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreditTip'
+
+  /reports/generate:
+    post:
+      tags: [Reports]
+      summary: Generate credit report
+      description: Generate a detailed credit analysis report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sessionId:
+                  type: string
+                  description: Session ID to generate report from
+                format:
+                  type: string
+                  enum: [pdf, html]
+                  default: pdf
+      responses:
+        '200':
+          description: Generated report
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+            text/html:
+              schema:
+                type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ChatMessage:
+      type: object
+      required:
+        - role
+        - content
+      properties:
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    ChatSession:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        lastMessageAt:
+          type: string
+          format: date-time
+        totalMessages:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+
+    ChatSessionDetail:
+      allOf:
+        - $ref: '#/components/schemas/ChatSession'
+        - type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/ChatMessage'
+
+    CreditScoreRequest:
+      type: object
+      required:
+        - currentScore
+      properties:
+        currentScore:
+          type: integer
+          minimum: 300
+          maximum: 900
+        paymentHistory:
+          type: object
+          properties:
+            onTimePayments:
+              type: integer
+            latePayments:
+              type: integer
+            missedPayments:
+              type: integer
+        creditUtilization:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 100
+        creditHistory:
+          type: object
+          properties:
+            oldestAccountAge:
+              type: integer
+              description: Age in months
+            averageAccountAge:
+              type: integer
+              description: Age in months
+        creditMix:
+          type: array
+          items:
+            type: string
+            enum: [credit_card, mortgage, auto_loan, student_loan, personal_loan, line_of_credit]
+        recentInquiries:
+          type: integer
+
+    CreditScoreAnalysis:
+      type: object
+      properties:
+        currentScore:
+          type: integer
+        scoreRange:
+          type: string
+          enum: [poor, fair, good, excellent]
+        analysis:
+          type: object
+          properties:
+            strengths:
+              type: array
+              items:
+                type: string
+            weaknesses:
+              type: array
+              items:
+                type: string
+            opportunities:
+              type: array
+              items:
+                type: string
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+        projectedScore:
+          type: object
+          properties:
+            threeMonths:
+              type: integer
+            sixMonths:
+              type: integer
+            twelveMonths:
+              type: integer
+
+    Recommendation:
+      type: object
+      properties:
+        priority:
+          type: string
+          enum: [high, medium, low]
+        action:
+          type: string
+        impact:
+          type: string
+        timeframe:
+          type: string
+
+    CreditFactor:
+      type: object
+      properties:
+        name:
+          type: string
+        weight:
+          type: number
+          format: float
+        description:
+          type: string
+        tips:
+          type: array
+          items:
+            type: string
+
+    CreditTip:
+      type: object
+      properties:
+        category:
+          type: string
+        tip:
+          type: string
+        impact:
+          type: string
+          enum: [high, medium, low]
+        difficulty:
+          type: string
+          enum: [easy, moderate, hard]
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        statusCode:
+          type: integer
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+              retryAfter:
+                type: integer
+                description: Seconds until rate limit resets

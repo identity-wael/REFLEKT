@@ -1,0 +1,290 @@
+---
+title: Quick Reference
+description: Essential commands, endpoints, and configurations at a glance
+---
+
+import { Tabs, Callout } from 'nextra/components'
+
+# Quick Reference
+
+Essential commands, API endpoints, and configurations for REFLEKT Console.
+
+## Common Commands
+
+### Development
+
+```bash
+# From monorepo root (recommended)
+pnpm turbo dev --filter=console
+pnpm turbo build --filter=console
+pnpm turbo lint --filter=console
+pnpm turbo typecheck --filter=console
+
+# From console directory
+cd console
+pnpm dev
+pnpm build
+pnpm start
+pnpm type-check
+pnpm lint
+pnpm format
+```
+
+### Database
+
+```bash
+# Generate Supabase types
+pnpm generate:types
+
+# Run migrations
+pnpm db:migrate
+
+# Reset database
+pnpm db:reset
+
+# Seed database
+pnpm db:seed
+```
+
+### Deployment
+
+```bash
+# Deploy to Vercel
+vercel --prod
+
+# Deploy preview
+vercel
+
+# Check deployment status
+vercel logs
+
+# Set environment variable
+vercel env add VARIABLE_NAME production
+```
+
+## API Endpoints
+
+### Chat Operations
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /api/chat | Send message and stream response |
+| GET | /api/chat/history | Get conversation history |
+| DELETE | /api/chat/[id] | Delete conversation |
+| POST | /api/chat/title | Generate chat title |
+
+### AI Models
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | /api/models | List available models |
+| POST | /api/models/switch | Switch active model |
+| GET | /api/models/[id]/status | Check model availability |
+
+### Voice & Avatar
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | /api/tts | Text-to-speech synthesis |
+| POST | /api/avatar/session | Create avatar session |
+| POST | /api/avatar/speak | Make avatar speak |
+| WS | /api/voice/stream | Real-time voice streaming |
+
+## Environment Variables
+
+### Required
+
+```env
+# Supabase (Required)
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# OpenAI (Required for GPT-4o)
+OPENAI_API_KEY=sk-proj-...
+```
+
+### Optional AI Providers
+
+```env
+# Alternative AI Models
+ANTHROPIC_API_KEY=sk-ant-api...
+GOOGLE_AI_API_KEY=AIzaSy...
+MISTRAL_API_KEY=...
+XAI_API_KEY=...
+PERPLEXITY_API_KEY=pplx-...
+GROQ_API_KEY=gsk_...
+
+# Local Models
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+### Optional Features
+
+```env
+# HeyGen Avatars
+HEYGEN_API_KEY=...
+
+# Monitoring
+SENTRY_DSN=https://...
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+
+# Security
+ENCRYPTION_KEY=... # 32-byte hex
+NEXTAUTH_SECRET=...
+```
+
+## Model Configuration
+
+### Available Models
+
+| Provider | Model ID | Context | Cost/1M tokens |
+|---|---|---|---|
+| OpenAI | gpt-4o | 128K | $5-15 |
+| OpenAI | gpt-4o-mini | 128K | $0.15-0.60 |
+| Anthropic | claude-3-opus | 200K | $15-75 |
+| Google | gemini-1.5-pro | 1M | $3.50-10.50 |
+| Mistral | mistral-large | 32K | $2-6 |
+
+## Supabase Schema
+
+### Key Tables
+
+```sql
+-- Users table
+users (
+  id UUID PRIMARY KEY,
+  email TEXT,
+  created_at TIMESTAMP,
+  daily_message_count INT DEFAULT 0,
+  is_pro BOOLEAN DEFAULT false
+)
+
+-- Conversations table
+conversations (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  title TEXT,
+  model TEXT DEFAULT 'gpt-4o',
+  created_at TIMESTAMP
+)
+
+-- Messages table
+messages (
+  id UUID PRIMARY KEY,
+  conversation_id UUID REFERENCES conversations(id),
+  role TEXT, -- 'user' or 'assistant'
+  content TEXT,
+  created_at TIMESTAMP
+)
+```
+
+## Component Import Paths
+
+```typescript
+// UI Components
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+
+// Chat Components
+import { ChatInterface } from '@/components/chat/chat-interface'
+import { MessageList } from '@/components/chat/message-list'
+
+// AI Services
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { anthropic } from '@ai-sdk/anthropic'
+
+// Supabase
+import { createClient } from '@/lib/supabase/client'
+import { createServerClient } from '@/lib/supabase/server'
+```
+
+## Useful Patterns
+
+### Stream AI Response
+
+```typescript
+const result = await streamText({
+  model: openai('gpt-4o'),
+  messages,
+  temperature: 0.7,
+  maxTokens: 4096
+});
+
+return result.toDataStreamResponse();
+```
+
+### Switch Models Mid-Conversation
+
+```typescript
+const model = getModel(modelId); // Dynamic model selection
+const result = await streamText({
+  model,
+  messages: conversation.messages
+});
+```
+
+### Handle Rate Limits
+
+```typescript
+try {
+  const response = await streamText({...});
+} catch (error) {
+  if (error.code === 'rate_limit_exceeded') {
+    // Fallback to different model
+    const response = await streamText({
+      model: openai('gpt-4o-mini'),
+      ...
+    });
+  }
+}
+```
+
+## Keyboard Shortcuts
+
+| Shortcut | Action | Context |
+|---|---|---|
+| Cmd/Ctrl + K | Open command palette | Global |
+| Cmd/Ctrl + Enter | Send message | Chat input |
+| Cmd/Ctrl + / | Toggle sidebar | Global |
+| Esc | Stop generation | During streaming |
+| Cmd/Ctrl + N | New conversation | Chat interface |
+
+## Debug Commands
+
+```bash
+# Check API connectivity
+curl -H "Authorization: Bearer $OPENAI_API_KEY" \
+  https://api.openai.com/v1/models/gpt-4o
+
+# Test Supabase connection
+npx supabase status
+
+# View Vercel logs
+vercel logs --follow
+
+# Check TypeScript errors
+npx tsc --noEmit
+
+# Analyze bundle size
+pnpm analyze
+```
+
+## Error Codes
+
+| Code | Meaning | Solution |
+|---|---|---|
+| 401 | Invalid API key | Check environment variables |
+| 429 | Rate limit exceeded | Wait or upgrade plan |
+| 500 | Server error | Check logs, restart server |
+| 503 | Model unavailable | Try different model |
+
+## Useful Links
+
+- [API Documentation](/development/api)
+- [Environment Variables](/development/environment-variables)
+- [Troubleshooting](/operations/troubleshooting)
+- [GitHub Repository](https://github.com/reflekt-ai/console)
+- [Discord Support](https://discord.gg/reflekt-ai)
