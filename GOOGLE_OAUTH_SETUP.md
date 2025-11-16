@@ -1,5 +1,7 @@
 # Google OAuth Setup for REFLEKT
 
+> ✅ **Status: Successfully Configured** - OAuth authentication is working with Google Cloud project `reflekt-production` and Supabase project `REFLEKT`.
+
 ## Step 1: Create OAuth 2.0 Credentials in Google Cloud Console
 
 1. Go to: https://console.cloud.google.com/apis/credentials?project=reflekt-production
@@ -10,7 +12,8 @@
    - Fill in:
      - App name: REFLEKT
      - User support email: identity@wael.ai
-     - App domain: http://localhost:3000 (for development)
+     - App domain: https://xn--rflekt-mva.com (ASCII version of rēflekt.com)
+     - Authorized domains: xn--rflekt-mva.com, supabase.com
      - Developer contact: identity@wael.ai
    - Add scopes: email, profile, openid
    - Save and continue
