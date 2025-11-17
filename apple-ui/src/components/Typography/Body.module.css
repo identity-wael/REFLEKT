@@ -1,0 +1,91 @@
+/**
+ * Body Component Styles
+ * Styles specific to Body text component
+ */
+
+.body {
+  margin: 0;
+}
+
+/* Default paragraph spacing */
+.body + .body {
+  margin-top: 16px;
+}
+
+/* Improved readability settings */
+.body {
+  /* Prevent orphans and widows */
+  orphans: 2;
+  widows: 2;
+
+  /* Better word breaking */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  /* Hyphenation for better text flow */
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+}
+
+/* Prevent long URLs from breaking layout */
+.body a {
+  word-break: break-word;
+}
+
+/* Optimal line height for readability */
+.body {
+  line-height: 1.47; /* ~1.5 line height for body text */
+}
+
+/* Better list styling within body */
+.body ul,
+.body ol {
+  padding-left: 24px;
+  margin: 12px 0;
+}
+
+.body li {
+  margin: 4px 0;
+}
+
+/* Code within body text */
+.body code {
+  font-family: ui-monospace, 'SF Mono', Monaco, monospace;
+  font-size: 0.9em;
+  padding: 2px 6px;
+  background-color: rgba(120, 120, 128, 0.12);
+  border-radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .body code {
+    background-color: rgba(120, 120, 128, 0.24);
+  }
+}
+
+/* Strong and emphasis */
+.body strong,
+.body b {
+  font-weight: 600; /* Semibold */
+}
+
+.body em,
+.body i {
+  font-style: italic;
+}
+
+/* Blockquotes */
+.body blockquote {
+  margin: 16px 0;
+  padding-left: 16px;
+  border-left: 3px solid rgba(120, 120, 128, 0.3);
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .body blockquote {
+    border-left-color: rgba(120, 120, 128, 0.5);
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
