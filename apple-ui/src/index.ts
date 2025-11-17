@@ -333,6 +333,97 @@ export type {
   SectionPadding,
 } from './components/Section'
 
+// Table
+export {
+  Table,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableHeader,
+  TableFooter,
+} from './components/Table'
+export type {
+  TableProps,
+  TableRowProps,
+  TableCellProps,
+  TableBodyProps,
+  TableHeaderProps,
+  TableFooterProps,
+  TableColumn,
+  TableVariant,
+  TableSize,
+  SortDirection,
+  TablePagination,
+} from './components/Table'
+
+// Alert
+export { Alert } from './components/Alert'
+export type { AlertProps, AlertVariant } from './components/Alert'
+
+// ContextMenu
+export { ContextMenu } from './components/ContextMenu'
+export type { ContextMenuProps, ContextMenuItem } from './components/ContextMenu'
+
+// Picker
+export { Picker } from './components/Picker'
+export type { PickerProps, PickerOption, PickerSize } from './components/Picker'
+
+// CommandPalette
+export { CommandPalette } from './components/CommandPalette'
+export type { CommandPaletteProps, Command, CommandCategory } from './components/CommandPalette'
+
+// AppIcon
+export { AppIcon } from './components/AppIcon'
+export type { AppIconProps, AppIconSize, AppIconShape } from './components/AppIcon'
+
+// LiveActivity
+export { LiveActivity } from './components/LiveActivity'
+export type { LiveActivityProps } from './components/LiveActivity'
+
+// Dock
+export { Dock } from './components/Dock'
+export type { DockProps, DockItem, DockPosition, DockSize } from './components/Dock'
+
+// DynamicIsland
+export { DynamicIsland } from './components/DynamicIsland'
+export type { DynamicIslandProps, DynamicIslandState } from './components/DynamicIsland'
+
+// ControlPanel
+export { ControlPanel } from './components/ControlPanel'
+export type { ControlPanelProps, ControlItem, ControlType } from './components/ControlPanel'
+
+// Ornament
+export { Ornament } from './components/Ornament'
+export type { OrnamentProps, OrnamentPosition } from './components/Ornament'
+
+// VisionWindow
+export { VisionWindow } from './components/VisionWindow'
+export type { VisionWindowProps, VisionWindowMaterial } from './components/VisionWindow'
+
+// SpatialPanel
+export { SpatialPanel } from './components/SpatialPanel'
+export type { SpatialPanelProps } from './components/SpatialPanel'
+
+// ImmersiveSpace
+export { ImmersiveSpace } from './components/ImmersiveSpace'
+export type { ImmersiveSpaceProps } from './components/ImmersiveSpace'
+
+// Image (Enhanced)
+export { Image } from './components/Image'
+export type { ImageProps, ImageObjectFit, ImageLoading, ImageRounded } from './components/Image'
+
+// VideoPlayer
+export { VideoPlayer } from './components/VideoPlayer'
+export type { VideoPlayerProps } from './components/VideoPlayer'
+
+// AudioPlayer
+export { AudioPlayer } from './components/AudioPlayer'
+export type { AudioPlayerProps } from './components/AudioPlayer'
+
+// Gallery
+export { Gallery } from './components/Gallery'
+export type { GalleryProps, GalleryImage, GalleryLayout, GalleryAspectRatio } from './components/Gallery'
+
 // === DESIGN TOKENS ===
 
 export {

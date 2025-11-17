@@ -1,0 +1,243 @@
+.liveActivity {
+  position: relative;
+  width: 100%;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.liveActivity.clickable {
+  cursor: pointer;
+  border: none;
+  text-align: left;
+}
+
+.liveActivity.clickable:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.liveActivity.clickable:active {
+  transform: scale(0.98);
+}
+
+.liveActivity.compact {
+  padding: 12px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.liveActivity.compact .header {
+  margin-bottom: 0;
+}
+
+.titleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1.4;
+}
+
+.timestamp {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+/* Content */
+.content {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.7);
+  line-height: 1.5;
+}
+
+/* Progress */
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #007AFF 0%, #00C7FF 100%);
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+}
+
+.progressFill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progressLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: #007AFF;
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Pulse animation */
+.pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #007AFF 0%, #00C7FF 100%);
+  opacity: 0.6;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .liveActivity {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.04),
+      0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .liveActivity.clickable:hover {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 6px 20px rgba(0, 0, 0, 0.4);
+  }
+
+  .title {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .subtitle {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .timestamp {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .content {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .progressTrack {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .progressFill {
+    background: linear-gradient(90deg, #0A84FF 0%, #00D9FF 100%);
+  }
+
+  .progressLabel {
+    color: #0A84FF;
+  }
+
+  .pulse {
+    background: linear-gradient(90deg, #0A84FF 0%, #00D9FF 100%);
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .liveActivity {
+    transition: opacity 0.1s;
+  }
+
+  .liveActivity.clickable:hover,
+  .liveActivity.clickable:active {
+    transform: none;
+  }
+
+  .progressFill {
+    transition: width 0.2s linear;
+  }
+
+  .progressFill::after,
+  .pulse {
+    animation: none;
+  }
+}
+
+/* Focus visible */
+.liveActivity.clickable:focus-visible {
+  outline: 3px solid #007AFF;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .liveActivity.clickable:focus-visible {
+    outline-color: #0A84FF;
+  }
+}

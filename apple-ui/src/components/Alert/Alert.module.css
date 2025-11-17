@@ -1,0 +1,196 @@
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  backdrop-filter: blur(20px);
+  animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert.exiting {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Icon */
+.icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.message {
+  color: inherit;
+  opacity: 0.9;
+}
+
+/* Action Button */
+.actionButton {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(255, 255, 255, 0.15);
+  color: inherit;
+}
+
+.actionButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.02);
+}
+
+.actionButton:active {
+  transform: scale(0.98);
+}
+
+.actionButton.primaryAction {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* Dismiss Button */
+.dismissButton {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.dismissButton:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dismissButton:active {
+  transform: scale(0.95);
+}
+
+/* Variants */
+.info {
+  background: rgba(0, 122, 255, 0.15);
+  border: 1px solid rgba(0, 122, 255, 0.3);
+  color: #007AFF;
+}
+
+.success {
+  background: rgba(52, 199, 89, 0.15);
+  border: 1px solid rgba(52, 199, 89, 0.3);
+  color: #34C759;
+}
+
+.warning {
+  background: rgba(255, 159, 10, 0.15);
+  border: 1px solid rgba(255, 159, 10, 0.3);
+  color: #FF9F0A;
+}
+
+.error {
+  background: rgba(255, 69, 58, 0.15);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+  color: #FF453A;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .info {
+    background: rgba(10, 132, 255, 0.15);
+    border-color: rgba(10, 132, 255, 0.3);
+    color: #0A84FF;
+  }
+
+  .success {
+    background: rgba(48, 209, 88, 0.15);
+    border-color: rgba(48, 209, 88, 0.3);
+    color: #30D158;
+  }
+
+  .warning {
+    background: rgba(255, 169, 20, 0.15);
+    border-color: rgba(255, 169, 20, 0.3);
+    color: #FFA914;
+  }
+
+  .error {
+    background: rgba(255, 79, 68, 0.15);
+    border-color: rgba(255, 79, 68, 0.3);
+    color: #FF4F44;
+  }
+
+  .actionButton.primaryAction {
+    background: rgba(255, 255, 255, 0.15);
+    color: inherit;
+  }
+
+  .actionButton.primaryAction:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .alert {
+    animation: none;
+    transition: opacity 0.1s;
+  }
+
+  .alert.exiting {
+    opacity: 0;
+    transform: none;
+  }
+
+  .actionButton,
+  .dismissButton {
+    transition: opacity 0.1s;
+  }
+
+  .actionButton:hover,
+  .actionButton:active,
+  .dismissButton:active {
+    transform: none;
+  }
+}

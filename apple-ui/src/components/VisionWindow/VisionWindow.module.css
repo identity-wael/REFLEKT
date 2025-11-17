@@ -1,0 +1,251 @@
+.visionWindow {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  transform: translateZ(var(--window-depth, 0));
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Material variants */
+.visionWindow.glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.visionWindow.frosted {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(60px) saturate(200%);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.visionWindow.vibrant {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(80px) saturate(220%) brightness(1.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.05),
+    0 16px 48px rgba(0, 0, 0, 0.18);
+}
+
+/* Floating effect */
+.visionWindow.floating {
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 24px 64px rgba(0, 0, 0, 0.2),
+    0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.visionWindow.floating:hover {
+  transform: translateZ(calc(var(--window-depth, 0) + 10px));
+}
+
+/* Title bar */
+.titleBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.closeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  color: rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.closeButton:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.85);
+  transform: scale(1.05);
+}
+
+.closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  padding: 20px;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Resize handle */
+.resizeHandle {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  cursor: nwse-resize;
+}
+
+.resizeHandle::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 12px;
+  height: 12px;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.2) 55%,
+    transparent 55%,
+    transparent 60%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0.2) 65%,
+    transparent 65%
+  );
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .visionWindow.glass {
+    background: rgba(30, 30, 30, 0.7);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+
+  .visionWindow.frosted {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 12px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .visionWindow.vibrant {
+    background: rgba(30, 30, 30, 0.65);
+    border-color: rgba(255, 255, 255, 0.13);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.09),
+      0 16px 48px rgba(0, 0, 0, 0.6);
+  }
+
+  .visionWindow.floating {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 24px 64px rgba(0, 0, 0, 0.6),
+      0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  .titleBar {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .title {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .closeButton {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .closeButton:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .resizeHandle::after {
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.3) 55%,
+      transparent 55%,
+      transparent 60%,
+      rgba(255, 255, 255, 0.3) 60%,
+      rgba(255, 255, 255, 0.3) 65%,
+      transparent 65%
+    );
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .visionWindow {
+    transition: opacity 0.1s;
+  }
+
+  .visionWindow.floating:hover {
+    transform: translateZ(var(--window-depth, 0));
+  }
+
+  .closeButton:hover,
+  .closeButton:active {
+    transform: none;
+  }
+}
+
+/* Focus visible */
+.closeButton:focus-visible {
+  outline: 2px solid #007AFF;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .closeButton:focus-visible {
+    outline-color: #0A84FF;
+  }
+}
