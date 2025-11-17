@@ -1,0 +1,35 @@
+/**
+ * Caption Component Styles
+ * Styles specific to Caption component
+ */
+
+.caption {
+  display: inline-block;
+  margin: 0;
+}
+
+/* Subtle styling for captions */
+.caption {
+  font-feature-settings: 'tnum' 1; /* Tabular numbers for consistent alignment */
+}
+
+/* Line clamping utilities for captions */
+.singleLine {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.twoLines {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.threeLines {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
