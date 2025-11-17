@@ -1,6 +1,6 @@
 # Apple UI Component Library - Implementation Status
 
-## ✅ Completed Components (32/59)
+## ✅ Completed Components (41/59)
 
 ### Core Components
 - Typography
@@ -28,6 +28,10 @@
 ### Navigation
 - Navigation (with NavContent, NavBrand, NavLinks, NavLink)
 - MenuBar (with MenuBarSection, MenuItem, MenuBarDivider)
+- Sidebar (macOS-style with collapsible state)
+- Breadcrumbs (with auto-collapse)
+- Pagination (3 variants: numbered, simple, compact)
+- List (iOS Settings-style)
 
 ### visionOS/tvOS
 - Icon (with IconGrid)
@@ -38,20 +42,14 @@
 ### Widgets
 - Widget (with WidgetHeader, WidgetContent, WidgetValue, WidgetTrend, WidgetFooter)
 
-## 📋 Remaining Components (27 total)
+### Layout
+- Stack (VStack/HStack with alignment)
+- Divider (with optional label)
+- Spacer (flexible space)
+- Grid (responsive CSS Grid with GridItem)
+- Section (with header/footer)
 
-### Navigation (4)
-- [ ] Sidebar
-- [ ] Breadcrumbs
-- [ ] Pagination
-- [ ] List (iOS Settings style)
-
-### Layout (5)
-- [ ] Stack (VStack/HStack)
-- [ ] Divider
-- [ ] Spacer
-- [ ] Grid
-- [ ] Section
+## 📋 Remaining Components (18 total)
 
 ### Apple-Specific (5)
 - [ ] Dock (macOS style)
@@ -80,5 +78,5 @@
 - [ ] Gallery
 
 ## 📊 Progress
-- **Completed**: 32/59 (54%)
-- **Remaining**: 27/59 (46%)
+- **Completed**: 41/59 (69%)
+- **Remaining**: 18/59 (31%)

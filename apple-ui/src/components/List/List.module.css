@@ -1,0 +1,242 @@
+/**
+ * List Component Styles
+ * iOS Settings-style list
+ */
+
+.list {
+  /* Base styles */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* === VARIANTS === */
+
+/* Default variant */
+.variant-default {
+  background: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-default {
+    background: #1c1c1e;
+  }
+}
+
+/* Inset variant (rounded groups) */
+.variant-inset {
+  background: transparent;
+}
+
+.variant-inset .section {
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-inset .section {
+    background: #1c1c1e;
+  }
+}
+
+/* Plain variant (minimal styling) */
+.variant-plain {
+  background: transparent;
+}
+
+/* === SECTION === */
+
+.section {
+  margin-bottom: 24px;
+}
+
+.sectionHeader {
+  padding: 12px 16px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sectionHeader {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+/* Inset variant section header */
+.variant-inset .sectionHeader {
+  background: transparent;
+  padding: 12px 20px 8px 20px;
+}
+
+/* === LIST ITEM === */
+
+.item {
+  /* Base styles */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  cursor: default;
+  outline: none;
+  text-align: left;
+  text-decoration: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Typography */
+  font-family: inherit;
+  color: #000000;
+
+  /* Smooth transitions */
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Divided items */
+.divided .item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .item {
+    color: #ffffff;
+  }
+
+  .divided .item:not(:last-child) {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Navigable items */
+.item.navigable {
+  cursor: pointer;
+}
+
+.item.navigable:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.item.navigable:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .item.navigable:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .item.navigable:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Focus state */
+.item:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: -2px;
+}
+
+/* Disabled state */
+.item.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* === ITEM CONTENT === */
+
+.itemContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* === ITEM TEXT === */
+
+.itemText {
+  flex: 1;
+  min-width: 0;
+}
+
+.itemPrimary {
+  font-size: 17px;
+  line-height: 22px;
+  font-weight: 400;
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemSecondary {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  color: rgba(60, 60, 67, 0.6);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .itemSecondary {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+/* === ITEM ICON === */
+
+.itemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: inherit;
+}
+
+/* === ITEM ACTION === */
+
+.itemAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+/* === CHEVRON === */
+
+.chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  color: rgba(60, 60, 67, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .chevron {
+    color: rgba(235, 235, 245, 0.3);
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+}

@@ -222,6 +222,117 @@ export type { PopoverProps, PopoverTriggerProps, PopoverContentProps, PopoverPos
 export { Tooltip } from './components/Tooltip'
 export type { TooltipProps, TooltipPosition } from './components/Tooltip'
 
+// Sidebar
+export {
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarSection,
+  SidebarItem,
+  SidebarFooter,
+} from './components/Sidebar'
+export type {
+  SidebarProps,
+  SidebarHeaderProps,
+  SidebarContentProps,
+  SidebarSectionProps,
+  SidebarItemProps,
+  SidebarFooterProps,
+  SidebarVariant,
+  SidebarWidth,
+  SidebarPosition,
+} from './components/Sidebar'
+
+// Breadcrumbs
+export { Breadcrumbs } from './components/Breadcrumbs'
+export type {
+  BreadcrumbsProps,
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+  BreadcrumbSize,
+} from './components/Breadcrumbs'
+
+// Pagination
+export { Pagination } from './components/Pagination'
+export type {
+  PaginationProps,
+  PaginationVariant,
+  PaginationSize,
+} from './components/Pagination'
+
+// List (iOS Settings style)
+export {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemAction,
+  ListSection,
+  ListSectionHeader,
+} from './components/List'
+export type {
+  ListProps,
+  ListItemProps,
+  ListItemTextProps,
+  ListItemIconProps,
+  ListItemActionProps,
+  ListSectionProps,
+  ListSectionHeaderProps,
+  ListVariant,
+} from './components/List'
+
+// Stack (VStack/HStack)
+export { Stack, VStack, HStack } from './components/Stack'
+export type {
+  StackProps,
+  StackDirection,
+  StackSpacing,
+  StackAlign,
+} from './components/Stack'
+
+// Divider
+export { Divider } from './components/Divider'
+export type {
+  DividerProps,
+  DividerOrientation,
+  DividerVariant,
+  DividerThickness,
+} from './components/Divider'
+
+// Spacer
+export { Spacer } from './components/Spacer'
+export type {
+  SpacerProps,
+  SpacerSize,
+  SpacerDirection,
+} from './components/Spacer'
+
+// Grid
+export { Grid, GridItem } from './components/Grid'
+export type {
+  GridProps,
+  GridItemProps,
+  GridColumns,
+  GridGap,
+  GridAutoFlow,
+} from './components/Grid'
+
+// Section
+export {
+  Section,
+  SectionHeader,
+  SectionContent,
+  SectionFooter,
+} from './components/Section'
+export type {
+  SectionProps,
+  SectionHeaderProps,
+  SectionContentProps,
+  SectionFooterProps,
+  SectionVariant,
+  SectionPadding,
+} from './components/Section'
+
 // === DESIGN TOKENS ===
 
 export {
