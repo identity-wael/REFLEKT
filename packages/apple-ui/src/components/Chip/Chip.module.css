@@ -1,0 +1,393 @@
+/* Chip Component Styles */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-sizing: border-box;
+  user-select: none;
+}
+
+/* Sizes */
+.sm {
+  height: 24px;
+  padding: 0 10px;
+  font-size: 12px;
+  gap: 4px;
+}
+
+.sm.chip:has(.startAdornment) {
+  padding-left: 6px;
+}
+
+.sm.chip:has(.deleteButton) {
+  padding-right: 6px;
+}
+
+.md {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 14px;
+  gap: 6px;
+}
+
+.md.chip:has(.startAdornment) {
+  padding-left: 8px;
+}
+
+.md.chip:has(.deleteButton) {
+  padding-right: 8px;
+}
+
+.lg {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 16px;
+  gap: 8px;
+}
+
+.lg.chip:has(.startAdornment) {
+  padding-left: 10px;
+}
+
+.lg.chip:has(.deleteButton) {
+  padding-right: 10px;
+}
+
+/* Start Adornment */
+.startAdornment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sm .startAdornment {
+  width: 16px;
+  height: 16px;
+}
+
+.md .startAdornment {
+  width: 20px;
+  height: 20px;
+}
+
+.lg .startAdornment {
+  width: 24px;
+  height: 24px;
+}
+
+/* Label */
+.label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Delete Button */
+.deleteButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+}
+
+.deleteButton:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.deleteButton:active {
+  transform: scale(0.9);
+}
+
+.sm .deleteButton {
+  width: 16px;
+  height: 16px;
+}
+
+.md .deleteButton {
+  width: 20px;
+  height: 20px;
+}
+
+.lg .deleteButton {
+  width: 24px;
+  height: 24px;
+}
+
+/* Filled Variant - Light Mode */
+.filled.blue {
+  background: #007AFF;
+  color: #fff;
+}
+
+.filled.green {
+  background: #34C759;
+  color: #fff;
+}
+
+.filled.red {
+  background: #FF3B30;
+  color: #fff;
+}
+
+.filled.orange {
+  background: #FF9500;
+  color: #fff;
+}
+
+.filled.purple {
+  background: #AF52DE;
+  color: #fff;
+}
+
+.filled.gray {
+  background: #8E8E93;
+  color: #fff;
+}
+
+/* Outlined Variant - Light Mode */
+.outlined.blue {
+  background: transparent;
+  border-color: #007AFF;
+  color: #007AFF;
+}
+
+.outlined.green {
+  background: transparent;
+  border-color: #34C759;
+  color: #34C759;
+}
+
+.outlined.red {
+  background: transparent;
+  border-color: #FF3B30;
+  color: #FF3B30;
+}
+
+.outlined.orange {
+  background: transparent;
+  border-color: #FF9500;
+  color: #FF9500;
+}
+
+.outlined.purple {
+  background: transparent;
+  border-color: #AF52DE;
+  color: #AF52DE;
+}
+
+.outlined.gray {
+  background: transparent;
+  border-color: #8E8E93;
+  color: #8E8E93;
+}
+
+/* Soft Variant - Light Mode */
+.soft.blue {
+  background: rgba(0, 122, 255, 0.1);
+  color: #007AFF;
+}
+
+.soft.green {
+  background: rgba(52, 199, 89, 0.1);
+  color: #34C759;
+}
+
+.soft.red {
+  background: rgba(255, 59, 48, 0.1);
+  color: #FF3B30;
+}
+
+.soft.orange {
+  background: rgba(255, 149, 0, 0.1);
+  color: #FF9500;
+}
+
+.soft.purple {
+  background: rgba(175, 82, 222, 0.1);
+  color: #AF52DE;
+}
+
+.soft.gray {
+  background: rgba(142, 142, 147, 0.1);
+  color: #8E8E93;
+}
+
+/* Clickable State */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover:not(.disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.clickable:active:not(.disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.clickable:focus-visible {
+  outline: 2px solid #007AFF;
+  outline-offset: 2px;
+}
+
+/* Selected State */
+.selected.filled {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1),
+              0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.selected.outlined,
+.selected.soft {
+  border-width: 2px;
+}
+
+/* Disabled State */
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .filled.blue {
+    background: #0A84FF;
+  }
+
+  .filled.green {
+    background: #30D158;
+  }
+
+  .filled.red {
+    background: #FF453A;
+  }
+
+  .filled.orange {
+    background: #FF9F0A;
+  }
+
+  .filled.purple {
+    background: #BF5AF2;
+  }
+
+  .filled.gray {
+    background: #98989D;
+  }
+
+  .outlined.blue {
+    border-color: #0A84FF;
+    color: #0A84FF;
+  }
+
+  .outlined.green {
+    border-color: #30D158;
+    color: #30D158;
+  }
+
+  .outlined.red {
+    border-color: #FF453A;
+    color: #FF453A;
+  }
+
+  .outlined.orange {
+    border-color: #FF9F0A;
+    color: #FF9F0A;
+  }
+
+  .outlined.purple {
+    border-color: #BF5AF2;
+    color: #BF5AF2;
+  }
+
+  .outlined.gray {
+    border-color: #98989D;
+    color: #98989D;
+  }
+
+  .soft.blue {
+    background: rgba(10, 132, 255, 0.15);
+    color: #0A84FF;
+  }
+
+  .soft.green {
+    background: rgba(48, 209, 88, 0.15);
+    color: #30D158;
+  }
+
+  .soft.red {
+    background: rgba(255, 69, 58, 0.15);
+    color: #FF453A;
+  }
+
+  .soft.orange {
+    background: rgba(255, 159, 10, 0.15);
+    color: #FF9F0A;
+  }
+
+  .soft.purple {
+    background: rgba(191, 90, 242, 0.15);
+    color: #BF5AF2;
+  }
+
+  .soft.gray {
+    background: rgba(152, 152, 157, 0.15);
+    color: #98989D;
+  }
+
+  .deleteButton:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .clickable:focus-visible {
+    outline-color: #0A84FF;
+  }
+
+  .selected.filled {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15),
+                0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
+
+  .deleteButton {
+    transition: none;
+  }
+
+  .clickable:hover:not(.disabled) {
+    transform: none;
+  }
+
+  .clickable:active:not(.disabled) {
+    transform: none;
+  }
+
+  .deleteButton:active {
+    transform: none;
+  }
+}

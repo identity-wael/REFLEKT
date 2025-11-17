@@ -1,0 +1,140 @@
+/**
+ * Popover Component Styles
+ * Floating content with glass effect and smooth animations
+ */
+
+.popover {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(0, 0, 0, 0.08);
+  max-width: 320px;
+  animation: popoverFadeIn 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-origin: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .popover {
+    background: rgba(44, 44, 46, 0.85);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .popover {
+    animation: none;
+  }
+}
+
+/* Content */
+.content {
+  padding: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  line-height: 20px;
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content {
+    color: #ffffff;
+  }
+}
+
+/* Arrow */
+.arrow {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transform: translate(-50%, -50%) rotate(45deg);
+  pointer-events: none;
+  z-index: -1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .arrow {
+    background: rgba(44, 44, 46, 0.85);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+}
+
+/* === POSITION-SPECIFIC ARROW STYLES === */
+
+/* Top positions - arrow on bottom */
+.position-top .arrow,
+.position-top-start .arrow,
+.position-top-end .arrow {
+  top: 100%;
+  border-bottom: none;
+  border-right: none;
+  margin-top: -8px;
+}
+
+/* Bottom positions - arrow on top */
+.position-bottom .arrow,
+.position-bottom-start .arrow,
+.position-bottom-end .arrow {
+  top: 0;
+  border-top: none;
+  border-left: none;
+  margin-top: -8px;
+}
+
+/* Left position - arrow on right */
+.position-left .arrow {
+  left: 100%;
+  border-right: none;
+  border-bottom: none;
+  margin-left: -8px;
+}
+
+/* Right position - arrow on left */
+.position-right .arrow {
+  left: 0;
+  border-left: none;
+  border-top: none;
+  margin-left: -8px;
+}
+
+/* === TRANSFORM ORIGINS FOR ANIMATIONS === */
+
+.position-top,
+.position-top-start,
+.position-top-end {
+  transform-origin: center bottom;
+}
+
+.position-bottom,
+.position-bottom-start,
+.position-bottom-end {
+  transform-origin: center top;
+}
+
+.position-left {
+  transform-origin: right center;
+}
+
+.position-right {
+  transform-origin: left center;
+}

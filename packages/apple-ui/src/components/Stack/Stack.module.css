@@ -1,0 +1,69 @@
+/**
+ * Stack Component Styles
+ * SwiftUI-style stack layout
+ */
+
+.stack {
+  /* Base styles */
+  display: flex;
+}
+
+/* === DIRECTION === */
+
+.direction-vertical {
+  flex-direction: column;
+  gap: var(--stack-spacing, 12px);
+}
+
+.direction-horizontal {
+  flex-direction: row;
+  gap: var(--stack-spacing, 12px);
+}
+
+/* === ALIGNMENT === */
+
+/* Vertical stack alignment (cross-axis = horizontal) */
+.direction-vertical.align-start {
+  align-items: flex-start;
+}
+
+.direction-vertical.align-center {
+  align-items: center;
+}
+
+.direction-vertical.align-end {
+  align-items: flex-end;
+}
+
+.direction-vertical.align-stretch {
+  align-items: stretch;
+}
+
+/* Horizontal stack alignment (cross-axis = vertical) */
+.direction-horizontal.align-start {
+  align-items: flex-start;
+}
+
+.direction-horizontal.align-center {
+  align-items: center;
+}
+
+.direction-horizontal.align-end {
+  align-items: flex-end;
+}
+
+.direction-horizontal.align-stretch {
+  align-items: stretch;
+}
+
+/* === WRAP === */
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+/* === FULL WIDTH === */
+
+.fullWidth {
+  width: 100%;
+}

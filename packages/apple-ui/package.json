@@ -1,0 +1,46 @@
+{
+  "name": "@reflekt/apple-ui",
+  "version": "0.1.0",
+  "description": "Apple-inspired UI component library for REFLEKT",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./styles": "./dist/styles/index.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && tsc --module esnext --outDir dist/esm",
+    "lint": "eslint src --ext .ts,.tsx",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "apple",
+    "ui",
+    "components",
+    "react",
+    "design-system"
+  ],
+  "author": "REFLEKT",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1"
+  }
+}

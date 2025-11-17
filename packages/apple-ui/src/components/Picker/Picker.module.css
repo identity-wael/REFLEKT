@@ -1,0 +1,183 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.picker {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.picker.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Sizes */
+.picker.sm {
+  height: 96px; /* 3 items × 32px */
+}
+
+.picker.md {
+  height: 120px; /* 3 items × 40px */
+}
+
+.picker.lg {
+  height: 144px; /* 3 items × 48px */
+}
+
+/* Highlight overlay */
+.highlight {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 16px);
+  pointer-events: none;
+  z-index: 2;
+  background: rgba(0, 122, 255, 0.08);
+  border: 1px solid rgba(0, 122, 255, 0.2);
+  border-radius: 8px;
+  transition: background 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.picker.sm .highlight {
+  height: 32px;
+}
+
+.picker.md .highlight {
+  height: 40px;
+}
+
+.picker.lg .highlight {
+  height: 48px;
+}
+
+/* Options container */
+.optionsContainer {
+  height: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.optionsContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.optionsContainer:focus {
+  outline: none;
+}
+
+.optionsContainer:focus-visible {
+  outline: 2px solid #007AFF;
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* Options */
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  user-select: none;
+}
+
+.picker.sm .option {
+  height: 32px;
+  font-size: 14px;
+}
+
+.picker.md .option {
+  height: 40px;
+  font-size: 16px;
+}
+
+.picker.lg .option {
+  height: 48px;
+  font-size: 18px;
+}
+
+.option.selected {
+  color: #007AFF;
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+.option.padding {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .picker {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .highlight {
+    background: rgba(10, 132, 255, 0.12);
+    border-color: rgba(10, 132, 255, 0.3);
+  }
+
+  .option {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .option.selected {
+    color: #0A84FF;
+  }
+
+  .optionsContainer:focus-visible {
+    outline-color: #0A84FF;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .option {
+    transition: color 0.1s;
+  }
+
+  .option.selected {
+    transform: none;
+  }
+
+  .highlight {
+    transition: none;
+  }
+}
+
+/* Touch optimization */
+@media (hover: none) and (pointer: coarse) {
+  .option {
+    min-height: 44px; /* iOS touch target size */
+  }
+}

@@ -1,0 +1,158 @@
+/**
+ * Typography Component Styles
+ * Apple Design System Typography
+ */
+
+.typography {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Text Style Variants */
+.variant-largeTitle {
+  font-size: 34px;
+  line-height: 41px;
+  letter-spacing: 0.37px;
+}
+
+.variant-title1 {
+  font-size: 28px;
+  line-height: 34px;
+  letter-spacing: 0.36px;
+}
+
+.variant-title2 {
+  font-size: 22px;
+  line-height: 28px;
+  letter-spacing: 0.35px;
+}
+
+.variant-title3 {
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: 0.38px;
+}
+
+.variant-body {
+  font-size: 17px;
+  line-height: 22px;
+  letter-spacing: -0.43px;
+}
+
+.variant-callout {
+  font-size: 16px;
+  line-height: 21px;
+  letter-spacing: -0.32px;
+}
+
+.variant-subheadline {
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: -0.24px;
+}
+
+.variant-footnote {
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: -0.08px;
+}
+
+.variant-caption1 {
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+}
+
+.variant-caption2 {
+  font-size: 11px;
+  line-height: 13px;
+  letter-spacing: 0.06px;
+}
+
+/* Font Weights (SF Pro 9 weights) */
+.weight-ultralight {
+  font-weight: 100;
+}
+
+.weight-thin {
+  font-weight: 200;
+}
+
+.weight-light {
+  font-weight: 300;
+}
+
+.weight-regular {
+  font-weight: 400;
+}
+
+.weight-medium {
+  font-weight: 500;
+}
+
+.weight-semibold {
+  font-weight: 600;
+}
+
+.weight-bold {
+  font-weight: 700;
+}
+
+.weight-heavy {
+  font-weight: 800;
+}
+
+.weight-black {
+  font-weight: 900;
+}
+
+/* Label Colors (Light Mode) */
+.color-primary {
+  color: #000000;
+}
+
+.color-secondary {
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.color-tertiary {
+  color: rgba(60, 60, 67, 0.3);
+}
+
+.color-quaternary {
+  color: rgba(60, 60, 67, 0.18);
+}
+
+/* Text Alignment */
+.align-left {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .color-primary {
+    color: #ffffff;
+  }
+
+  .color-secondary {
+    color: rgba(235, 235, 245, 0.6);
+  }
+
+  .color-tertiary {
+    color: rgba(235, 235, 245, 0.3);
+  }
+
+  .color-quaternary {
+    color: rgba(235, 235, 245, 0.18);
+  }
+}

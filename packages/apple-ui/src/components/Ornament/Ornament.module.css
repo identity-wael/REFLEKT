@@ -1,0 +1,162 @@
+.ornamentContainer {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+}
+
+.mainContent {
+  position: relative;
+  z-index: 1;
+}
+
+.ornament {
+  position: absolute;
+  z-index: 10;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  font-size: 13px;
+  animation: ornamentFloat 3s ease-in-out infinite;
+  transform: translateZ(var(--ornament-depth, 0));
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ornament.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes ornamentFloat {
+  0%, 100% {
+    transform: translateZ(var(--ornament-depth, 0)) translateY(0);
+  }
+  50% {
+    transform: translateZ(var(--ornament-depth, 0)) translateY(-2px);
+  }
+}
+
+/* Position variants */
+.ornament.top {
+  bottom: calc(100% + var(--ornament-offset));
+  left: 50%;
+  transform: translateX(-50%) translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.bottom {
+  top: calc(100% + var(--ornament-offset));
+  left: 50%;
+  transform: translateX(-50%) translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.left {
+  right: calc(100% + var(--ornament-offset));
+  top: 50%;
+  transform: translateY(-50%) translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.right {
+  left: calc(100% + var(--ornament-offset));
+  top: 50%;
+  transform: translateY(-50%) translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.top-left {
+  bottom: calc(100% + var(--ornament-offset));
+  right: calc(100% + var(--ornament-offset));
+  transform: translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.top-right {
+  bottom: calc(100% + var(--ornament-offset));
+  left: calc(100% + var(--ornament-offset));
+  transform: translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.bottom-left {
+  top: calc(100% + var(--ornament-offset));
+  right: calc(100% + var(--ornament-offset));
+  transform: translateZ(var(--ornament-depth, 0));
+}
+
+.ornament.bottom-right {
+  top: calc(100% + var(--ornament-offset));
+  left: calc(100% + var(--ornament-offset));
+  transform: translateZ(var(--ornament-depth, 0));
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .ornament.glass {
+    background: rgba(30, 30, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ornament {
+    animation: none;
+  }
+}
+
+/* Hover interaction */
+.ornamentContainer:hover .ornament {
+  transform: translateZ(calc(var(--ornament-depth, 0) + 10px));
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.06),
+    0 8px 24px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ornamentContainer:hover .ornament.top,
+.ornamentContainer:hover .ornament.bottom {
+  transform: translateX(-50%) translateZ(calc(var(--ornament-depth, 0) + 10px));
+}
+
+.ornamentContainer:hover .ornament.left,
+.ornamentContainer:hover .ornament.right {
+  transform: translateY(-50%) translateZ(calc(var(--ornament-depth, 0) + 10px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ornamentContainer:hover .ornament,
+  .ornamentContainer:hover .ornament.top,
+  .ornamentContainer:hover .ornament.bottom,
+  .ornamentContainer:hover .ornament.left,
+  .ornamentContainer:hover .ornament.right {
+    transform: none;
+  }
+
+  .ornament.top {
+    transform: translateX(-50%);
+  }
+
+  .ornament.bottom {
+    transform: translateX(-50%);
+  }
+
+  .ornament.left {
+    transform: translateY(-50%);
+  }
+
+  .ornament.right {
+    transform: translateY(-50%);
+  }
+
+  .ornament.top-left,
+  .ornament.top-right,
+  .ornament.bottom-left,
+  .ornament.bottom-right {
+    transform: none;
+  }
+}

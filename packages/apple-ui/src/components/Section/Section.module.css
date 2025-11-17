@@ -1,0 +1,170 @@
+/**
+ * Section Component Styles
+ * Content section with header and footer
+ */
+
+.section {
+  /* Base styles */
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+/* === VARIANTS === */
+
+/* Default variant */
+.variant-default {
+  background: transparent;
+}
+
+/* Card variant */
+.variant-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-card {
+    background: #1c1c1e;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Bordered variant */
+.variant-bordered {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-bordered {
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* === PADDING === */
+
+.padding-none {
+  padding: 0;
+}
+
+.padding-sm {
+  padding: 12px;
+}
+
+.padding-md {
+  padding: 20px;
+}
+
+.padding-lg {
+  padding: 24px;
+}
+
+.padding-xl {
+  padding: 32px;
+}
+
+/* === HEADER === */
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.headerText {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0.35px;
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .title {
+    color: #ffffff;
+  }
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 400;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .subtitle {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+.headerAction {
+  flex-shrink: 0;
+}
+
+/* === CONTENT === */
+
+.content {
+  flex: 1;
+}
+
+/* === FOOTER === */
+
+.footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+/* === PADDING ADJUSTMENTS FOR VARIANTS === */
+
+/* No padding on default variant by default */
+.variant-default.padding-none .header {
+  margin-bottom: 16px;
+}
+
+.variant-default.padding-none .footer {
+  margin-top: 16px;
+  padding-top: 16px;
+}
+
+/* Card and bordered variants with padding-none still need internal spacing */
+.variant-card.padding-none .header,
+.variant-bordered.padding-none .header {
+  padding: 20px 20px 0;
+  margin-bottom: 0;
+}
+
+.variant-card.padding-none .content,
+.variant-bordered.padding-none .content {
+  padding: 16px 20px;
+}
+
+.variant-card.padding-none .footer,
+.variant-bordered.padding-none .footer {
+  padding: 0 20px 20px;
+  margin-top: 0;
+}

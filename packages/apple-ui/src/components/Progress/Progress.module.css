@@ -1,0 +1,215 @@
+/**
+ * Progress Component Styles
+ */
+
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+.valueLabel {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+  text-align: right;
+  min-width: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .valueLabel {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* Linear Progress */
+.linear {
+  position: relative;
+  width: 100%;
+  background: rgba(120, 120, 128, 0.16);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .linear {
+    background: rgba(120, 120, 128, 0.24);
+  }
+}
+
+.linearTrack {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Sizes */
+.size-sm {
+  height: 4px;
+}
+
+.size-md {
+  height: 6px;
+}
+
+.size-lg {
+  height: 8px;
+}
+
+/* Colors */
+.color-blue {
+  background: #007aff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-blue {
+    background: #0a84ff;
+  }
+}
+
+.color-green {
+  background: #34c759;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-green {
+    background: #32d74b;
+  }
+}
+
+.color-orange {
+  background: #ff9500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-orange {
+    background: #ff9f0a;
+  }
+}
+
+.color-red {
+  background: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-red {
+    background: #ff453a;
+  }
+}
+
+.color-purple {
+  background: #af52de;
+}
+
+@media (prefers-color-scheme: dark) {
+  .color-purple {
+    background: #bf5af2;
+  }
+}
+
+/* Indeterminate linear */
+.indeterminate {
+  width: 50% !important;
+  animation: linearIndeterminate 1.5s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
+}
+
+@keyframes linearIndeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+/* Circular Progress */
+.circular {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.circularBackground {
+  fill: none;
+  stroke: rgba(120, 120, 128, 0.16);
+}
+
+@media (prefers-color-scheme: dark) {
+  .circularBackground {
+    stroke: rgba(120, 120, 128, 0.24);
+  }
+}
+
+.circularTrack {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.circularValue {
+  position: absolute;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  .circularValue {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+/* Circular sizes */
+.circular-sm .circularValue {
+  font-size: 10px;
+}
+
+.circular-md .circularValue {
+  font-size: 12px;
+}
+
+.circular-lg .circularValue {
+  font-size: 14px;
+}
+
+/* Indeterminate circular */
+.circularIndeterminate {
+  animation: circularIndeterminate 1.4s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes circularIndeterminate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .linearTrack,
+  .circularTrack,
+  .indeterminate,
+  .circularIndeterminate {
+    transition: none !important;
+    animation: none !important;
+  }
+}

@@ -1,0 +1,240 @@
+/**
+ * Divider Component Styles
+ * Visual separator line
+ */
+
+.divider {
+  /* Base styles */
+  border: none;
+  background: rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .divider {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* === ORIENTATION === */
+
+.orientation-horizontal {
+  width: 100%;
+  height: 1px;
+}
+
+.orientation-vertical {
+  width: 1px;
+  height: 100%;
+  align-self: stretch;
+}
+
+/* === VARIANT === */
+
+.variant-solid {
+  /* Already set in base styles */
+}
+
+.variant-dashed {
+  background: none;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.orientation-vertical.variant-dashed {
+  border-top: none;
+  border-left: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-dashed {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .orientation-vertical.variant-dashed {
+    border-left-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.variant-dotted {
+  background: none;
+  border-top: 1px dotted rgba(0, 0, 0, 0.08);
+}
+
+.orientation-vertical.variant-dotted {
+  border-top: none;
+  border-left: 1px dotted rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-dotted {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+
+  .orientation-vertical.variant-dotted {
+    border-left-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* === THICKNESS === */
+
+.thickness-thin {
+  /* Default: 1px (already set) */
+}
+
+.thickness-medium.orientation-horizontal {
+  height: 2px;
+}
+
+.thickness-medium.orientation-vertical {
+  width: 2px;
+}
+
+.thickness-thick.orientation-horizontal {
+  height: 4px;
+}
+
+.thickness-thick.orientation-vertical {
+  width: 4px;
+}
+
+/* === SPACING === */
+
+.spacing-none {
+  margin: 0;
+}
+
+.spacing-xs.orientation-horizontal {
+  margin: 4px 0;
+}
+
+.spacing-xs.orientation-vertical {
+  margin: 0 4px;
+}
+
+.spacing-sm.orientation-horizontal {
+  margin: 8px 0;
+}
+
+.spacing-sm.orientation-vertical {
+  margin: 0 8px;
+}
+
+.spacing-md.orientation-horizontal {
+  margin: 12px 0;
+}
+
+.spacing-md.orientation-vertical {
+  margin: 0 12px;
+}
+
+.spacing-lg.orientation-horizontal {
+  margin: 16px 0;
+}
+
+.spacing-lg.orientation-vertical {
+  margin: 0 16px;
+}
+
+.spacing-xl.orientation-horizontal {
+  margin: 20px 0;
+}
+
+.spacing-xl.orientation-vertical {
+  margin: 0 20px;
+}
+
+/* === DIVIDER WITH LABEL === */
+
+.dividerWithLabel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.dividerWithLabel .line {
+  flex: 1;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dividerWithLabel .line {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Line variants for label divider */
+.dividerWithLabel .variant-dashed {
+  background: none;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dividerWithLabel .variant-dashed {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.dividerWithLabel .variant-dotted {
+  background: none;
+  border-top: 1px dotted rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dividerWithLabel .variant-dotted {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Line thickness for label divider */
+.dividerWithLabel .thickness-medium {
+  height: 2px;
+}
+
+.dividerWithLabel .thickness-thick {
+  height: 4px;
+}
+
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(60, 60, 67, 0.6);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+/* Spacing for divider with label */
+.dividerWithLabel.spacing-none {
+  margin: 0;
+}
+
+.dividerWithLabel.spacing-xs {
+  margin: 4px 0;
+}
+
+.dividerWithLabel.spacing-sm {
+  margin: 8px 0;
+}
+
+.dividerWithLabel.spacing-md {
+  margin: 12px 0;
+}
+
+.dividerWithLabel.spacing-lg {
+  margin: 16px 0;
+}
+
+.dividerWithLabel.spacing-xl {
+  margin: 20px 0;
+}

@@ -1,0 +1,10 @@
+/**
+ * Spacer Component Styles
+ * Flexible space component
+ */
+
+.spacer {
+  /* Base styles - minimal styling */
+  display: block;
+  flex-shrink: 0;
+}
