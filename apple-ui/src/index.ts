@@ -140,6 +140,24 @@ export type {
   ZoneAnimation,
 } from './components/FloatingZone'
 
+// Modal
+export { Modal, ModalHeader, ModalContent, ModalFooter } from './components/Modal'
+export type {
+  ModalProps,
+  ModalHeaderProps,
+  ModalContentProps,
+  ModalFooterProps,
+  ModalSize,
+} from './components/Modal'
+
+// Switch (iOS-style toggle)
+export { Switch } from './components/Switch'
+export type { SwitchProps, SwitchSize, SwitchColor } from './components/Switch'
+
+// Toast (Notifications)
+export { ToastProvider, useToast, toast } from './components/Toast'
+export type { ToastProps, Toast, ToastVariant, ToastPosition } from './components/Toast'
+
 // === DESIGN TOKENS ===
 
 export {
