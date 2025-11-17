@@ -158,6 +158,22 @@ export type { SwitchProps, SwitchSize, SwitchColor } from './components/Switch'
 export { ToastProvider, useToast, toast } from './components/Toast'
 export type { ToastProps, Toast, ToastVariant, ToastPosition } from './components/Toast'
 
+// Select
+export { Select } from './components/Select'
+export type { SelectProps, SelectOption, SelectSize, SelectVariant } from './components/Select'
+
+// Tabs
+export { Tabs, TabPanel } from './components/Tabs'
+export type { TabsProps, TabPanelProps, TabItem, TabsVariant, TabsSize } from './components/Tabs'
+
+// Checkbox
+export { Checkbox } from './components/Checkbox'
+export type { CheckboxProps, CheckboxSize } from './components/Checkbox'
+
+// Radio
+export { Radio, RadioGroup } from './components/Radio'
+export type { RadioProps, RadioGroupProps, RadioSize } from './components/Radio'
+
 // === DESIGN TOKENS ===
 
 export {

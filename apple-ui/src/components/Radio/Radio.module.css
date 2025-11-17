@@ -1,0 +1,223 @@
+/**
+ * Radio Component Styles
+ */
+
+.container {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.containerDisabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.radioWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.radio {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio:disabled {
+  cursor: not-allowed;
+}
+
+.radioVisual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+  transition: all 200ms ease;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .radioVisual {
+    background: rgba(28, 28, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Sizes */
+.size-sm {
+  width: 18px;
+  height: 18px;
+}
+
+.size-md {
+  width: 22px;
+  height: 22px;
+}
+
+.size-lg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Radio dot */
+.radioDot {
+  width: 50%;
+  height: 50%;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 200ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Checked state */
+.radio:checked + .radioVisual {
+  background: #007aff;
+  border-color: #007aff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .radio:checked + .radioVisual {
+    background: #0a84ff;
+    border-color: #0a84ff;
+  }
+}
+
+.radio:checked + .radioVisual .radioDot {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover state */
+.radio:hover + .radioVisual {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  .radio:hover + .radioVisual {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.radio:checked:hover + .radioVisual {
+  background: #0066cc;
+  border-color: #0066cc;
+}
+
+@media (prefers-color-scheme: dark) {
+  .radio:checked:hover + .radioVisual {
+    background: #0077ed;
+    border-color: #0077ed;
+  }
+}
+
+/* Focus state */
+.radio:focus-visible + .radioVisual {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .radio:focus-visible + .radioVisual {
+    outline-color: #0a84ff;
+  }
+}
+
+/* Error state */
+.error + .visualError {
+  border-color: #ff3b30 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error + .visualError {
+    border-color: #ff453a !important;
+  }
+}
+
+.error:checked + .visualError {
+  background: #ff3b30 !important;
+  border-color: #ff3b30 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error:checked + .visualError {
+    background: #ff453a !important;
+    border-color: #ff453a !important;
+  }
+}
+
+/* Disabled state */
+.visualDisabled {
+  opacity: 0.5;
+}
+
+/* Label */
+.labelWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 400;
+  color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: #fff;
+  }
+}
+
+.description {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .description {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+/* Radio Group */
+.radioGroup {
+  display: flex;
+}
+
+.orientation-vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orientation-horizontal {
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .radioVisual,
+  .radioDot {
+    transition: none !important;
+  }
+}

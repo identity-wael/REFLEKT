@@ -1,6 +1,6 @@
 # Apple UI Component Library - Implementation Status
 
-## ✅ Completed Components (18/59)
+## ✅ Completed Components (22/59)
 
 ### Core Components
 - Typography
@@ -10,6 +10,10 @@
 - Modal (with ModalHeader, ModalContent, ModalFooter)
 - Switch (iOS-style toggle)
 - Toast (notification system with ToastProvider)
+- Select (dropdown with options)
+- Tabs (with TabPanel - 3 variants)
+- Checkbox (with indeterminate state)
+- Radio (with RadioGroup)
 
 ### Navigation
 - Navigation (with NavContent, NavBrand, NavLinks, NavLink)
@@ -24,14 +28,7 @@
 ### Widgets
 - Widget (with WidgetHeader, WidgetContent, WidgetValue, WidgetTrend, WidgetFooter)
 
-## 🚧 In Progress (Tier 1 - Critical)
-
-- [ ] Select/Dropdown
-- [ ] Tabs
-- [ ] Checkbox
-- [ ] Radio
-
-## 📋 Remaining Components (44 total)
+## 📋 Remaining Components (37 total)
 
 ### Tier 2 - High Value (9)
 - [ ] Sheet (iOS bottom sheet)
@@ -85,6 +82,5 @@
 - [ ] Gallery
 
 ## 📊 Progress
-- **Completed**: 18/59 (31%)
-- **In Progress**: 4/59 (7%)
+- **Completed**: 22/59 (37%)
 - **Remaining**: 37/59 (63%)
