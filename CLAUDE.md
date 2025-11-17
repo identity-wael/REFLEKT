@@ -23,15 +23,20 @@
 REFLEKT is a modern, multilingual website built with Next.js 15 and React 19, optimized for performance, accessibility, and developer experience.
 
 ### Current State
-- **Phase:** Active Development
+- **Phase:** Production Deployment
 - **Version:** 0.1.0
-- **Latest Major Change:** Restructured as Next.js 15 website (commit fdc7674)
-- **Deployment Target:** Vercel (optimized)
+- **Latest Major Changes:**
+  - Supabase integration with Google OAuth authentication
+  - Deployed to Vercel under Reflekt team
+  - Custom domain: rēflekt.com (xn--rflekt-mva.com)
+- **Deployment:** Live on Vercel (https://reflekt-website.vercel.app)
 
 ### Technology Stack
 - **Framework:** Next.js 15.5.3 with App Router & Turbopack
 - **UI Library:** React 19.2.0 with Server Components
 - **Language:** TypeScript 5.9.3
+- **Backend:** Supabase (Database, Auth, Storage)
+- **Authentication:** Google OAuth via Supabase
 - **Styling:** Tailwind CSS v4 with CSS variables
 - **UI Components:** shadcn/ui (Radix UI primitives)
 - **Animations:** Framer Motion 12.23.24
@@ -39,6 +44,7 @@ REFLEKT is a modern, multilingual website built with Next.js 15 and React 19, op
 - **i18n:** next-intl (English & Japanese support)
 - **Testing:** Vitest (unit) + Playwright (E2E)
 - **Code Quality:** ESLint 9.39.1 with Next.js config
+- **Deployment:** Vercel (Production)
 
 ---
 
@@ -54,8 +60,13 @@ REFLEKT/
 │   │   │   ├── layout.tsx     # Locale-specific layout
 │   │   │   ├── about/         # About page
 │   │   │   ├── contact/       # Contact page
+│   │   │   ├── dashboard/     # Protected dashboard (auth required)
+│   │   │   ├── login/         # Login page with Google OAuth
 │   │   │   ├── services/      # Services page
 │   │   │   └── stories/       # Stories page
+│   │   ├── auth/              # Authentication routes
+│   │   │   ├── callback/      # OAuth callback handler
+│   │   │   └── auth-code-error/ # Auth error page
 │   │   ├── globals.css        # Global styles + Tailwind directives
 │   │   ├── layout.tsx         # Root layout
 │   │   └── page.tsx           # Root page (locale redirect)
@@ -66,6 +77,9 @@ REFLEKT/
 │   │   │   ├── form.tsx
 │   │   │   ├── input.tsx
 │   │   │   └── ...
+│   │   ├── auth/              # Authentication components
+│   │   │   ├── login-button.tsx
+│   │   │   └── user-menu.tsx
 │   │   ├── __tests__/         # Component tests
 │   │   ├── accessibility.tsx
 │   │   ├── business-strategy-section.tsx
@@ -88,6 +102,10 @@ REFLEKT/
 │   │   ├── request.ts         # i18n request configuration
 │   │   └── routing.ts         # i18n routing configuration
 │   ├── lib/
+│   │   ├── supabase/          # Supabase configuration
+│   │   │   ├── client.ts      # Browser client
+│   │   │   ├── server.ts      # Server client
+│   │   │   └── middleware.ts  # Session middleware
 │   │   ├── constants.ts       # App constants
 │   │   └── utils.ts           # Utility functions (cn, etc.)
 │   ├── test/
@@ -106,6 +124,9 @@ REFLEKT/
 │   │   └── products/
 │   ├── videos/
 │   └── *.svg                 # SVG icons
+├── supabase/                 # Supabase project configuration
+│   ├── .gitignore
+│   └── config.toml           # Local Supabase config
 ├── components.json           # shadcn/ui configuration
 ├── eslint.config.mjs         # ESLint configuration
 ├── next.config.ts            # Next.js configuration
@@ -113,8 +134,11 @@ REFLEKT/
 ├── playwright.config.ts      # Playwright E2E config
 ├── postcss.config.mjs        # PostCSS configuration
 ├── tsconfig.json             # TypeScript configuration
+├── vercel.json               # Vercel deployment config
 ├── vitest.config.ts          # Vitest configuration
+├── .env.local                # Environment variables (gitignored)
 ├── CLAUDE.md                 # This file
+├── GOOGLE_OAUTH_SETUP.md     # OAuth setup documentation
 ├── README.md                 # Project documentation
 └── REFLEKT_BUILD_INSTRUCTIONS.md  # Build & deployment guide
 ```
@@ -915,6 +939,7 @@ Before committing changes, verify:
 
 | Version | Date | Changes |
 |---------|------|---------|
+| 3.0.0 | 2025-11-16 | Added Supabase integration, Google OAuth, and Vercel deployment |
 | 2.0.0 | 2025-11-16 | Updated for Next.js 15 website structure with full tech stack documentation |
 | 1.0.0 | 2025-11-16 | Initial CLAUDE.md creation for REFLEKT project |
 
