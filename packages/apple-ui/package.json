@@ -3,22 +3,13 @@
   "version": "0.1.0",
   "description": "Apple-inspired UI component library for REFLEKT",
   "main": "dist/index.js",
-  "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./styles": "./dist/styles/index.css"
-  },
   "files": [
     "dist"
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc && mkdir -p dist/styles && cp src/components/**/*.css dist/styles/",
+    "build": "tsc && find src -name '*.css' -exec sh -c 'mkdir -p dist/$(dirname {} | cut -d/ -f2-) && cp {} dist/$(dirname {} | cut -d/ -f2-)/' \\;",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit"
   },
