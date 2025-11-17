@@ -1,0 +1,52 @@
+/**
+ * Label Component Styles
+ * Styles specific to Label component for forms
+ */
+
+.label {
+  display: block;
+  margin: 0 0 4px 0;
+  cursor: pointer;
+}
+
+.label:empty {
+  display: none;
+}
+
+/* Required indicator */
+.required {
+  color: #ff3b30; /* Apple system red */
+  margin-left: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .required {
+    color: #ff453a; /* Dark mode red */
+  }
+}
+
+/* Helper text styling */
+.helper {
+  display: block;
+  margin-top: 4px;
+}
+
+/* Error text styling */
+.error {
+  display: block;
+  margin-top: 4px;
+  color: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    color: #ff453a;
+  }
+}
+
+/* Disabled state */
+.label:has(+ :disabled),
+.label:has(+ [aria-disabled='true']) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

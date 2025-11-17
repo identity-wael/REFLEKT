@@ -1,0 +1,39 @@
+/**
+ * Heading Component Styles
+ * Additional styles specific to Heading component
+ * Most styles inherited from Typography component
+ */
+
+/* Prevent orphans and widows for better typography */
+.heading {
+  orphans: 3;
+  widows: 3;
+}
+
+/* Prevent headings from breaking across pages/columns */
+.heading {
+  break-inside: avoid;
+  break-after: avoid;
+  page-break-inside: avoid;
+  page-break-after: avoid;
+}
+
+/* Improved hyphenation for long headings */
+.heading {
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphenate-limit-chars: 8 4 4;
+}
+
+/* Balance multi-line headings for better visual appearance */
+@supports (text-wrap: balance) {
+  .heading {
+    text-wrap: balance;
+  }
+}
+
+/* Ensure proper spacing */
+.heading {
+  margin: 0;
+}

@@ -77,6 +77,11 @@ export interface TypographyProps {
   className?: string
 
   /**
+   * Inline styles
+   */
+  style?: React.CSSProperties
+
+  /**
    * Content to render
    */
   children: React.ReactNode
@@ -124,12 +129,13 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
       as,
       align,
       className,
+      style,
       children,
       ...props
     },
     ref
   ) => {
-    const Component = as ?? defaultElementMap[variant] ?? 'span'
+    const Component = as ?? defaultElementMap[variant]!
 
     return React.createElement(
       Component,
@@ -143,6 +149,7 @@ export const Typography = React.forwardRef<HTMLElement, TypographyProps>(
           align && styles[`align-${align}`],
           className
         ),
+        style,
         ...props,
       },
       children

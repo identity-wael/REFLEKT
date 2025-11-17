@@ -1,26 +1,9 @@
 /**
- * Typography System Exports
- * Complete Apple-compatible typography system with utilities and presets
+ * Typography Utilities Index
+ * Exports all typography utilities for easy importing
  */
 
-// Core Typography Component
-export { Typography } from './Typography'
-export type { TypographyProps, TextStyle, FontWeight, LabelColor } from './Typography'
-
-// Specialized Typography Components
-export { Heading } from './Heading'
-export type { HeadingProps, HeadingLevel } from './Heading'
-
-export { Body } from './Body'
-export type { BodyProps } from './Body'
-
-export { Caption } from './Caption'
-export type { CaptionProps } from './Caption'
-
-export { Label } from './Label'
-export type { LabelProps } from './Label'
-
-// Typography Utilities
+// Typography Scales and Presets
 export {
   typographyScales,
   headingPresets,
@@ -29,7 +12,7 @@ export {
   linkPresets,
   buttonPresets,
   formPresets,
-} from './utilities/typography-scales'
+} from './typography-scales'
 
 export type {
   TypographyPreset,
@@ -40,7 +23,7 @@ export type {
   LinkPresetKey,
   ButtonPresetKey,
   FormPresetKey,
-} from './utilities/typography-scales'
+} from './typography-scales'
 
 // Text Helper Functions
 export {
@@ -59,7 +42,7 @@ export {
   highlightText,
   getInitials,
   pluralize,
-} from './utilities/text-helpers'
+} from './text-helpers'
 
 // Font Metrics and Constants
 export {
@@ -83,4 +66,4 @@ export {
   getFontVariant,
   trackingToEm,
   getRequiredContrast,
-} from './utilities/font-metrics'
+} from './font-metrics'
