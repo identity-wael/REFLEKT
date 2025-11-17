@@ -32,29 +32,29 @@
 
 /* Classic glass */
 .material-glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
 }
 
 @media (prefers-color-scheme: dark) {
   .material-glass {
-    background: rgba(28, 28, 30, 0.7);
+    background: rgba(0, 0, 0, 0.9);
   }
 }
 
 /* Frosted heavy (macOS Sonoma style) */
 .material-frosted-heavy {
-  background: rgba(255, 255, 255, 0.5);
-  backdrop-filter: blur(80px) saturate(200%) brightness(105%);
-  -webkit-backdrop-filter: blur(80px) saturate(200%) brightness(105%);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 @media (prefers-color-scheme: dark) {
   .material-frosted-heavy {
-    background: rgba(28, 28, 30, 0.6);
-    backdrop-filter: blur(80px) saturate(180%) brightness(90%);
-    -webkit-backdrop-filter: blur(80px) saturate(180%) brightness(90%);
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
   }
 }
 
@@ -149,15 +149,15 @@
   justify-content: space-between;
   max-width: 1600px;
   margin: 0 auto;
-  padding: 0 20px;
-  height: 48px;
+  padding: 0 24px;
+  height: 108px;
   gap: 20px;
 }
 
 @media (max-width: 768px) {
   .menuBarContent {
     padding: 0 16px;
-    height: 44px;
+    height: 96px;
   }
 }
 
@@ -168,7 +168,7 @@
   align-items: center;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
     sans-serif;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
   color: #000000;
   white-space: nowrap;
@@ -207,16 +207,16 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
     sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   color: #000000;
   background: transparent;
   border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
+  border-radius: 8px;
+  padding: 10px 16px;
   cursor: pointer;
   outline: none;
   transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -235,9 +235,22 @@
 }
 
 .menuItemActive {
-  background: rgba(0, 0, 0, 0.08);
+  background: transparent;
   color: #007aff;
   font-weight: 600;
+  position: relative;
+}
+
+.menuItemActive::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  height: 2px;
+  background: #007aff;
+  border-radius: 1px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -255,8 +268,12 @@
   }
 
   .menuItemActive {
-    background: rgba(255, 255, 255, 0.12);
+    background: transparent;
     color: #0a84ff;
+  }
+
+  .menuItemActive::after {
+    background: #0a84ff;
   }
 }
 
@@ -304,9 +321,9 @@
 
 .menuBarDivider {
   width: 1px;
-  height: 20px;
+  height: 24px;
   background: rgba(0, 0, 0, 0.1);
-  margin: 0 4px;
+  margin: 0 8px;
 }
 
 @media (prefers-color-scheme: dark) {
