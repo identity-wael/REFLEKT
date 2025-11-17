@@ -8,8 +8,12 @@ const withMDX = createMDX({})
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
+  transpilePackages: ['@reflekt/apple-ui'],
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
+  },
+  turbopack: {
+    root: '../../',
   },
   serverExternalPackages: ['@vercel/analytics'],
   images: {
