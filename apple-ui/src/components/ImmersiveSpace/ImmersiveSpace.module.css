@@ -1,0 +1,172 @@
+.immersiveSpace {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  perspective: var(--space-perspective, 1000px);
+  transform-style: preserve-3d;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+
+/* Default background gradient */
+.immersiveSpace {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 100, 255, 0.2) 0%,
+    rgba(200, 100, 255, 0.2) 50%,
+    rgba(255, 100, 150, 0.2) 100%
+  );
+}
+
+/* Ambient lighting effect */
+.ambientLight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+  animation: ambientPulse 4s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Content wrapper with 3D positioning */
+.contentWrapper {
+  position: relative;
+  z-index: 2;
+  transform: translateZ(var(--space-depth, 0));
+  transform-style: preserve-3d;
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px;
+}
+
+/* Depth of field blur effect */
+.depthBlur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 30%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+  mix-blend-mode: multiply;
+}
+
+/* Floating particles effect (optional enhancement) */
+.immersiveSpace::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.3;
+  animation: floatParticles 60s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes floatParticles {
+  0% {
+    transform: translateY(0) translateZ(-100px);
+  }
+  100% {
+    transform: translateY(-1000px) translateZ(-100px);
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .immersiveSpace {
+    background: linear-gradient(
+      135deg,
+      rgba(50, 50, 150, 0.3) 0%,
+      rgba(100, 50, 150, 0.3) 50%,
+      rgba(150, 50, 100, 0.3) 100%
+    );
+  }
+
+  .ambientLight {
+    background: radial-gradient(
+      ellipse at center,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0) 70%
+    );
+  }
+
+  .depthBlur {
+    background: radial-gradient(
+      circle at center,
+      transparent 30%,
+      rgba(0, 0, 0, 0.2) 100%
+    );
+  }
+
+  .immersiveSpace::after {
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ambientLight,
+  .immersiveSpace::after {
+    animation: none;
+  }
+
+  .contentWrapper {
+    transform: none;
+  }
+
+  .immersiveSpace {
+    perspective: none;
+    transform-style: flat;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contentWrapper {
+    padding: 20px;
+  }
+
+  .immersiveSpace {
+    perspective: 500px;
+  }
+
+  /* Reduce depth on mobile for better performance */
+  .contentWrapper {
+    transform: translateZ(calc(var(--space-depth, 0) * 0.5));
+  }
+}
+
+@media (max-width: 480px) {
+  .contentWrapper {
+    padding: 16px;
+  }
+}

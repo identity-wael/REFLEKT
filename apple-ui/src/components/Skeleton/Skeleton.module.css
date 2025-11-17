@@ -1,0 +1,189 @@
+/* Skeleton Component Styles */
+
+.skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    rgba(142, 142, 147, 0.1) 0%,
+    rgba(142, 142, 147, 0.2) 50%,
+    rgba(142, 142, 147, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 6px;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Static (no animation) */
+.static {
+  animation: none;
+  background: rgba(142, 142, 147, 0.15);
+}
+
+/* Variants */
+.text {
+  display: inline-block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.circular {
+  border-radius: 50%;
+}
+
+.rectangular {
+  border-radius: 0;
+}
+
+.rounded {
+  border-radius: 12px;
+}
+
+/* Text Sizes */
+.text.sm {
+  height: 14px;
+}
+
+.text.md {
+  height: 16px;
+}
+
+.text.lg {
+  height: 20px;
+}
+
+/* Text Group (for multiple lines) */
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Pulse Animation (alternative) */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Wave Animation (alternative) */
+@keyframes wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Before pseudo-element for wave effect */
+.skeleton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: wave 1.5s ease-in-out infinite;
+}
+
+.skeleton {
+  position: relative;
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(152, 152, 157, 0.15) 0%,
+      rgba(152, 152, 157, 0.25) 50%,
+      rgba(152, 152, 157, 0.15) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  .static {
+    background: rgba(152, 152, 157, 0.2);
+  }
+
+  .skeleton::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: rgba(142, 142, 147, 0.15);
+  }
+
+  .skeleton::before {
+    animation: none;
+    display: none;
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      background-position: 0 0;
+    }
+  }
+
+  @keyframes wave {
+    0%, 100% {
+      transform: translateX(0);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .skeleton {
+      background: rgba(152, 152, 157, 0.2);
+    }
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .skeleton {
+    background: rgba(142, 142, 147, 0.3);
+    outline: 1px solid rgba(142, 142, 147, 0.5);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .skeleton {
+      background: rgba(152, 152, 157, 0.3);
+      outline: 1px solid rgba(152, 152, 157, 0.5);
+    }
+  }
+}

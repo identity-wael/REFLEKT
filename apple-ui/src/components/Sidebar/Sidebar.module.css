@@ -1,0 +1,366 @@
+/**
+ * Sidebar Component Styles
+ * macOS-style sidebar navigation
+ */
+
+.sidebar {
+  /* Base styles */
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  z-index: 1020;
+
+  /* Smooth transitions with spring easing */
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              width 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Accessibility */
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .sidebar {
+    background: rgba(28, 28, 30, 0.8);
+    border-right-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}
+
+/* === VARIANTS === */
+
+.variant-default {
+  /* Always visible sidebar */
+  position: relative;
+}
+
+.variant-collapsible {
+  /* Can be collapsed */
+  position: relative;
+}
+
+.variant-overlay {
+  /* Mobile overlay sidebar */
+  position: fixed;
+}
+
+/* === WIDTH VARIANTS === */
+
+.width-sm {
+  width: 240px;
+}
+
+.width-md {
+  width: 280px;
+}
+
+.width-lg {
+  width: 320px;
+}
+
+/* === POSITION === */
+
+.position-left {
+  left: 0;
+}
+
+.position-right {
+  right: 0;
+  border-right: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .position-right {
+    border-left-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* === COLLAPSED STATE === */
+
+.collapsed {
+  transform: translateX(-100%);
+}
+
+.position-right.collapsed {
+  transform: translateX(100%);
+}
+
+.variant-collapsible.collapsed {
+  width: 0;
+  opacity: 0;
+}
+
+/* === OVERLAY MODE === */
+
+.overlayMode {
+  position: fixed;
+  z-index: 1050;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1040;
+  animation: fadeIn 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .overlay {
+    background: rgba(0, 0, 0, 0.6);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* === INNER CONTAINER === */
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* === HEADER === */
+
+.header {
+  flex-shrink: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+  }
+}
+
+/* === CONTENT === */
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 0;
+
+  /* Custom scrollbar for webkit */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .content {
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  }
+
+  .content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* === SECTION === */
+
+.section {
+  margin-bottom: 12px;
+}
+
+.sectionTitle {
+  padding: 8px 20px 4px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .sectionTitle {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+.sectionContent {
+  padding: 4px 8px;
+}
+
+/* === ITEM === */
+
+.item {
+  /* Base styles */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  margin: 2px 0;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Typography */
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: #000000;
+
+  /* Smooth transitions */
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.item:active {
+  transform: scale(0.98);
+}
+
+.item:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .item {
+    color: #ffffff;
+  }
+
+  .item:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Active state */
+.itemActive {
+  background: #007aff;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.itemActive:hover {
+  background: #0051d5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .itemActive {
+    background: #0a84ff;
+  }
+
+  .itemActive:hover {
+    background: #409cff;
+  }
+}
+
+/* Item icon */
+.itemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.itemActive .itemIcon {
+  opacity: 1;
+}
+
+/* Item label */
+.itemLabel {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* === FOOTER === */
+
+.footer {
+  flex-shrink: 0;
+  padding: 12px 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .item {
+    transition: none;
+  }
+
+  .item:active {
+    transform: none;
+  }
+}

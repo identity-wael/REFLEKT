@@ -1,0 +1,234 @@
+/**
+ * Select Component Styles
+ */
+
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.85);
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.labelDisabled {
+  opacity: 0.5;
+}
+
+.selectWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.select {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 17px;
+  line-height: 1.4;
+  color: #000;
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  outline: none;
+  transition: all 200ms ease;
+  appearance: none;
+  cursor: pointer;
+  padding-right: 40px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .select {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Variants */
+.variant-outlined {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-outlined {
+    background: rgba(28, 28, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.variant-filled {
+  background: rgba(120, 120, 128, 0.12);
+  border: 1px solid transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-filled {
+    background: rgba(120, 120, 128, 0.24);
+  }
+}
+
+/* Sizes */
+.size-sm {
+  padding: 8px 12px;
+  font-size: 15px;
+}
+
+.size-md {
+  padding: 11px 16px;
+  font-size: 17px;
+}
+
+.size-lg {
+  padding: 14px 20px;
+  font-size: 19px;
+}
+
+/* With start icon */
+.withStartIcon.size-sm {
+  padding-left: 40px;
+}
+
+.withStartIcon.size-md {
+  padding-left: 48px;
+}
+
+.withStartIcon.size-lg {
+  padding-left: 56px;
+}
+
+.startIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .startIcon {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.chevron {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: transform 200ms ease;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chevron {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* States */
+.select:hover {
+  border-color: rgba(0, 0, 0, 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  .select:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.select:focus {
+  border-color: #007aff;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .select:focus {
+    border-color: #0a84ff;
+    box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+  }
+}
+
+.select:focus + .chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.error {
+  border-color: #ff3b30 !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    border-color: #ff453a !important;
+  }
+}
+
+.error:focus {
+  box-shadow: 0 0 0 4px rgba(255, 59, 48, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .error:focus {
+    box-shadow: 0 0 0 4px rgba(255, 69, 58, 0.2);
+  }
+}
+
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Helper text */
+.helperText {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(0, 0, 0, 0.6);
+  margin: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .helperText {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.helperError {
+  color: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .helperError {
+    color: #ff453a;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .select,
+  .chevron {
+    transition: none !important;
+  }
+}

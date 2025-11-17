@@ -1,0 +1,288 @@
+/**
+ * Tabs Component Styles
+ */
+
+.tabs {
+  display: inline-flex;
+  flex-direction: column;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.fullWidth .tabsList {
+  width: 100%;
+}
+
+.fullWidth .tab {
+  flex: 1;
+}
+
+.tabsList {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+  font-weight: 400;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 200ms ease;
+  outline: none;
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+}
+
+/* Default Variant */
+.variant-default .tabsList {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-default .tabsList {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.variant-default .tab {
+  color: rgba(0, 0, 0, 0.6);
+  padding-bottom: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-default .tab {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.variant-default .tab:hover {
+  color: rgba(0, 0, 0, 0.85);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-default .tab:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.variant-default .tab.active {
+  color: #007aff;
+  font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-default .tab.active {
+    color: #0a84ff;
+  }
+}
+
+.indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  background: #007aff;
+  border-radius: 1px;
+  transition: all 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .indicator {
+    background: #0a84ff;
+  }
+}
+
+/* Segmented Variant */
+.variant-segmented .tabsList {
+  background: rgba(120, 120, 128, 0.12);
+  border-radius: 10px;
+  padding: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-segmented .tabsList {
+    background: rgba(120, 120, 128, 0.24);
+  }
+}
+
+.variant-segmented .tab {
+  color: rgba(0, 0, 0, 0.85);
+  border-radius: 8px;
+  z-index: 2;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-segmented .tab {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.variant-segmented .tab.active {
+  color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-segmented .tab.active {
+    color: #fff;
+  }
+}
+
+.segmentedIndicator {
+  position: absolute;
+  left: 2px;
+  top: 2px;
+  bottom: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .segmentedIndicator {
+    background: rgba(58, 58, 60, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Pills Variant */
+.variant-pills .tabsList {
+  gap: 8px;
+}
+
+.variant-pills .tab {
+  color: rgba(0, 0, 0, 0.7);
+  background: rgba(120, 120, 128, 0.12);
+  border-radius: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-pills .tab {
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(120, 120, 128, 0.24);
+  }
+}
+
+.variant-pills .tab:hover {
+  background: rgba(120, 120, 128, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-pills .tab:hover {
+    background: rgba(120, 120, 128, 0.32);
+  }
+}
+
+.variant-pills .tab.active {
+  color: #fff;
+  background: #007aff;
+  font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-pills .tab.active {
+    background: #0a84ff;
+  }
+}
+
+/* Sizes */
+.size-sm .tab {
+  padding: 8px 12px;
+  font-size: 13px;
+}
+
+.size-sm .icon {
+  font-size: 14px;
+}
+
+.size-md .tab {
+  padding: 10px 16px;
+  font-size: 15px;
+}
+
+.size-md .icon {
+  font-size: 16px;
+}
+
+.size-lg .tab {
+  padding: 12px 20px;
+  font-size: 17px;
+}
+
+.size-lg .icon {
+  font-size: 18px;
+}
+
+/* Disabled state */
+.disabled {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+}
+
+/* Tab Panel */
+.panel {
+  animation: fadeIn 200ms ease;
+}
+
+.panelHidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .tab,
+  .indicator,
+  .segmentedIndicator,
+  .panel {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.tab:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab:focus-visible {
+    outline-color: #0a84ff;
+  }
+}

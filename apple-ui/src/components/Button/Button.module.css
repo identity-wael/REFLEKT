@@ -1,0 +1,286 @@
+/**
+ * Button Component Styles
+ * Apple Design System Buttons
+ */
+
+.button {
+  /* Base styles */
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Smooth transitions (Apple's signature easing) */
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Remove default button styles */
+  background: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.button:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+/* Disabled state */
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Loading state */
+.button.loading {
+  cursor: wait;
+}
+
+/* Full width */
+.button.fullWidth {
+  width: 100%;
+}
+
+/* === VARIANTS === */
+
+/* Primary Button (Blue, filled) */
+.variant-primary {
+  background: #007aff;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.variant-primary:hover:not(:disabled) {
+  background: #0051d5;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.variant-primary:active:not(:disabled) {
+  background: #004acd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-primary {
+    background: #0a84ff;
+  }
+
+  .variant-primary:hover:not(:disabled) {
+    background: #409cff;
+  }
+
+  .variant-primary:active:not(:disabled) {
+    background: #0077ed;
+  }
+}
+
+/* Secondary Button (Gray, filled) */
+.variant-secondary {
+  background: rgba(120, 120, 128, 0.2);
+  color: #000000;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.variant-secondary:hover:not(:disabled) {
+  background: rgba(120, 120, 128, 0.28);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.variant-secondary:active:not(:disabled) {
+  background: rgba(120, 120, 128, 0.32);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-secondary {
+    background: rgba(120, 120, 128, 0.36);
+    color: #ffffff;
+  }
+
+  .variant-secondary:hover:not(:disabled) {
+    background: rgba(120, 120, 128, 0.44);
+  }
+
+  .variant-secondary:active:not(:disabled) {
+    background: rgba(120, 120, 128, 0.48);
+  }
+}
+
+/* Tertiary Button (Text only) */
+.variant-tertiary {
+  background: transparent;
+  color: #007aff;
+  box-shadow: none;
+}
+
+.variant-tertiary:hover:not(:disabled) {
+  background: rgba(0, 122, 255, 0.08);
+}
+
+.variant-tertiary:active:not(:disabled) {
+  background: rgba(0, 122, 255, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-tertiary {
+    color: #0a84ff;
+  }
+
+  .variant-tertiary:hover:not(:disabled) {
+    background: rgba(10, 132, 255, 0.15);
+  }
+
+  .variant-tertiary:active:not(:disabled) {
+    background: rgba(10, 132, 255, 0.25);
+  }
+}
+
+/* Destructive Button (Red) */
+.variant-destructive {
+  background: #ff3b30;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.variant-destructive:hover:not(:disabled) {
+  background: #e8291c;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.variant-destructive:active:not(:disabled) {
+  background: #d11f14;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(0);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-destructive {
+    background: #ff453a;
+  }
+
+  .variant-destructive:hover:not(:disabled) {
+    background: #ff6961;
+  }
+
+  .variant-destructive:active:not(:disabled) {
+    background: #ff2d20;
+  }
+}
+
+/* Plain Button (Minimal) */
+.variant-plain {
+  background: transparent;
+  color: #000000;
+  box-shadow: none;
+  padding: 0;
+}
+
+.variant-plain:hover:not(:disabled) {
+  opacity: 0.7;
+}
+
+.variant-plain:active:not(:disabled) {
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-plain {
+    color: #ffffff;
+  }
+}
+
+/* === SIZES === */
+
+.size-sm {
+  font-size: 14px;
+  line-height: 18px;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.size-md {
+  font-size: 16px;
+  line-height: 21px;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.size-lg {
+  font-size: 17px;
+  line-height: 22px;
+  padding: 14px 28px;
+  border-radius: 12px;
+}
+
+/* === ICON CONTAINERS === */
+
+.startIcon,
+.endIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.startIcon {
+  margin-right: -4px;
+}
+
+.endIcon {
+  margin-left: -4px;
+}
+
+/* === LOADING SPINNER === */
+
+.spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinnerSvg {
+  width: 16px;
+  height: 16px;
+  animation: spin 800ms linear infinite;
+}
+
+.spinnerCircle {
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-dasharray: 50;
+  stroke-dashoffset: 25;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Content */
+.content {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Loading state - hide content but maintain space */
+.loading .content {
+  visibility: hidden;
+}

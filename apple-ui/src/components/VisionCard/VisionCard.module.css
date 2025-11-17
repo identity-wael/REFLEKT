@@ -1,0 +1,344 @@
+/**
+ * VisionCard Component Styles
+ * visionOS-inspired glass cards with depth and 3D effects
+ */
+
+.visionCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: transform;
+}
+
+.visionCardContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+/* === MATERIALS === */
+
+/* Glass material */
+.material-glass {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-glass {
+    background: rgba(28, 28, 30, 0.6);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Frosted material */
+.material-frosted {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(60px) saturate(200%) brightness(120%);
+  -webkit-backdrop-filter: blur(60px) saturate(200%) brightness(120%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-frosted {
+    background: rgba(28, 28, 30, 0.5);
+    backdrop-filter: blur(60px) saturate(150%) brightness(80%);
+    -webkit-backdrop-filter: blur(60px) saturate(150%) brightness(80%);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Crystal material */
+.material-crystal {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 20px 60px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-crystal {
+    background: rgba(28, 28, 30, 0.8);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1),
+      0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* Dark glass material */
+.material-dark-glass {
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-dark-glass {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* === DEPTH LEVELS === */
+
+.depth-flat {
+  box-shadow: none;
+}
+
+.depth-shallow {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .depth-shallow {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.depth-medium {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (prefers-color-scheme: dark) {
+  .depth-medium {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.depth-deep {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .depth-deep {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* === BORDER RADIUS === */
+
+.radius-sm {
+  border-radius: 12px;
+}
+
+.radius-md {
+  border-radius: 16px;
+}
+
+.radius-lg {
+  border-radius: 24px;
+}
+
+.radius-xl {
+  border-radius: 32px;
+}
+
+.radius-2xl {
+  border-radius: 40px;
+}
+
+/* === PADDING === */
+
+.padding-none {
+  padding: 0;
+}
+
+.padding-sm {
+  padding: 16px;
+}
+
+.padding-md {
+  padding: 24px;
+}
+
+.padding-lg {
+  padding: 32px;
+}
+
+.padding-xl {
+  padding: 48px;
+}
+
+/* === TILT EFFECT === */
+
+.tiltable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.tiltable:hover {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tiltable:hover {
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* === GLOW EFFECT === */
+
+.glowOverlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 122, 255, 0.3) 0%,
+    transparent 70%
+  );
+  transition: opacity 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glowable:hover .glowOverlay {
+  opacity: 1;
+}
+
+.glowable:hover {
+  border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 0 40px rgba(0, 122, 255, 0.3), 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glowable:hover .glowOverlay {
+    background: radial-gradient(
+      circle at center,
+      rgba(10, 132, 255, 0.4) 0%,
+      transparent 70%
+    );
+  }
+
+  .glowable:hover {
+    border-color: rgba(10, 132, 255, 0.5);
+    box-shadow: 0 0 40px rgba(10, 132, 255, 0.4), 0 20px 60px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* === FLOATING ANIMATION === */
+
+.floating {
+  animation: vision-float 6s ease-in-out infinite;
+}
+
+@keyframes vision-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.02);
+  }
+}
+
+.floating:hover {
+  animation-play-state: paused;
+}
+
+/* === VISION CARD GRID === */
+
+.visionCardGrid {
+  display: grid;
+  width: 100%;
+}
+
+.gap-sm {
+  gap: 16px;
+}
+
+.gap-md {
+  gap: 24px;
+}
+
+.gap-lg {
+  gap: 32px;
+}
+
+.gap-xl {
+  gap: 48px;
+}
+
+/* === ACCESSIBILITY === */
+
+.tiltable:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tiltable:focus-visible {
+    outline-color: #0a84ff;
+  }
+}
+
+/* Active state */
+.tiltable:active {
+  transform: perspective(1000px) scale(0.98);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .visionCard {
+    transition: none !important;
+  }
+
+  .floating {
+    animation: none !important;
+  }
+
+  .tiltable:hover {
+    transform: none !important;
+  }
+
+  .glowOverlay {
+    transition: none !important;
+  }
+}
+
+/* === LIGHT REFLECTION EFFECT (visionOS style) === */
+
+.visionCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+}
+
+.tiltable:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .visionCard::before {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 100%
+    );
+  }
+}

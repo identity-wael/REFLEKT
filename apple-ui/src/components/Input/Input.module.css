@@ -1,0 +1,274 @@
+/**
+ * Input Component Styles
+ * Apple Design System Input Fields
+ */
+
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Label */
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #000000;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: #ffffff;
+  }
+}
+
+/* Input Wrapper */
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 10px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Input Element */
+.input {
+  flex: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 22px;
+  color: #000000;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+
+.input::placeholder {
+  color: rgba(60, 60, 67, 0.3);
+}
+
+.input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input {
+    color: #ffffff;
+  }
+
+  .input::placeholder {
+    color: rgba(235, 235, 245, 0.3);
+  }
+}
+
+/* === VARIANTS === */
+
+/* Outlined Variant */
+.variant-outlined {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.variant-outlined:focus-within {
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-outlined {
+    background: #1c1c1e;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .variant-outlined:focus-within {
+    border-color: #0a84ff;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+  }
+}
+
+/* Filled Variant */
+.variant-filled {
+  background: #f2f2f7;
+  border: 1px solid transparent;
+}
+
+.variant-filled:focus-within {
+  background: #ffffff;
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-filled {
+    background: #2c2c2e;
+  }
+
+  .variant-filled:focus-within {
+    background: #1c1c1e;
+    border-color: #0a84ff;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+  }
+}
+
+/* === SIZES === */
+
+.size-sm {
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.size-sm .input {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.size-md {
+  padding: 10px 16px;
+}
+
+.size-lg {
+  padding: 14px 20px;
+}
+
+.size-lg .input {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+/* === STATES === */
+
+/* Error State */
+.error {
+  border-color: #ff3b30 !important;
+}
+
+.error:focus-within {
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    border-color: #ff453a !important;
+  }
+
+  .error:focus-within {
+    box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.15) !important;
+  }
+}
+
+/* Disabled State */
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* === ICONS === */
+
+.startIcon,
+.endIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: rgba(60, 60, 67, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  .startIcon,
+  .endIcon {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+.startIcon {
+  margin-right: -4px;
+}
+
+.endIcon {
+  margin-left: -4px;
+}
+
+/* Adjust padding when icons are present */
+.hasStartIcon.size-sm {
+  padding-left: 8px;
+}
+
+.hasStartIcon.size-md {
+  padding-left: 12px;
+}
+
+.hasStartIcon.size-lg {
+  padding-left: 16px;
+}
+
+.hasEndIcon.size-sm {
+  padding-right: 8px;
+}
+
+.hasEndIcon.size-md {
+  padding-right: 12px;
+}
+
+.hasEndIcon.size-lg {
+  padding-right: 16px;
+}
+
+/* === HELPER TEXT & ERROR MESSAGE === */
+
+.helperText,
+.errorMessage {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0;
+}
+
+.helperText {
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.errorMessage {
+  color: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .helperText {
+    color: rgba(235, 235, 245, 0.6);
+  }
+
+  .errorMessage {
+    color: #ff453a;
+  }
+}
+
+/* Remove autofill background */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input:-webkit-autofill,
+  .input:-webkit-autofill:hover,
+  .input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1c1c1e inset;
+    box-shadow: 0 0 0 1000px #1c1c1e inset;
+    -webkit-text-fill-color: #ffffff;
+  }
+}
