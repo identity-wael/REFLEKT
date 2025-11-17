@@ -1,0 +1,315 @@
+/**
+ * Textarea Component Styles
+ * Apple Design System Multi-line Input
+ */
+
+.container {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* Label */
+.label {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  color: #000000;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .label {
+    color: #ffffff;
+  }
+}
+
+/* Textarea Wrapper */
+.textareaWrapper {
+  position: relative;
+  display: flex;
+  border-radius: 10px;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Textarea Element */
+.textarea {
+  flex: 1;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 22px;
+  color: #000000;
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  min-height: 60px;
+}
+
+.textarea::placeholder {
+  color: rgba(60, 60, 67, 0.3);
+}
+
+.textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .textarea {
+    color: #ffffff;
+  }
+
+  .textarea::placeholder {
+    color: rgba(235, 235, 245, 0.3);
+  }
+}
+
+/* === VARIANTS === */
+
+/* Outlined Variant */
+.variant-outlined {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.variant-outlined:focus-within {
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-outlined {
+    background: #1c1c1e;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .variant-outlined:focus-within {
+    border-color: #0a84ff;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+  }
+}
+
+/* Filled Variant */
+.variant-filled {
+  background: #f2f2f7;
+  border: 1px solid transparent;
+}
+
+.variant-filled:focus-within {
+  background: #ffffff;
+  border-color: #007aff;
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  .variant-filled {
+    background: #2c2c2e;
+  }
+
+  .variant-filled:focus-within {
+    background: #1c1c1e;
+    border-color: #0a84ff;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.15);
+  }
+}
+
+/* === SIZES === */
+
+.size-sm {
+  padding: 6px 12px;
+}
+
+.size-sm .textarea {
+  font-size: 14px;
+  line-height: 18px;
+  min-height: 48px;
+}
+
+.size-md {
+  padding: 10px 16px;
+}
+
+.size-lg {
+  padding: 14px 20px;
+}
+
+.size-lg .textarea {
+  font-size: 18px;
+  line-height: 24px;
+  min-height: 72px;
+}
+
+/* === RESIZE OPTIONS === */
+
+.resize-none {
+  resize: none;
+}
+
+.resize-vertical {
+  resize: vertical;
+}
+
+.resize-horizontal {
+  resize: horizontal;
+}
+
+.resize-both {
+  resize: both;
+}
+
+/* === STATES === */
+
+/* Error State */
+.error {
+  border-color: #ff3b30 !important;
+}
+
+.error:focus-within {
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .error {
+    border-color: #ff453a !important;
+  }
+
+  .error:focus-within {
+    box-shadow: 0 0 0 3px rgba(255, 69, 58, 0.15) !important;
+  }
+}
+
+/* Disabled State */
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* === FOOTER (Helper Text & Character Count) === */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 18px;
+}
+
+.messages {
+  flex: 1;
+}
+
+.helperText,
+.errorMessage {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  margin: 0;
+}
+
+.helperText {
+  color: rgba(60, 60, 67, 0.6);
+}
+
+.errorMessage {
+  color: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .helperText {
+    color: rgba(235, 235, 245, 0.6);
+  }
+
+  .errorMessage {
+    color: #ff453a;
+  }
+}
+
+/* Character Counter */
+.charCount {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+  color: rgba(60, 60, 67, 0.6);
+  margin: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .charCount {
+    color: rgba(235, 235, 245, 0.6);
+  }
+}
+
+.charCountError {
+  color: #ff3b30;
+}
+
+@media (prefers-color-scheme: dark) {
+  .charCountError {
+    color: #ff453a;
+  }
+}
+
+/* Remove autofill background */
+.textarea:-webkit-autofill,
+.textarea:-webkit-autofill:hover,
+.textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  box-shadow: 0 0 0 1000px #ffffff inset;
+  -webkit-text-fill-color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .textarea:-webkit-autofill,
+  .textarea:-webkit-autofill:hover,
+  .textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #1c1c1e inset;
+    box-shadow: 0 0 0 1000px #1c1c1e inset;
+    -webkit-text-fill-color: #ffffff;
+  }
+}
+
+/* Scrollbar styling for webkit browsers */
+.textarea::-webkit-scrollbar {
+  width: 8px;
+}
+
+.textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.textarea::-webkit-scrollbar-thumb {
+  background: rgba(60, 60, 67, 0.3);
+  border-radius: 4px;
+}
+
+.textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(60, 60, 67, 0.5);
+}
+
+@media (prefers-color-scheme: dark) {
+  .textarea::-webkit-scrollbar-thumb {
+    background: rgba(235, 235, 245, 0.3);
+  }
+
+  .textarea::-webkit-scrollbar-thumb:hover {
+    background: rgba(235, 235, 245, 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textareaWrapper {
+    transition: none;
+  }
+}

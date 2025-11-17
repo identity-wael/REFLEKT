@@ -174,6 +174,54 @@ export type { CheckboxProps, CheckboxSize } from './components/Checkbox'
 export { Radio, RadioGroup } from './components/Radio'
 export type { RadioProps, RadioGroupProps, RadioSize } from './components/Radio'
 
+// Sheet (iOS bottom sheet)
+export { Sheet, SheetHeader, SheetTitle, SheetBody, SheetFooter } from './components/Sheet'
+export type {
+  SheetProps,
+  SheetHeaderProps,
+  SheetTitleProps,
+  SheetBodyProps,
+  SheetFooterProps,
+  SheetSize,
+  SheetPosition,
+} from './components/Sheet'
+
+// Progress
+export { Progress } from './components/Progress'
+export type { ProgressProps, ProgressVariant, ProgressSize, ProgressColor } from './components/Progress'
+
+// Badge
+export { Badge } from './components/Badge'
+export type { BadgeProps, BadgeVariant, BadgeColor, BadgeSize, BadgePosition } from './components/Badge'
+
+// Avatar
+export { Avatar } from './components/Avatar'
+export type { AvatarProps, AvatarSize, AvatarShape, AvatarStatus } from './components/Avatar'
+
+// Chip
+export { Chip } from './components/Chip'
+export type { ChipProps, ChipVariant, ChipColor, ChipSize } from './components/Chip'
+
+// Skeleton
+export { Skeleton } from './components/Skeleton'
+export type { SkeletonProps, SkeletonVariant, SkeletonSize } from './components/Skeleton'
+
+// Slider
+export { Slider } from './components/Slider'
+export type { SliderProps, SliderSize, SliderColor, SliderMark } from './components/Slider'
+
+// Textarea
+export { Textarea } from './components/Textarea'
+export type { TextareaProps, TextareaVariant, TextareaSize, TextareaResize } from './components/Textarea'
+
+// Popover
+export { Popover, PopoverTrigger, PopoverContent } from './components/Popover'
+export type { PopoverProps, PopoverTriggerProps, PopoverContentProps, PopoverPosition, PopoverTriggerType } from './components/Popover'
+
+// Tooltip
+export { Tooltip } from './components/Tooltip'
+export type { TooltipProps, TooltipPosition } from './components/Tooltip'
+
 // === DESIGN TOKENS ===
 
 export {
