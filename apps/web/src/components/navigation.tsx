@@ -49,7 +49,7 @@ export function Navigation() {
   return (
     <motion.header
       style={{
-        backgroundColor: scrolled ? 'rgba(0, 0, 0, 0.95)' : 'rgba(0, 0, 0, 0.9)',
+        backgroundColor: scrolled ? 'rgba(0, 0, 0, 0.6)' : 'rgba(0, 0, 0, 0.5)',
         backdropFilter: `blur(${headerBlur}px)`,
       }}
       className="fixed top-0 z-50 w-full border-b border-white/10 transition-all duration-300"
