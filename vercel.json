@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "pnpm --filter=@reflekt/apple-ui build && pnpm --filter=web build",
+  "buildCommand": "cd packages/apple-ui && npm run build && cd ../../apps/web && npm run build",
   "installCommand": "corepack enable && corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile",
   "outputDirectory": "apps/web/.next",
   "ignoreCommand": "exit 0"
