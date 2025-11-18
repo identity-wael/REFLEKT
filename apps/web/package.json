@@ -28,7 +28,7 @@
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",
-    "@reflekt/apple-ui": "0.1.0",
+    "@reflekt/apple-ui": "file:../../packages/apple-ui",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.81.1",
     "@vercel/analytics": "^1.5.0",
