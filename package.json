@@ -10,7 +10,12 @@
     "type-check": "turbo type-check"
   },
   "devDependencies": {
+    "playwright": "^1.56.1",
     "turbo": "^2.6.1"
   },
-  "packageManager": "pnpm@10.22.0"
+  "packageManager": "pnpm@10.22.0",
+  "dependencies": {
+    "@modelcontextprotocol/server-everything": "^2025.9.25",
+    "@upstash/context7-mcp": "^1.0.27"
+  }
 }

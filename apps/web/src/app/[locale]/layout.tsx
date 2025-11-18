@@ -5,7 +5,7 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
 import "../globals.css";
-import { Navigation } from '@/components/navigation';
+import { AppleNavigation as Navigation } from '@/components/apple-navigation';
 import { Footer } from '@/components/footer';
 
 const geistSans = Geist({
