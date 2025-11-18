@@ -1,0 +1,398 @@
+/**
+ * MenuBar Component Styles
+ * Latest Apple glassmorphism (macOS Sonoma / visionOS style)
+ */
+
+.menuBar {
+  width: 100%;
+  z-index: 1000;
+  transition: all 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  will-change: backdrop-filter, background-color;
+}
+
+/* === POSITIONS === */
+
+.position-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.position-sticky {
+  position: sticky;
+  top: 0;
+}
+
+.position-static {
+  position: static;
+}
+
+/* === MATERIALS === */
+
+/* Classic glass */
+.material-glass {
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(20px) saturate(160%) brightness(110%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(110%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-glass {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(20px) saturate(140%) brightness(90%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%) brightness(90%);
+  }
+}
+
+/* Frosted heavy (macOS Sonoma style) */
+.material-frosted-heavy {
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-frosted-heavy {
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* Ultra-translucent (visionOS style) */
+.material-translucent {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(100px) saturate(220%) brightness(110%);
+  -webkit-backdrop-filter: blur(100px) saturate(220%) brightness(110%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-translucent {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(100px) saturate(200%) brightness(85%);
+    -webkit-backdrop-filter: blur(100px) saturate(200%) brightness(85%);
+  }
+}
+
+/* Vibrant with color tint */
+.material-vibrant {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(240, 240, 245, 0.5) 100%
+  );
+  backdrop-filter: blur(60px) saturate(240%) hue-rotate(-5deg);
+  -webkit-backdrop-filter: blur(60px) saturate(240%) hue-rotate(-5deg);
+}
+
+@media (prefers-color-scheme: dark) {
+  .material-vibrant {
+    background: linear-gradient(
+      180deg,
+      rgba(28, 28, 30, 0.7) 0%,
+      rgba(20, 20, 22, 0.6) 100%
+    );
+    backdrop-filter: blur(60px) saturate(200%) hue-rotate(5deg);
+    -webkit-backdrop-filter: blur(60px) saturate(200%) hue-rotate(5deg);
+  }
+}
+
+/* === SCROLLED STATE === */
+
+.scrolled {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04),
+    0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.material-frosted-heavy.scrolled {
+  backdrop-filter: blur(100px) saturate(220%) brightness(103%);
+  -webkit-backdrop-filter: blur(100px) saturate(220%) brightness(103%);
+}
+
+.material-translucent.scrolled {
+  backdrop-filter: blur(120px) saturate(250%) brightness(108%);
+  -webkit-backdrop-filter: blur(120px) saturate(250%) brightness(108%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .scrolled {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  .material-frosted-heavy.scrolled {
+    backdrop-filter: blur(100px) saturate(200%) brightness(88%);
+    -webkit-backdrop-filter: blur(100px) saturate(200%) brightness(88%);
+  }
+
+  .material-translucent.scrolled {
+    backdrop-filter: blur(120px) saturate(230%) brightness(83%);
+    -webkit-backdrop-filter: blur(120px) saturate(230%) brightness(83%);
+  }
+}
+
+/* Border */
+.bordered {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  .bordered {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* === MENU BAR CONTENT === */
+
+.menuBarContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 108px;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .menuBarContent {
+    padding: 0 16px;
+    height: 96px;
+  }
+}
+
+/* === MENU BAR BRAND === */
+
+.menuBarBrand {
+  display: flex;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000000;
+  white-space: nowrap;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuBarBrand {
+    color: #ffffff;
+  }
+}
+
+/* === MENU BAR SECTION === */
+
+.menuBarSection {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.align-start {
+  justify-content: flex-start;
+}
+
+.align-center {
+  justify-content: center;
+}
+
+.align-end {
+  justify-content: flex-end;
+}
+
+/* === MENU ITEM === */
+
+.menuItem {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #000000;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  outline: none;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menuItem:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #000000;
+}
+
+.menuItem:active {
+  background: rgba(0, 0, 0, 0.1);
+  transform: scale(0.98);
+}
+
+.menuItemActive {
+  background: transparent;
+  color: #007aff;
+  font-weight: 600;
+  position: relative;
+}
+
+.menuItemActive::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  height: 2px;
+  background: #007aff;
+  border-radius: 1px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuItem {
+    color: #ffffff;
+  }
+
+  .menuItem:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  .menuItem:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .menuItemActive {
+    background: transparent;
+    color: #0a84ff;
+  }
+
+  .menuItemActive::after {
+    background: #0a84ff;
+  }
+}
+
+/* Menu item parts */
+.menuItemIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.menuItemText {
+  white-space: nowrap;
+}
+
+.menuItemIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 4px;
+  height: 4px;
+  background: #007aff;
+  border-radius: 50%;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuItemIndicator {
+    background: #0a84ff;
+  }
+}
+
+/* Focus state */
+.menuItem:focus-visible {
+  outline: 2px solid #007aff;
+  outline-offset: 2px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuItem:focus-visible {
+    outline-color: #0a84ff;
+  }
+}
+
+/* === DIVIDER === */
+
+.menuBarDivider {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+  margin: 0 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuBarDivider {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* === MOBILE RESPONSIVE === */
+
+@media (max-width: 768px) {
+  .menuBarSection {
+    gap: 2px;
+  }
+
+  .menuItem {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+}
+
+/* === REDUCE MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  .menuBar {
+    transition: none !important;
+  }
+
+  .menuItem {
+    transition: none !important;
+  }
+
+  .menuItem:active {
+    transform: none !important;
+  }
+}
+
+/* === LIGHT REFLECTION (visionOS style) === */
+
+.menuBar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scrolled::before {
+  opacity: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuBar::before {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
+  }
+}

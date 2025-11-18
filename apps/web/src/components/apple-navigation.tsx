@@ -10,7 +10,7 @@ import {
   MenuBarSection,
   MenuItem,
   MenuBarDivider,
-} from '@reflekt/apple-ui';
+} from './apple-ui-menubar';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu, Globe, X, Home, Info, Briefcase, BookOpen, Mail } from 'lucide-react';

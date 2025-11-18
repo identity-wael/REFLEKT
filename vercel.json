@@ -1,7 +1,5 @@
 {
   "framework": "nextjs",
-  "buildCommand": "cd packages/apple-ui && npm install && npm run build && cd ../.. && mkdir -p apps/web/node_modules/@reflekt && cp -r packages/apple-ui apps/web/node_modules/@reflekt/apple-ui && cd apps/web && npm run build",
-  "installCommand": "npm install",
   "outputDirectory": "apps/web/.next",
   "ignoreCommand": "exit 0"
 }
